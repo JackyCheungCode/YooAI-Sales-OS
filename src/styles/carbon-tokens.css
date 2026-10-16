@@ -1,4 +1,5 @@
-/* Carbon is the single source for all design tokens. This file adds only the approved Chinese font fallback. */
+/* Carbon tokens remain the source of truth; this alias names the page-level background explicitly. */
+:root { --cds-bg-page: var(--cds-background); }
 body {
   font-family: 'IBM Plex Sans', SimSun, sans-serif;
 }
