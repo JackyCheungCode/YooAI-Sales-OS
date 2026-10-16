@@ -155,7 +155,7 @@ export function LeadsPage() {
     <div className="leads-notice" role="status"><WarningAlt size={17}/><span>{notice}</span></div>
     <div className="lead-stat-grid">
       <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='全部线索'?' active':'')} onClick={()=>setStatusFilter('全部线索')}><span>线索总数</span><strong>{counts.all}</strong><small>全部状态</small></Button>
-      <Button type="button" className={'lead-stat'+(statusFilter==='新线索'?' active':'')} onClick={()=>setStatusFilter('新线索')}><span>新线索</span><strong>{counts.fresh}</strong><small>待首次处理</small></Button>
+      <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='新线索'?' active':'')} onClick={()=>setStatusFilter('新线索')}><span>新线索</span><strong>{counts.fresh}</strong><small>待首次处理</small></Button>
       <Button type="button" className={'lead-stat'+(statusFilter==='跟进中'?' active':'')} onClick={()=>setStatusFilter('跟进中')}><span>跟进中</span><strong>{counts.follow}</strong><small>等待回复或推进</small></Button>
       <Button type="button" className={'lead-stat'+(statusFilter==='已确认'?' active':'')} onClick={()=>setStatusFilter('已确认')}><span>已确认</span><strong>{counts.qualified}</strong><small>具备转化条件</small></Button>
       <Button type="button" className={'lead-stat'+(poolOnly?' active':'')} onClick={()=>setPoolOnly(v=>!v)}><span>公共线索池</span><strong>{counts.pool}</strong><small>{poolOnly?'正在查看公共池':'点击查看待认领'}</small></Button>
