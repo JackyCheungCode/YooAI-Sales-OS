@@ -1,6 +1,6 @@
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
 import { useMemo, useState, type ReactNode } from 'react';
-import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
+import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/icons-react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
 import './dashboard.css';
