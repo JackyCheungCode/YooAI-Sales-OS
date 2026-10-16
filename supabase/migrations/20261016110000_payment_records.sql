@@ -192,6 +192,7 @@ begin
   update public.payment_records set received_amount=p_received_amount, received_at=p_received_at, fx_rate=p_fx_rate,
     fx_source=p_fx_source, fx_rate_at=case when p_fx_rate is not null then p_received_at else null end,
     bank_fee=p_bank_fee, intermediary_fee=p_intermediary_fee, net_received_amount=v_net,
+    realized_fx_gain_loss=case when p_fx_rate is not null and v_payment.schedule_id is not null then round((p_fx_rate-coalesce((select s.reference_fx_rate from public.receivable_schedules s where s.id=v_payment.schedule_id),p_fx_rate))*p_received_amount,2) else null end,
     difference_reason=p_difference_reason, difference_note=p_difference_note, status=v_status,
     finance_confirmed_by=auth.uid(), finance_confirmed_at=now(), updated_at=now()
     where id=p_payment_id returning * into v_payment;
