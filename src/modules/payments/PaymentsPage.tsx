@@ -57,7 +57,6 @@ export function PaymentsPage(){
  useEffect(()=>{void reload();},[]);
  const filtered=useMemo(()=>rows.filter(p=>(filter==='all'||displayedStatus(p)===filter)&&[p.payment_number,p.customer?.name??'',p.order?.order_number??'',p.bank_reference??'',p.remitter_name??''].some(v=>v.toLowerCase().includes(search.toLowerCase()))),[rows,filter,search]);
  const overdue=rows.filter(p=>displayedStatus(p)==='overdue');const disputed=rows.filter(p=>displayedStatus(p)==='disputed');
- const outstanding=rows.filter(p=>!['received','reconciled','refunded','disputed'].includes(displayedStatus(p))).reduce((s,p)=>s+Math.max(0,p.receivable_amount-p.received_amount),0);
  const outstandingByCurrency=rows.filter(p=>!['received','reconciled','refunded','disputed'].includes(displayedStatus(p))).reduce((acc,p)=>{acc[p.currency_code]=(acc[p.currency_code]??0)+Math.max(0,p.receivable_amount-p.received_amount);return acc;},{} as Record<string,number>);
  const outstandingLabel=Object.entries(outstandingByCurrency).map(([currency,value])=>fmt(value,currency)).join(' · ')||'—';
  const showModal=(m:typeof modal)=>{setFormError('');setModal(m);};
