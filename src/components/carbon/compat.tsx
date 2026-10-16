@@ -1,6 +1,12 @@
 import { createElement, useEffect, useRef, type ReactNode } from 'react';
 
-type CarbonProps = Record<string, any> & { children?: ReactNode; className?: string };
+type CarbonProps = Record<string, any> & {
+  children?: ReactNode;
+  className?: string;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onChange?: (event: any) => void;
+};
 
 function CustomElement({ tag, children, ...props }: CarbonProps & { tag: string }) {
   return createElement(tag, props, children);
@@ -78,7 +84,7 @@ export function TableHeader(props: CarbonProps) {
 export function TableCell(props: CarbonProps) {
   return createElement('cds-table-cell', props, props.children);
 }
-export function FileUploaderButton(props: CarbonProps) {
+export function FileUploaderButton(props: CarbonProps & { onChange?: (event: any) => void }) {
   return createElement('cds-file-uploader-button', props, props.children);
 }
 
