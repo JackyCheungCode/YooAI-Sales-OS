@@ -6,8 +6,6 @@
 .dashboard-filter-title>div{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
 .dashboard-filter-title strong{font-size:var(--cds-heading-compact-01-font-size)}
 .dashboard-filter-title span{color:var(--cds-text-secondary);font-size:var(--cds-label-01-font-size)}
-.filter-reset,.text-action,.dashboard-panel__footer button{border:0;padding:0;color:var(--cds-link-primary);background:transparent;font:inherit;cursor:pointer}
-.filter-reset{font-size:var(--cds-label-01-font-size)}
 .dashboard-filters{row-gap:var(--cds-spacing-05)}
 .dashboard-filters .cds--col{min-width:0}
 .dashboard-filters .cds--select{width:100%}
