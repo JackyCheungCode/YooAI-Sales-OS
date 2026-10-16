@@ -1,5 +1,5 @@
-import { Tag } from '@carbon/react';
-import { Add, Download, Filter, Search, UserMultiple } from '@carbon/react/icons';
+import { Search as CarbonSearch, Tag } from '@carbon/react';
+import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
 import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput } from '../../components/ui/Field';
@@ -24,7 +24,7 @@ export function CustomersPage() {
     <section className="panel">
       <div className="panel__heading"><div><h2>客户档案</h2><p>搜索、筛选并维护客户信息</p></div><Tag type={isSupabaseConfigured ? 'green' : 'warm-gray'}>{isSupabaseConfigured ? 'Supabase 配置已读取' : '等待配置 Supabase'}</Tag></div>
       <div className="filter-row">
-        <div className="search-wrap"><Search size={17} /><TextInput id="customer-search" aria-label="搜索客户" placeholder="搜索客户名称、邮箱或联系人" value={keyword} onChange={(event) => setKeyword(event.target.value)} /></div>
+        <CarbonSearch id="customer-search" labelText="搜索客户" placeholder="搜索客户名称、邮箱或联系人" value={keyword} onChange={(event) => setKeyword(event.target.value)} />
         <div className="filter-select"><SelectInput id="customer-status" labelText="客户状态" value={status} onChange={(event) => setStatus(event.target.value)}>
           <SelectItem value="all" text="全部状态" /><SelectItem value="active" text="合作中" /><SelectItem value="qualified" text="已确认" /><SelectItem value="inactive" text="已暂停" />
         </SelectInput></div>
