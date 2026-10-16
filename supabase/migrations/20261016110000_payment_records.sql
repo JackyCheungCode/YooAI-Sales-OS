@@ -347,7 +347,7 @@ begin
   if v_role not in ('finance','admin','executive') then
     raise exception 'Only authorized finance users may change payment allocations' using errcode='42501';
   end if;
-  return case when tg_op='DELETE' then old else new end;
+  if tg_op='DELETE' then return old; else return new; end if;
 end $$;
 drop trigger if exists payment_allocations_finance_guard on public.payment_allocations;
 create trigger payment_allocations_finance_guard before insert or update or delete on public.payment_allocations
