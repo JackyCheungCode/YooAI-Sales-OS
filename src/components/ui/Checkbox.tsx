@@ -1,6 +1,17 @@
-import { Checkbox as CarbonCheckbox } from '@carbon/react';
-import type { ComponentProps } from 'react';
-type Props = Omit<ComponentProps<typeof CarbonCheckbox>, 'labelText'> & { children: string };
+import { createElement, type ChangeEventHandler } from 'react';
+
+type Props = {
+  id?: string;
+  name?: string;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+  value?: string;
+  children: string;
+  onChange?: ChangeEventHandler<HTMLElement>;
+  className?: string;
+};
+
 export function Checkbox({ children, ...props }: Props) {
-  return <CarbonCheckbox labelText={children} {...props} />;
+  return createElement('cds-checkbox', { labelText: children, ...props });
 }
