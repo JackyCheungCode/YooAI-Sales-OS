@@ -1,4 +1,4 @@
-import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '@carbon/react';
+import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '../components/carbon/compat';
 import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Close } from '@carbon/react/icons';
 import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
@@ -10,7 +10,7 @@ export function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const goTo = (path: string) => (event: MouseEvent<HTMLAnchorElement>) => {
+  const goTo = (path: string) => (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
     navigate(path);
     setMobileNavOpen(false);
