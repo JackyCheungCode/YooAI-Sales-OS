@@ -20,6 +20,7 @@
 
 4. **网格布局 — 2x Grid**
    - https://carbondesignsystem.com/building-blocks/foundations/grid/
+   - Carbon 2x Grid 官方说明与断点：https://carbondesignsystem.com/building-blocks/foundations/2x-grid/overview
    - 所有页面的列宽、容器、边距、内边距与对齐方式必须遵循 Carbon 2x Grid 原则，并优先使用 Carbon Grid / Column 组件。不得随意创建不符合网格节奏的尺寸。
 
 5. **间距令牌 — Spacing**
