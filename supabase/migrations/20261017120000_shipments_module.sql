@@ -261,8 +261,8 @@ create or replace function public.create_shipment_with_items(
   p_notes text,
   p_items jsonb
 ) returns jsonb
-language plpgsql security invoker set search_path = ''
-as $$
+language plpgsql security definer set search_path = ''
+as $
 declare
   v_order public.orders%rowtype;
   v_shipment public.shipments%rowtype;
