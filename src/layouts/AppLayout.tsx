@@ -14,11 +14,12 @@ export function AppLayout() {
     navigate(path);
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
-  const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts'].includes(location.pathname);
+  const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts', '/opportunities'].includes(location.pathname);
   const pageTitle = isDashboard ? '经营智控中枢'
     : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）'
     : location.pathname === '/leads' ? '线索（Lead）'
     : location.pathname === '/contacts' ? '联系人（Contact）'
+    : location.pathname === '/opportunities' ? '商机（Opportunity）'
     : '经营智控中枢';
 
   return <div className="app-shell">
@@ -31,6 +32,7 @@ export function AppLayout() {
           <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
           <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
           <SideNavMenuItem href="/contacts" isActive={location.pathname === '/contacts'} onClick={goTo('/contacts')}>联系人（Contact）</SideNavMenuItem>
+          <SideNavMenuItem href="/opportunities" isActive={location.pathname === '/opportunities'} onClick={goTo('/opportunities')}>商机（Opportunity）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
