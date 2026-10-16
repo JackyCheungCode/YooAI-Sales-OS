@@ -1,7 +1,7 @@
 import { Tile, Tag, Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '../../components/carbon/compat';
 
 import { useMemo, useState } from 'react';
-import { Add, Search, Renew, Document, CheckmarkFilled, WarningAlt, Close, Copy, Send, Download, ArrowRight, Time, Calendar, Money, TrashCan } from '@carbon/react/icons';
+import { Add, Search, Renew, Document, CheckmarkFilled, WarningAlt, Close, Copy, Send, Download, ArrowRight, Time, Calendar, Money, TrashCan } from '@carbon/icons-react';
 
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
