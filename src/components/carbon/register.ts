@@ -8,6 +8,7 @@ import '@carbon/web-components/es/components/button/index.js';
 import '@carbon/web-components/es/components/checkbox/index.js';
 import '@carbon/web-components/es/components/grid/index.js';
 import '@carbon/web-components/es/components/inline-notification/index.js';
+import '@carbon/web-components/es/components/file-uploader/index.js';
 import '@carbon/web-components/es/components/radio-button/index.js';
 import '@carbon/web-components/es/components/search/index.js';
 import '@carbon/web-components/es/components/select/index.js';
