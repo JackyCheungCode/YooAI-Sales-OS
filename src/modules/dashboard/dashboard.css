@@ -79,11 +79,5 @@
 @media(max-width:1055px){.dashboard-heading{align-items:flex-start}.dashboard-heading__actions{justify-content:flex-start}.dashboard-section-heading{align-items:flex-start;flex-direction:column}.dashboard-refresh{align-self:flex-start}}
 @media(max-width:671px){.dashboard-page{gap:var(--cds-spacing-05)}.dashboard-heading__actions{width:100%;gap:var(--cds-spacing-03)}.dashboard-filter-panel{padding:var(--cds-spacing-05)}.dashboard-filter-title{align-items:flex-start}.dashboard-filter-title>div{gap:var(--cds-spacing-02);flex-direction:column}.dashboard-section-heading h2{font-size:1.35rem}.dashboard-metric-card{min-height:8.5rem;padding:var(--cds-spacing-04)}.dashboard-metric-card__value{font-size:1.35rem}.dashboard-panel__heading{padding:var(--cds-spacing-05)}.dashboard-panel__footer{align-items:flex-start;padding:var(--cds-spacing-04) var(--cds-spacing-05)}.risk-row{align-items:flex-start;gap:var(--cds-spacing-03);padding:var(--cds-spacing-04) var(--cds-spacing-05);flex-wrap:wrap}.risk-main{flex-basis:calc(100% - 3.25rem)}.risk-row cds-tag{margin-left:var(--cds-spacing-09)}.ranking-row{padding:var(--cds-spacing-04) var(--cds-spacing-05)}.journey-flow{gap:var(--cds-spacing-02);padding:var(--cds-spacing-05) var(--cds-spacing-04)}.journey-step{padding:var(--cds-spacing-04) var(--cds-spacing-05)}.journey-step strong{font-size:1rem}.journey-step i{right:-.45rem}.funnel-row{grid-template-columns:4.5rem minmax(2rem,1fr) auto;gap:var(--cds-spacing-03)}.funnel-row strong{font-size:.75rem}.dashboard-disclaimer{padding:var(--cds-spacing-04)}}
 
-/* Six executive KPIs fit on one desktop row, then reflow without horizontal overflow. */
-.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
-.dashboard-metrics>cds-column{grid-column:span 1!important;min-width:0}
-@media(max-width:1055px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:671px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
 .dashboard-area-nav [role="tab"]{flex-shrink:0;border-radius:0;border-bottom:3px solid transparent;color:var(--cds-text-secondary);white-space:nowrap}
 .dashboard-area-nav [role="tab"][aria-selected="true"]{border-bottom-color:var(--cds-interactive);color:var(--cds-text-primary);font-weight:600}
