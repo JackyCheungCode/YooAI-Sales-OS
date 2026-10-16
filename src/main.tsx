@@ -10,12 +10,10 @@ import './styles/global.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GlobalTheme theme="g10">
       <BrowserRouter>
         <AuthProvider>
           <App />
         </AuthProvider>
       </BrowserRouter>
-    </GlobalTheme>
   </StrictMode>,
 );
