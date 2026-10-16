@@ -2,7 +2,7 @@ import { Column, Grid, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
 import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
-import { SelectInput, SelectItem, TextInput } from '../../components/ui/Field';
+import { SelectInput, SelectItem } from '../../components/ui/Field';
 import { isSupabaseConfigured } from '../../lib/supabase';
 
 function StatTile({ label, icon, value, note }: { label: string; icon: ReactNode; value: string; note: string }) {
