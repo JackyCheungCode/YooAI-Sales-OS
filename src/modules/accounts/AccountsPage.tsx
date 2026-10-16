@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Add, Search, Filter, Renew, ArrowRight, Close, Building, UserMultiple, Email, Phone, Chat, WarningAlt, Document, Calendar, CheckmarkFilled, Time } from '@carbon/react/icons';
+import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, Email, Phone, WarningAlt, Document, CheckmarkFilled } from '@carbon/react/icons';
 import { Tag, Tile } from '@carbon/react';
 import { Button } from '../../components/ui/Button';
 import './accounts.css';
