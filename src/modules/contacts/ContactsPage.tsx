@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Add, Search, Renew, Email, Phone, Chat, UserMultiple, WarningAlt, Calendar, Time, Link as LinkIcon, Close, CheckmarkFilled, Document, CalendarHeatMap } from '@carbon/react/icons';
+import { Add, Search, Renew, Email, Phone, Chat, UserMultiple, WarningAlt, Calendar, Time, Link as LinkIcon, Close, CheckmarkFilled, Document } from '@carbon/react/icons';
 import { Tag } from '@carbon/react';
 import { Button } from '../../components/ui/Button';
 import './contacts.css';
