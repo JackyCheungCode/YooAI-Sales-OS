@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, Email, Phone, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '@carbon/react/icons';
+import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '@carbon/react/icons';
 import { Tag } from '@carbon/react';
 import { Button } from '../../components/ui/Button';
 import './opportunities.css';
@@ -49,9 +49,8 @@ export function OpportunitiesPage(){
  const update=(patch:Partial<Opportunity>)=>setItems(prev=>prev.map(o=>o.id===selected.id?{...o,...patch}:o));
  const moveTo=(stage:Stage)=>{update({stage,stageSince:'2026-10-16',probability:stageProbability[stage]});setShowAdvance(false);setExitChecks({});setToast('阶段已在本地原型中更新；尚未写入数据库。');};
  const submitNew=()=>{const n:Opportunity={...seed[0],id:'OPP-2026-'+String(items.length+19).padStart(4,'0'),name:'新客户 · 新产品商机 · 10月',account:'待选择客户',accountId:'',contact:'待选择联系人',product:'待填写',amount:0,stage:'询盘确认',probability:10,closeDate:'2026-11-30',owner:'Justin Yoo',category:'仅管道',nextStep:'确认客户需求与产品数量',nextDate:'2026-10-19',created:'2026-10-16',stageSince:'2026-10-16',competitor:'',competitorNote:'',decisionTouched:false,contacts:[],notes:'',lossReason:'',pausedUntil:''};setItems(p=>[n,...p]);setSelectedId(n.id);setShowCreate(false);setTab('概览');setToast('已添加样例商机，仅保存在当前页面状态。');};
- const closeLost=()=>{if(!reason.trim()){setToast('输单关闭必须填写输单原因。');return;}update({lossReason:reason,stage:'询盘确认',probability:0,category:'仅管道',notes:selected.notes+'\n输单记录：'+reason});setToast('已在原型中记录输单原因；正式版应使用独立的输单终止状态。');setReason('');};
  return <div className="opps-page">
-  <header className="opps-heading"><div><div className="opps-eyebrow">SALES PIPELINE / 商机管理</div><h1>商机管理</h1><p>从询盘确认到收款结案，统一管理交易阶段、预测和履约衔接。</p></div><div className="opps-heading-actions"><Button kind="ghost" variant="ghost" renderIcon={Renew} onClick={()=>setToast('演示数据已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={()=>setShowCreate(true)}>新建商机</Button></div></header>
+  <header className="opps-heading"><div><div className="opps-eyebrow">SALES PIPELINE / 商机管理</div><h1>商机管理</h1><p>从询盘确认到收款结案，统一管理交易阶段、预测和履约衔接。</p></div><div className="opps-heading-actions"><Button variant="ghost" renderIcon={Renew} onClick={()=>setToast('演示数据已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={()=>setShowCreate(true)}>新建商机</Button></div></header>
   <div className="opps-prototype-note"><WarningAlt size={18}/><div><strong>交互原型 · 示例数据</strong><span>阶段推进、编辑和新建仅更新当前页面状态。真实审批、权限、汇率服务、单据链路与 Supabase 持久化尚未接入。</span></div></div>
   <section className="opps-kpis">
    <div className="opps-kpi"><span>开放管道总额</span><strong>US$236.4K</strong><small>3 笔样例商机 · 原币种分开展示</small></div>
