@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, Email, Phone, WarningAlt, Document, CheckmarkFilled } from '@carbon/react/icons';
-import { Tag } from '@carbon/react';
+import { Tag } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './accounts.css';
