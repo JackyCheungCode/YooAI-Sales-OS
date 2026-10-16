@@ -1,5 +1,13 @@
-@import './components.css';
 @import './app.css';
 @import './auth.css';
-@import './controls.css';
-*{box-sizing:border-box}html,body,#root{min-height:100%;margin:0}body{background:var(--color-bg);color:var(--color-text);font-size:var(--font-size-md);line-height:1.5}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}a{color:inherit;text-decoration:none}:focus-visible{outline:3px solid rgb(54 89 217 / 25%);outline-offset:2px}::selection{background:#dce5ff}
+
+* { box-sizing: border-box; }
+html, body, #root { min-height: 100%; margin: 0; }
+body {
+  font-family: 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--cds-background, #f4f4f4);
+  color: var(--cds-text-primary, #161616);
+  font-size: 14px;
+}
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--cds-highlight, #d0e2ff); }
