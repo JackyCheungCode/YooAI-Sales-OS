@@ -18,7 +18,7 @@ export function AppLayout() {
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
   const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts', '/opportunities'].includes(location.pathname);
-  const isSalesDocuments = ['/quotes', '/orders', '/payments'].includes(location.pathname);
+  const isSalesDocuments = ['/quotes', '/orders', '/shipments', '/payments'].includes(location.pathname);
   const pageTitle = isDashboard ? '经营智控中枢'
     : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）'
     : location.pathname === '/leads' ? '线索（Lead）'
@@ -26,6 +26,7 @@ export function AppLayout() {
     : location.pathname === '/opportunities' ? '商机（Opportunity）'
     : location.pathname === '/quotes' ? '报价单（Quote）'
     : location.pathname === '/orders' ? '订单（Order）'
+     : location.pathname === '/shipments' ? '出运单（Shipment）'
     : location.pathname === '/payments' ? '收汇记录（Payment）'
     : '经营智控中枢';
 
@@ -45,6 +46,7 @@ export function AppLayout() {
         <SideNavMenu title="销售单据" renderIcon={Document} isActive={isSalesDocuments}>
           <SideNavMenuItem href="/quotes" isActive={location.pathname === '/quotes'} onClick={goTo('/quotes')}>报价单（Quote）</SideNavMenuItem>
           <SideNavMenuItem href="/orders" isActive={location.pathname === '/orders'} onClick={goTo('/orders')}>订单（Order）</SideNavMenuItem>
+          <SideNavMenuItem href="/shipments" isActive={location.pathname === '/shipments'} onClick={goTo('/shipments')}>出运单（Shipment）</SideNavMenuItem>
           <SideNavMenuItem href="/payments" isActive={location.pathname === '/payments'} onClick={goTo('/payments')}>收汇记录（Payment）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
