@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '../layouts/AppLayout';
 import { CustomersPage } from '../modules/customers/CustomersPage';
+import { LeadsPage } from '../modules/leads/LeadsPage';
 import { DashboardPage } from '../modules/dashboard/DashboardPage';
 import { LoginPage } from '../modules/settings/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -12,6 +13,7 @@ export default function App() {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/customers" element={<CustomersPage />} />
+      <Route path="/leads" element={<LeadsPage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>;
