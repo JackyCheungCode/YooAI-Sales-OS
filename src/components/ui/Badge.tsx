@@ -1,2 +1,7 @@
+import { Tag } from '@carbon/react';
 import type { ReactNode } from 'react';
-export function Badge({tone='neutral',children}:{tone?:'neutral'|'success'|'warning'|'info';children:ReactNode}){return <span className={`ui-badge ui-badge--${tone}`}>{children}</span>}
+type Tone = 'neutral' | 'success' | 'warning' | 'info';
+const typeByTone = { neutral: 'gray', success: 'green', warning: 'warm-gray', info: 'blue' } as const;
+export function Badge({ tone = 'neutral', children }: { tone?: Tone; children: ReactNode }) {
+  return <Tag type={typeByTone[tone]}>{children}</Tag>;
+}
