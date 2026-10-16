@@ -7,7 +7,7 @@
 .topbar{gap:var(--cds-spacing-06);padding-inline:clamp(1.25rem,3vw,2.5rem)}
 .breadcrumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .topbar__actions{flex-shrink:0;gap:.5rem}
-.page-content{width:100%;max-width:1480px;padding:var(--cds-spacing-07) clamp(1.25rem,3vw,2.75rem) var(--cds-spacing-09)}
+.page-content{display:block;width:100%;max-width:1584px;margin-inline:auto;padding:var(--cds-spacing-07) var(--cds-spacing-07) var(--cds-spacing-09);min-width:0}
 .page-heading{align-items:flex-start;gap:var(--cds-spacing-06);margin-bottom:var(--cds-spacing-07)}
 .page-heading>div:first-child{min-width:0}
 .page-heading h1{line-height:1.25;overflow-wrap:anywhere}
@@ -36,7 +36,7 @@
  .breadcrumb{white-space:normal;font-size:.75rem;line-height:1.4}
  .topbar__actions{gap:.125rem;flex-wrap:wrap;justify-content:flex-end}
  .topbar__actions .cds--btn{padding-inline:.5rem;font-size:.75rem}
- .page-content{padding:1.25rem .875rem var(--cds-spacing-07)}
+ .page-content{padding:var(--cds-spacing-05) var(--cds-spacing-05) var(--cds-spacing-07)}
  .page-heading{gap:var(--cds-spacing-05);margin-bottom:1.25rem}
  .heading-actions{justify-content:flex-start}
  .stat-grid{gap:.75rem}
@@ -49,7 +49,7 @@
 @media(max-width:380px){
  .sidebar{flex-basis:48px;width:48px;padding-inline:.25rem}
  .app-main{width:calc(100% - 48px)}
- .page-content{padding-inline:.625rem}
+ .page-content{padding-inline:var(--cds-spacing-04)}
  .topbar{padding-inline:.5rem}
  .topbar__actions .cds--btn{padding-inline:.25rem}
 }
