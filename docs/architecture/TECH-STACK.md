@@ -2,9 +2,17 @@
 
 ## Runtime
 - Frontend: Vite, React, TypeScript, React Router.
+- System UI and design language: IBM Carbon Design System via `@carbon/react`; Carbon icons via `@carbon/react/icons`; official Carbon Sass theme and tokens.
 - Data and identity: Supabase PostgreSQL and Supabase Auth.
 - Hosting: Vercel static hosting with SPA fallback in `vercel.json`.
 - Source of truth: GitHub `main` branch.
+
+## UI policy
+- Carbon is mandatory for system components, including buttons, text inputs, selects, text areas, checkboxes, radio groups, tags, dialogs, notifications, and tables.
+- Do not introduce another component or icon library or build parallel custom controls.
+- Shared components under `src/components/ui` are thin wrappers over Carbon components.
+- See `docs/architecture/DESIGN-SYSTEM.md` for the enforcement rules.
+- `src/styles/tokens.css` is compatibility glue mapping legacy layout variables to Carbon tokens; it is not an independent design system.
 
 ## Frontend environment variables
 - `VITE_SUPABASE_URL`: Supabase project URL.
@@ -19,4 +27,5 @@ Never put a Supabase service-role or secret key in a `VITE_` variable. Browser c
 - Email/password login is wired to Supabase Auth; public registration is not exposed.
 - Customer data loading and CRUD are not yet connected to the UI.
 - RLS policies in the migration are owner-scoped; a future team/workspace model will require a deliberate membership-based authorization design.
-- No Preview or Production deployment is triggered by this scaffold work.
+- Carbon integration files have been updated in GitHub, but a clean install, TypeScript check, production build, and browser regression test are still required before calling the migration verified.
+- No manual Preview or Production deployment has been requested or performed as part of this change.
