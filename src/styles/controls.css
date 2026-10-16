@@ -1,0 +1,1 @@
+.ui-check{display:flex;align-items:center;gap:8px}.ui-check input{accent-color:var(--color-brand)}.ui-radio-group{display:flex;gap:12px;border:0;padding:0}.ui-radio input{accent-color:var(--color-brand)}.ui-radio__copy{display:flex;flex-direction:column}.ui-radio__copy small{color:var(--color-text-muted);font-size:var(--font-size-xs)}
