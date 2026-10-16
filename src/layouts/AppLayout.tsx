@@ -1,5 +1,5 @@
 import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '@carbon/react';
-import { Building, Dashboard, Help, Settings, UserMultiple } from '@carbon/react/icons';
+import { Building, Dashboard, Help, Settings, UserMultiple, Document } from '@carbon/react/icons';
 import type { MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
@@ -15,11 +15,13 @@ export function AppLayout() {
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
   const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts', '/opportunities'].includes(location.pathname);
+  const isSalesDocuments = ['/quotes'].includes(location.pathname);
   const pageTitle = isDashboard ? '经营智控中枢'
     : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）'
     : location.pathname === '/leads' ? '线索（Lead）'
     : location.pathname === '/contacts' ? '联系人（Contact）'
     : location.pathname === '/opportunities' ? '商机（Opportunity）'
+    : location.pathname === '/quotes' ? '报价单（Quote）'
     : '经营智控中枢';
 
   return <div className="app-shell">
@@ -33,6 +35,9 @@ export function AppLayout() {
           <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
           <SideNavMenuItem href="/contacts" isActive={location.pathname === '/contacts'} onClick={goTo('/contacts')}>联系人（Contact）</SideNavMenuItem>
           <SideNavMenuItem href="/opportunities" isActive={location.pathname === '/opportunities'} onClick={goTo('/opportunities')}>商机（Opportunity）</SideNavMenuItem>
+        </SideNavMenu>
+        <SideNavMenu title="销售单据" renderIcon={Document} isActive={isSalesDocuments}>
+          <SideNavMenuItem href="/quotes" isActive={location.pathname === '/quotes'} onClick={goTo('/quotes')}>报价单（Quote）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
