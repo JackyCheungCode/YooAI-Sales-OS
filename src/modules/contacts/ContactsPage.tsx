@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Add, Search, Renew, Email, Phone, Chat, UserMultiple, WarningAlt, Calendar, Time, Link as LinkIcon, Close, CheckmarkFilled, Document } from '@carbon/react/icons';
-import { Tag, Checkbox } from '@carbon/react';
+import { Tag } from '../../components/carbon/compat';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './contacts.css';
