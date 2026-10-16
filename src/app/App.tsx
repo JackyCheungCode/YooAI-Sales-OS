@@ -6,6 +6,7 @@ import { AccountsPage } from '../modules/accounts/AccountsPage';
 import { ContactsPage } from '../modules/contacts/ContactsPage';
 import { OpportunitiesPage } from '../modules/opportunities/OpportunitiesPage';
 import { QuotesPage } from '../modules/quotes/QuotesPage';
+import { OrdersPage } from '../modules/orders/OrdersPage';
 import { DashboardPage } from '../modules/dashboard/DashboardPage';
 import { LoginPage } from '../modules/settings/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/contacts" element={<ContactsPage />} />
       <Route path="/opportunities" element={<OpportunitiesPage />} />
       <Route path="/quotes" element={<QuotesPage />} />
+      <Route path="/orders" element={<OrdersPage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>;
