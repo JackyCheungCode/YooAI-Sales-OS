@@ -1,6 +1,7 @@
 import { SideNavItems, SideNavLink } from '@carbon/react';
-import { Activity, Ai, Building, Dashboard, Document, Help, Plug, Search, Settings, ShoppingCart, UserMultiple } from '@carbon/react/icons';
+import { Activity, Ai, Building, Close, Dashboard, Document, Help, Menu, Plug, Search, Settings, ShoppingCart, UserMultiple } from '@carbon/react/icons';
 import type { MouseEvent } from 'react';
+import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../app/AuthContext';
@@ -20,17 +21,19 @@ const pageTitles: Record<string, string> = {
 
 export function AppLayout() {
   const { signOut } = useAuth();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const currentTitle = pageTitles[location.pathname] ?? '销售工作台';
   const goTo = (path: string) => (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     navigate(path);
+    setMobileNavOpen(false);
   };
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${mobileNavOpen ? " app-shell--mobile-nav-open" : ""}`}>
       <aside className="sidebar">
         <div className="brand">
           <div className="brand__mark"><Building size={19} /></div>
@@ -38,9 +41,10 @@ export function AppLayout() {
             <div className="brand__name">Yooai Sales OS</div>
             <div className="brand__caption">GLOBAL SALES PLATFORM</div>
           </div>
+          <Button className="mobile-nav-toggle" variant="ghost" size="sm" aria-label={mobileNavOpen ? "关闭导航" : "打开导航"} aria-expanded={mobileNavOpen} aria-controls="primary-navigation" renderIcon={mobileNavOpen ? Close : Menu} onClick={() => setMobileNavOpen((open) => !open)} />
         </div>
 
-        <nav className="nav-list" aria-label="主导航">
+        <nav id="primary-navigation" className={`nav-list${mobileNavOpen ? " nav-list--open" : ""}`} aria-label="主导航">
           <div className="workspace-label">销售业务</div>
           <SideNavItems>
             <SideNavLink href="/dashboard" isActive={isActive('/dashboard')} renderIcon={Dashboard} onClick={goTo('/dashboard')}>销售工作台</SideNavLink>
