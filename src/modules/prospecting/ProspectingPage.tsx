@@ -127,7 +127,7 @@ export function ProspectingPage() {
             </div>
             <div className="prospecting-channel-grid">
               {channels.map((channel) => (
-                <label className="prospecting-channel" key={channel.id} htmlFor={'channel-' + channel.id}>
+                <div className="prospecting-channel" key={channel.id}>
                   <Checkbox
                     id={'channel-' + channel.id}
                     labelText={channel.label}
@@ -136,7 +136,7 @@ export function ProspectingPage() {
                   />
                   <p>{channel.description}</p>
                   <Tag type="warm-gray">未配置</Tag>
-                </label>
+                </div>
               ))}
             </div>
             <div className="prospecting-channel-footer">
