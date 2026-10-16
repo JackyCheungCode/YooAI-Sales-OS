@@ -27,7 +27,18 @@ alter table public.leads
   add column if not exists website text,
   add column if not exists product_interest text,
   add column if not exists estimated_volume text,
-  add column if not exists target_price text;
+  add column if not exists target_price text,
+  add column if not exists whatsapp text,
+  add column if not exists source_detail text,
+  add column if not exists timezone text,
+  add column if not exists language text not null default 'English',
+  add column if not exists customer_type text,
+  add column if not exists entered_at date not null default current_date,
+  add column if not exists inquiry_at date,
+  add column if not exists in_public_pool boolean not null default true,
+  add column if not exists owner_label text,
+  add column if not exists last_follow_up_at timestamptz,
+  add column if not exists loss_reason text;
 
 alter table public.leads drop constraint if exists leads_stage_check;
 alter table public.leads add constraint leads_stage_check
