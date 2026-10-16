@@ -21,4 +21,4 @@ Global Prospect uses IBM Carbon Design System as its sole system UI component an
 
 ## Adoption status
 
-The shared button, text input, select, text area, tag, checkbox and radio wrappers now target Carbon components. Application shell layout and legacy page-level layout CSS still need a full Carbon pattern review. A local install, TypeScript check, build, and browser regression test must be completed before considering adoption verified.
+The shared button, text input, select, text area, tag, checkbox and radio wrappers target Carbon components. The customer page now uses Carbon Search, Tag and Tile; the application shell uses Carbon SideNavLink, SideNavItems, Carbon icons and Carbon buttons. Layout CSS remains only for page composition and uses Carbon theme tokens. A full visual and accessibility review is still required. A local install, TypeScript check, build, and browser regression test must be completed before considering adoption verified.
