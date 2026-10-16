@@ -1,5 +1,5 @@
 import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '@carbon/react';
-import { Building, Dashboard, Help, Settings, UserMultiple, Document } from '@carbon/react/icons';
+import { Building, Dashboard, Help, Settings, UserMultiple, Document, ShoppingCart } from '@carbon/react/icons';
 import type { MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
@@ -15,13 +15,14 @@ export function AppLayout() {
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
   const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts', '/opportunities'].includes(location.pathname);
-  const isSalesDocuments = ['/quotes'].includes(location.pathname);
+  const isSalesDocuments = ['/quotes', '/orders'].includes(location.pathname);
   const pageTitle = isDashboard ? '经营智控中枢'
     : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）'
     : location.pathname === '/leads' ? '线索（Lead）'
     : location.pathname === '/contacts' ? '联系人（Contact）'
     : location.pathname === '/opportunities' ? '商机（Opportunity）'
     : location.pathname === '/quotes' ? '报价单（Quote）'
+    : location.pathname === '/orders' ? '订单（Order）'
     : '经营智控中枢';
 
   return <div className="app-shell">
@@ -38,6 +39,7 @@ export function AppLayout() {
         </SideNavMenu>
         <SideNavMenu title="销售单据" renderIcon={Document} isActive={isSalesDocuments}>
           <SideNavMenuItem href="/quotes" isActive={location.pathname === '/quotes'} onClick={goTo('/quotes')}>报价单（Quote）</SideNavMenuItem>
+          <SideNavMenuItem href="/orders" isActive={location.pathname === '/orders'} onClick={goTo('/orders')}>订单（Order）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
