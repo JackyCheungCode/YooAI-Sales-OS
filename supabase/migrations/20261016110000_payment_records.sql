@@ -186,7 +186,7 @@ begin
   end if;
   select * into v_payment from public.payment_records where id=p_payment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Payment record not found or access denied' using errcode='P0002'; end if;
-  if v_payment.status in ('reconciled','refunded') then raise exception 'Closed payment cannot be reconfirmed' using errcode='55000'; end if;
+  if v_payment.status in ('reconciled','refunded') or v_payment.finance_confirmed_at is not null then raise exception 'Payment has already been financially confirmed or closed' using errcode='55000'; end if;
   v_net := greatest(0,p_received_amount-coalesce(p_bank_fee,0)-coalesce(p_intermediary_fee,0));
   v_status := case when p_received_amount=0 then 'pending' when p_received_amount < v_payment.receivable_amount then 'partially_received' else 'received' end;
   update public.payment_records set received_amount=p_received_amount, received_at=p_received_at, fx_rate=p_fx_rate,
@@ -212,14 +212,16 @@ begin
         and (select coalesce(sum(a.allocated_amount),0) from public.payment_allocations a where a.schedule_id=s.id) < s.due_amount
     ) then
       update public.orders set status='closed',closed_at=coalesce(closed_at,now()),updated_at=now()
-        where id=v_payment.order_id and owner_id=v_payment.owner_id;
-      update public.customers c set
-        first_order_at=coalesce(c.first_order_at,now()),
-        lifetime_order_value=coalesce(c.lifetime_order_value,0)+v_payment.received_amount,
-        lifecycle_stage='existing',
-        status=case when status='inactive' then status else 'active' end,
-        updated_at=now()
-      where c.id=v_payment.customer_id and c.owner_id=v_payment.owner_id;
+        where id=v_payment.order_id and owner_id=v_payment.owner_id and status <> 'closed';
+      if found then
+        update public.customers c set
+          first_order_at=coalesce(c.first_order_at,now()),
+          lifetime_order_value=coalesce(c.lifetime_order_value,0)+coalesce((select o.total_amount from public.orders o where o.id=v_payment.order_id),v_payment.received_amount),
+          lifecycle_stage='existing',
+          status=case when status='inactive' then status else 'active' end,
+          updated_at=now()
+        where c.id=v_payment.customer_id and c.owner_id=v_payment.owner_id;
+      end if;
     end if;
   end if;
   insert into public.payment_audit_logs(owner_id,payment_record_id,action,new_values,created_by)
@@ -336,3 +338,17 @@ for select to authenticated using (bucket_id='payment-documents' and (storage.fo
 drop policy if exists "payment documents owner delete" on storage.objects;
 create policy "payment documents owner delete" on storage.objects
 for delete to authenticated using (bucket_id='payment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+
+create or replace function public.guard_payment_allocations()
+returns trigger language plpgsql set search_path = ''
+as $$
+declare v_role text := coalesce(auth.jwt()->'app_metadata'->>'role','');
+begin
+  if v_role not in ('finance','admin','executive') then
+    raise exception 'Only authorized finance users may change payment allocations' using errcode='42501';
+  end if;
+  return case when tg_op='DELETE' then old else new end;
+end $$;
+drop trigger if exists payment_allocations_finance_guard on public.payment_allocations;
+create trigger payment_allocations_finance_guard before insert or update or delete on public.payment_allocations
+for each row execute function public.guard_payment_allocations();
