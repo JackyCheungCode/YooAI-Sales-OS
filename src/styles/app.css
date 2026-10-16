@@ -32,7 +32,7 @@ cds-table-container{max-width:100%;overflow-x:auto}
  .app-shell{display:flex}
  .sidebar{flex:0 0 56px;width:56px;padding:var(--cds-spacing-04) var(--cds-spacing-02)}
  .app-main{flex:1;width:calc(100% - 56px);min-width:0;margin-left:0}
- .topbar{height:auto;min-height:56px;align-items:flex-start;padding:var(--cds-spacing-04) var(--cds-spacing-03);gap:.5rem}
+ .topbar{height:auto;min-height:56px;align-items:flex-start;padding:var(--cds-spacing-04) var(--cds-spacing-03);gap:var(--cds-spacing-03)}
  .breadcrumb{white-space:normal;font-size:.75rem;line-height:1.4}
  .topbar__actions{gap:var(--cds-spacing-01);flex-wrap:wrap;justify-content:flex-end}
  
@@ -42,15 +42,15 @@ cds-table-container{max-width:100%;overflow-x:auto}
  .stat-grid{gap:var(--cds-spacing-03)}
  .stat-card{padding:var(--cds-spacing-04)}
  .panel__heading{padding:var(--cds-spacing-05)}
- .filter-row{padding:0 var(--cds-spacing-05) var(--cds-spacing-05);gap:.75rem}
+ .filter-row{padding:0 var(--cds-spacing-05) var(--cds-spacing-05);gap:var(--cds-spacing-04)}
  .empty-state{padding:var(--cds-spacing-08) var(--cds-spacing-05)}
  .table-footer{padding:var(--cds-spacing-04) var(--cds-spacing-05)}
 }
 @media(max-width:380px){
- .sidebar{flex-basis:48px;width:48px;padding-inline:.25rem}
+ .sidebar{flex-basis:48px;width:48px;padding-inline:var(--cds-spacing-02)}
  .app-main{width:calc(100% - 48px)}
  .page-content{padding-inline:var(--cds-spacing-04)}
- .topbar{padding-inline:.5rem}
+ .topbar{padding-inline:var(--cds-spacing-03)}
  
 }
 
@@ -62,9 +62,9 @@ cds-table-container{max-width:100%;overflow-x:auto}
  .mobile-nav-toggle{display:inline-flex}
  .sidebar{position:fixed;inset:0 auto 0 0;z-index:30;display:flex;flex:0 0 0;width:min(84vw,300px);max-width:300px;padding:var(--cds-spacing-05) var(--cds-spacing-05);background:var(--cds-layer);border-right:1px solid var(--cds-border-subtle-01);box-shadow:0 10px 35px rgba(0,0,0,.18);transform:translateX(-105%);transition:transform .2s ease;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
  .sidebar.sidebar--mobile-open{width:min(84vw,300px);transform:translateX(0)}
- .sidebar .brand{justify-content:flex-start;padding:0 .25rem var(--cds-spacing-06)}
+ .sidebar .brand{justify-content:flex-start;padding:0 var(--cds-spacing-02) var(--cds-spacing-06)}
  .sidebar .brand>div:last-child,.sidebar .workspace-label,.sidebar cds-side-nav-link::part(title),.sidebar .sidebar-bottom{display:initial}
- .sidebar .workspace-label{display:block;padding:0 .75rem .75rem}
+ .sidebar .workspace-label{display:block;padding:0 var(--cds-spacing-04) var(--cds-spacing-04)}
  .sidebar cds-side-nav-link::part(link){justify-content:flex-start;padding:var(--cds-spacing-03)}
  .sidebar cds-side-nav-menu{width:100%}
  .sidebar cds-side-nav-menu-item{padding-left:var(--cds-spacing-09)}
@@ -78,6 +78,6 @@ cds-table-container{max-width:100%;overflow-x:auto}
 }
 @media(prefers-reduced-motion:reduce){.sidebar{transition:none}}
 
-.carbon-field{display:flex;flex-direction:column;gap:var(--cds-spacing-02);min-width:0;color:var(--cds-text-secondary);font-size:var(--cds-label-01-font-size)}.carbon-field__label{display:block;color:var(--cds-text-secondary);font-size:var(--cds-label-01-font-size);line-height:1.4}.carbon-field>cds-text-input,.carbon-field>cds-select,.carbon-field>cds-text-area{width:100%;min-width:0}
+.carbon-field{display:flex;flex-direction:column;gap:var(--cds-spacing-02);min-width:0;color:var(--cds-text-secondary);font-size:var(--cds-label-01-font-size)}.carbon-field__label{display:block;color:var(--cds-text-secondary);font-size:var(--cds-label-01-font-size);line-height:1.4}.carbon-field>cds-text-input,.carbon-field>cds-select,.carbon-field>cds-textarea{width:100%;min-width:0}
 
 .account-search cds-text-input,.contacts-search cds-text-input,.lead-search cds-text-input,.opps-search cds-text-input,.orders-search cds-text-input,.quotes-search cds-text-input{flex:1;min-width:0;width:100%}.account-search cds-text-input,.contacts-search cds-text-input,.lead-search cds-text-input,.opps-search cds-text-input,.orders-search cds-text-input,.quotes-search cds-text-input{width:100%;min-width:0}
