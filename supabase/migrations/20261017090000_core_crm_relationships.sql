@@ -21,6 +21,7 @@ alter table public.leads
   add column if not exists converted_contact_id uuid references public.contacts(id) on delete set null,
   add column if not exists converted_opportunity_id uuid,
   add column if not exists conversion_note text,
+  add column if not exists contact_title text,
   add column if not exists country text,
   add column if not exists city text,
   add column if not exists website text,
@@ -183,7 +184,8 @@ begin
 
   v_customer_name := coalesce(nullif(trim(v_lead.company_name), ''), nullif(trim(v_lead.contact_name), ''), 'Converted lead');
   v_contact_name := coalesce(nullif(trim(v_lead.contact_name), ''), v_customer_name);
-  v_title := left('新商机 - ' || v_customer_name, 200);
+  v_title := left('新商机 - ' || v_customer_name ||
+    case when nullif(trim(v_lead.product_interest), '') is not null then ' · ' || trim(v_lead.product_interest) else '' end, 200);
 
   if p_customer_id is not null then
     select * into v_customer from public.customers
@@ -212,7 +214,7 @@ begin
     insert into public.customers(owner_id, company_id, name, customer_type, status,
       email, phone, country, source, notes, lifecycle_stage)
     values (v_user, v_company_id, v_customer_name, 'prospect', 'qualified',
-      v_lead.email, v_lead.phone, null, v_lead.source, v_lead.notes, 'potential')
+      v_lead.email, v_lead.phone, v_lead.country, v_lead.source, v_lead.notes, 'potential')
     returning * into v_customer;
   else
     v_customer_reused := true;
@@ -231,8 +233,8 @@ begin
   order by created_at limit 1 for update;
 
   if v_contact.id is null then
-    insert into public.contacts(owner_id, customer_id, company_id, full_name, email, phone, is_primary, roles)
-    values (v_user, v_customer.id, v_customer.company_id, v_contact_name, v_lead.email, v_lead.phone, true, array['buyer'])
+    insert into public.contacts(owner_id, customer_id, company_id, full_name, job_title, email, phone, is_primary, roles)
+    values (v_user, v_customer.id, v_customer.company_id, v_contact_name, v_lead.contact_title, v_lead.email, v_lead.phone, true, array['buyer'])
     returning * into v_contact;
   else
     update public.contacts
