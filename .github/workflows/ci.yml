@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, feature/core-crm-relationships]
   pull_request:
-    branches: [main]
+    branches: [main, feature/core-crm-relationships]
 
 permissions:
   contents: read
