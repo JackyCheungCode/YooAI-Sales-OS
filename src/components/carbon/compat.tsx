@@ -1,0 +1,83 @@
+import { createElement, useEffect, useRef, type ReactNode } from 'react';
+
+type CarbonProps = Record<string, any> & { children?: ReactNode; className?: string };
+
+function CustomElement({ tag, children, ...props }: CarbonProps & { tag: string }) {
+  return createElement(tag, props, children);
+}
+
+export function Tile(props: CarbonProps) {
+  return createElement('cds-tile', props, props.children);
+}
+
+export function Grid({ fullWidth, ...props }: CarbonProps & { fullWidth?: boolean }) {
+  return createElement('cds-grid', { ...props, 'full-width': fullWidth ? true : undefined }, props.children);
+}
+
+export function Column({ sm, md, lg, xlg, max, ...props }: CarbonProps & { sm?: number | string; md?: number | string; lg?: number | string; xlg?: number | string; max?: number | string }) {
+  return createElement('cds-column', { ...props, sm, md, lg, xlg, max }, props.children);
+}
+
+export function Tag({ type = 'gray', children, ...props }: CarbonProps & { type?: string }) {
+  const typeMap: Record<string, string> = { 'warm-gray': 'warm-gray', 'cool-gray': 'cool-gray', red: 'red', green: 'green', blue: 'blue', purple: 'purple', cyan: 'cyan', gray: 'gray' };
+  return createElement('cds-tag', { ...props, type: typeMap[type] ?? type }, children);
+}
+
+export function InlineNotification({ kind = 'info', title, subtitle, lowContrast, hideCloseButton, onCloseButtonClick, ...props }: CarbonProps & {
+  kind?: string; title?: string; subtitle?: string; lowContrast?: boolean; hideCloseButton?: boolean; onCloseButtonClick?: () => void;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onCloseButtonClick) return;
+    const close = () => onCloseButtonClick();
+    element.addEventListener('cds-notification-closed', close);
+    return () => element.removeEventListener('cds-notification-closed', close);
+  }, [onCloseButtonClick]);
+  return createElement('cds-inline-notification', {
+    ref, ...props, kind, title, subtitle,
+    lowContrast,
+    hideCloseButton,
+  });
+}
+
+export function Search({ labelText, onChange, ...props }: CarbonProps & { labelText?: string; onChange?: (event: any) => void }) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onChange) return;
+    const notify = (event: Event) => {
+      const target = event.target as HTMLElement & { value?: string };
+      if (target.value !== undefined) onChange({ target: { value: target.value } });
+    };
+    element.addEventListener('input', notify);
+    element.addEventListener('change', notify);
+    return () => {
+      element.removeEventListener('input', notify);
+      element.removeEventListener('change', notify);
+    };
+  }, [onChange]);
+  return createElement('cds-search', { ref, labelText, ...props });
+}
+
+export function Table(props: CarbonProps) {
+  return createElement('cds-table', props, props.children);
+}
+export function TableHead(props: CarbonProps) {
+  return createElement('cds-table-head', props, props.children);
+}
+export function TableBody(props: CarbonProps) {
+  return createElement('cds-table-body', props, props.children);
+}
+export function TableRow(props: CarbonProps) {
+  return createElement('cds-table-row', props, props.children);
+}
+export function TableHeader(props: CarbonProps) {
+  return createElement('cds-table-header-cell', props, props.children);
+}
+export function TableCell(props: CarbonProps) {
+  return createElement('cds-table-cell', props, props.children);
+}
+export function FileUploaderButton(props: CarbonProps) {
+  return createElement('cds-file-uploader-button', props, props.children);
+}
