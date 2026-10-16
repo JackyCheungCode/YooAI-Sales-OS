@@ -1,4 +1,4 @@
-import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
+import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '../../components/carbon/compat';
 import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
