@@ -135,3 +135,36 @@ create policy "Users can update their own activities" on public.activities for u
 create policy "Users can delete their own activities" on public.activities for delete to authenticated using ((select auth.uid()) = owner_id);
 
 grant select, insert, update, delete on public.companies, public.customers, public.contacts, public.leads, public.activities to authenticated;
+
+
+-- Restrictive relationship checks prevent a user from attaching their records to
+-- another user's company, customer, contact, or lead by guessing a foreign UUID.
+create policy "Company links must belong to the same user" on public.customers
+as restrictive for all to authenticated
+using (owner_id = (select auth.uid()) and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))))
+with check (owner_id = (select auth.uid()) and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))));
+
+create policy "Contact links must belong to the same user" on public.contacts
+as restrictive for all to authenticated
+using (owner_id = (select auth.uid())
+  and (customer_id is null or exists (select 1 from public.customers c where c.id = customer_id and c.owner_id = (select auth.uid())))
+  and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))))
+with check (owner_id = (select auth.uid())
+  and (customer_id is null or exists (select 1 from public.customers c where c.id = customer_id and c.owner_id = (select auth.uid())))
+  and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))));
+
+create policy "Lead company links must belong to the same user" on public.leads
+as restrictive for all to authenticated
+using (owner_id = (select auth.uid()) and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))))
+with check (owner_id = (select auth.uid()) and (company_id is null or exists (select 1 from public.companies c where c.id = company_id and c.owner_id = (select auth.uid()))));
+
+create policy "Activity links must belong to the same user" on public.activities
+as restrictive for all to authenticated
+using (owner_id = (select auth.uid())
+  and (customer_id is null or exists (select 1 from public.customers c where c.id = customer_id and c.owner_id = (select auth.uid())))
+  and (contact_id is null or exists (select 1 from public.contacts c where c.id = contact_id and c.owner_id = (select auth.uid())))
+  and (lead_id is null or exists (select 1 from public.leads l where l.id = lead_id and l.owner_id = (select auth.uid()))))
+with check (owner_id = (select auth.uid())
+  and (customer_id is null or exists (select 1 from public.customers c where c.id = customer_id and c.owner_id = (select auth.uid())))
+  and (contact_id is null or exists (select 1 from public.contacts c where c.id = contact_id and c.owner_id = (select auth.uid())))
+  and (lead_id is null or exists (select 1 from public.leads l where l.id = lead_id and l.owner_id = (select auth.uid()))));
