@@ -1,5 +1,6 @@
 import { SideNavLink } from '@carbon/react';
 import { Building, Dashboard, Help, Settings, UserMultiple } from '@carbon/react/icons';
+import type { MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../app/AuthContext';
@@ -8,7 +9,7 @@ export function AppLayout() {
   const { signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const goTo = (path: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const goTo = (path: string) => (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     navigate(path);
   };
