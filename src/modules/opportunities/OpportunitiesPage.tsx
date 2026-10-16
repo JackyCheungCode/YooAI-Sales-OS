@@ -1,7 +1,7 @@
-import { Tile } from '@carbon/react';
+import { Tile, Tag } from '../../components/carbon/compat';
 import { useMemo, useState } from 'react';
 import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '@carbon/react/icons';
-import { Tag, Checkbox } from '@carbon/react';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './opportunities.css';
