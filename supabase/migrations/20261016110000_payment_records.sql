@@ -365,12 +365,16 @@ create or replace function public.orders_generate_receivables_on_confirm()
 returns trigger language plpgsql set search_path = ''
 as $$
 begin
-  if new.status in ('confirmed','closed','partially_shipped','shipped')
-    and (tg_op='INSERT' or old.status not in ('confirmed','closed','partially_shipped','shipped')) then
+  if tg_op='INSERT' then
+    if new.status in ('confirmed','closed','partially_shipped','shipped') then
+      perform public.generate_order_receivables(new.id);
+    end if;
+  elsif new.status in ('confirmed','closed','partially_shipped','shipped')
+    and old.status not in ('confirmed','closed','partially_shipped','shipped') then
     perform public.generate_order_receivables(new.id);
   end if;
   return new;
-end $$;
+end $;
 drop trigger if exists orders_generate_receivables_after_confirm on public.orders;
 create trigger orders_generate_receivables_after_confirm
 after insert or update of status on public.orders
