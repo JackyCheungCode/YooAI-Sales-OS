@@ -131,3 +131,7 @@ export function SideNavMenu({ isActive, renderIcon, title, children, ...props }:
 export function SideNavMenuItem({ isActive, children, ...props }: SideNavBaseProps) {
   return createElement('cds-side-nav-menu-item', { ...props, active: isActive }, children);
 }
+
+export function SideNav(props: CarbonProps) {
+  return createElement('cds-side-nav', props, props.children);
+}
