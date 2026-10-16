@@ -1,6 +1,6 @@
 import { InlineNotification } from '../../components/carbon/compat';
 import { TextInput } from '../../components/ui/Field';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
@@ -42,11 +42,13 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   if (session) return <Navigate to="/customers" replace />;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
     setMessage('');
     setBusy(true);
     try {
@@ -94,7 +96,7 @@ export function LoginPage() {
       <h2>登录你的工作空间</h2>
       <p className="auth-form__intro">使用管理员为你开通的账户继续。</p>
 
-      <form className="auth-form" onSubmit={submit}>
+      <form ref={formRef} className="auth-form" onSubmit={submit}>
         <TextInput
           id="login-email"
           type="email"
@@ -126,7 +128,13 @@ export function LoginPage() {
             subtitle={message}
           />
         ) : null}
-        <Button type="submit" disabled={busy} className="auth-submit">
+        <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+        <Button
+          type="button"
+          onClick={() => formRef.current?.requestSubmit()}
+          disabled={busy}
+          className="auth-submit"
+        >
           {busy ? '正在验证…' : '登录'}
         </Button>
       </form>
