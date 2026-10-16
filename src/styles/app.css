@@ -4,7 +4,7 @@
 /* Global layout refinement: consistent page gutters, content rhythm, and overflow safety. */
 .app-shell{min-width:0;background:var(--cds-background)}
 .app-main{min-width:0}
-.topbar{gap:var(--cds-spacing-06);padding-inline:clamp(1.25rem,3vw,2.5rem)}
+.topbar{gap:var(--cds-spacing-06);padding-inline:clamp(var(--cds-spacing-05),3vw,var(--cds-spacing-08))}
 .breadcrumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .topbar__actions{flex-shrink:0;gap:var(--cds-spacing-03)}
 .page-content{display:block;width:100%;max-width:1600px;margin-inline:auto;padding:var(--cds-spacing-07) var(--cds-spacing-07) var(--cds-spacing-09);min-width:0}
@@ -18,7 +18,7 @@
 .stat-value{overflow-wrap:anywhere;line-height:1.25}
 .panel{min-width:0;border:1px solid var(--cds-border-subtle-01);background:var(--cds-layer)}
 .panel__heading{padding:var(--cds-spacing-05) var(--cds-spacing-06)}
-.filter-row{gap:var(--cds-spacing-05);padding:0 var(--cds-spacing-06) 1.25rem}
+.filter-row{gap:var(--cds-spacing-05);padding:0 var(--cds-spacing-06) var(--cds-spacing-05)}
 .filter-row>*{min-width:0}
 .empty-state{padding:var(--cds-spacing-09) var(--cds-spacing-06)}
 .table-footer{flex-wrap:wrap}
@@ -37,7 +37,7 @@ cds-table-container{max-width:100%;overflow-x:auto}
  .topbar__actions{gap:var(--cds-spacing-01);flex-wrap:wrap;justify-content:flex-end}
  
  .page-content{padding:var(--cds-spacing-05) var(--cds-spacing-05) var(--cds-spacing-07)}
- .page-heading{gap:var(--cds-spacing-05);margin-bottom:1.25rem}
+ .page-heading{gap:var(--cds-spacing-05);margin-bottom:var(--cds-spacing-05)}
  .heading-actions{justify-content:flex-start}
  .stat-grid{gap:var(--cds-spacing-03)}
  .stat-card{padding:var(--cds-spacing-04)}
@@ -67,7 +67,7 @@ cds-table-container{max-width:100%;overflow-x:auto}
  .sidebar .workspace-label{display:block;padding:0 .75rem .75rem}
  .sidebar cds-side-nav-link::part(link){justify-content:flex-start;padding:var(--cds-spacing-03)}
  .sidebar cds-side-nav-menu{width:100%}
- .sidebar cds-side-nav-menu-item{padding-left:2.75rem}
+ .sidebar cds-side-nav-menu-item{padding-left:var(--cds-spacing-09)}
  .sidebar .sidebar-bottom{display:grid;margin-top:auto}
  .mobile-nav-backdrop{position:fixed;inset:0;z-index:29;display:block;width:100%;height:100%;background:rgba(15,23,42,.42)}
  .app-shell{display:block}
