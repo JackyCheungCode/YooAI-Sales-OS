@@ -14,6 +14,7 @@ import '@carbon/web-components/es/components/search/index.js';
 import '@carbon/web-components/es/components/select/index.js';
 import '@carbon/web-components/es/components/table/index.js';
 import '@carbon/web-components/es/components/tag/index.js';
+import '@carbon/web-components/es/components/ui-shell/index.js';
 import '@carbon/web-components/es/components/text-area/index.js';
 import '@carbon/web-components/es/components/text-input/index.js';
 import '@carbon/web-components/es/components/tile/index.js';
