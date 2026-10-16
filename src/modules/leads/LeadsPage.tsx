@@ -67,12 +67,6 @@ async function fetchPersistedLeads(): Promise<Lead[]> {
 
 export function LeadsPage() {
   const [leads,setLeads] = useState<Lead[]>([]);
-  useEffect(() => {
-    let active = true;
-    fetchPersistedLeads().then(rows => { if (active) { setLeads(rows); setNotice(rows.length ? '已加载 Supabase 云端线索。' : '云端线索为空，可新建第一条真实线索。'); } })
-      .catch(error => { if (active) setNotice(error instanceof Error ? error.message : '读取云端线索失败。'); });
-    return () => { active = false; };
-  }, []);
   const [query,setQuery] = useState('');
   const [statusFilter,setStatusFilter] = useState('全部线索');
   const [sourceFilter,setSourceFilter] = useState('全部来源');
@@ -82,6 +76,13 @@ export function LeadsPage() {
   const [draft,setDraft] = useState<Lead>(blankLead());
   const [error,setError] = useState('');
   const [notice,setNotice] = useState('线索工作台已就绪。');
+  useEffect(() => {
+    let active = true;
+    fetchPersistedLeads().then(rows => { if (active) { setLeads(rows); setNotice(rows.length ? '已加载 Supabase 云端线索。' : '云端线索为空，可新建第一条真实线索。'); } })
+      .catch(error => { if (active) setNotice(error instanceof Error ? error.message : '读取云端线索失败。'); });
+    return () => { active = false; };
+  }, []);
+
 
   const filtered = useMemo(()=>leads.filter(lead=>{
     const text = [lead.name,lead.company,lead.email,lead.country,lead.id,lead.product].join(' ').toLowerCase();
@@ -147,7 +148,7 @@ export function LeadsPage() {
     const next=fromDbLead(data);setLeads(old=>old.map(l=>l.id===lead.id?next:l));setNotice('线索状态已保存到云端。');
   };
   return <div className="leads-page">
-    <div className="page-heading leads-heading"><div><div className="eyebrow">LEAD MANAGEMENT</div><h1>线索（Lead）</h1><p className="page-subtitle">集中管理尚未确认的潜在客户，从来源采集、资格判断到转化为正式客户关系。</p></div><div className="leads-heading-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>setNotice('页面状态已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={openNew}>新建线索</Button></div></div>
+    <div className="page-heading leads-heading"><div><div className="eyebrow">LEAD MANAGEMENT</div><h1>线索（Lead）</h1><p className="page-subtitle">集中管理尚未确认的潜在客户，从来源采集、资格判断到转化为正式客户关系。</p></div><div className="leads-heading-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>{fetchPersistedLeads().then(rows=>{setLeads(rows);setNotice('已刷新 Supabase 云端线索。');}).catch(error=>setNotice(error instanceof Error?error.message:'刷新云端线索失败。'));}}>刷新</Button><Button renderIcon={Add} onClick={openNew}>新建线索</Button></div></div>
     <div className="leads-notice" role="status"><WarningAlt size={17}/><span>{notice}</span></div>
     <div className="lead-stat-grid">
       <button type="button" className={'lead-stat'+(statusFilter==='全部线索'?' active':'')} onClick={()=>setStatusFilter('全部线索')}><span>线索总数</span><strong>{counts.all}</strong><small>全部状态</small></button>
@@ -166,7 +167,7 @@ export function LeadsPage() {
       <form onSubmit={saveLead} className="lead-form"><div className="lead-form-section"><h3>基本信息</h3><div className="lead-form-grid"><label>联系人姓名<input value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})} placeholder="姓名"/></label><label>职位<input value={draft.title} onChange={e=>setDraft({...draft,title:e.target.value})} placeholder="职位"/></label><label>公司名称<input value={draft.company} onChange={e=>setDraft({...draft,company:e.target.value})} placeholder="公司法定或常用名称"/></label><label>公司网站<input value={draft.website} onChange={e=>setDraft({...draft,website:e.target.value})} placeholder="https://"/></label><label>邮箱<input type="email" value={draft.email} onChange={e=>setDraft({...draft,email:e.target.value})} placeholder="name@company.com"/></label><label>WhatsApp<input value={draft.whatsapp} onChange={e=>setDraft({...draft,whatsapp:e.target.value})} placeholder="+国家区号"/></label><label>电话<input value={draft.phone} onChange={e=>setDraft({...draft,phone:e.target.value})} placeholder="电话号码"/></label><label>国家 / 地区<input required value={draft.country} onChange={e=>setDraft({...draft,country:e.target.value})} placeholder="国家或地区"/></label><label>城市<input value={draft.city} onChange={e=>setDraft({...draft,city:e.target.value})} placeholder="城市"/></label><label>时区<input value={draft.timezone} onChange={e=>setDraft({...draft,timezone:e.target.value})} placeholder="如 Europe/Berlin"/></label><label>沟通语言<select value={draft.language} onChange={e=>setDraft({...draft,language:e.target.value})}><option>English</option><option>中文</option><option>Español</option><option>日本語</option><option>Deutsch</option><option>Français</option><option>العربية</option><option>其他</option></select></label></div></div>
       <div className="lead-form-section"><h3>来源信息</h3><div className="lead-form-grid"><label>线索来源<select required value={draft.source} onChange={e=>setDraft({...draft,source:e.target.value})}><option value="">请选择来源</option>{sourceOptions.map(s=><option key={s}>{s}</option>)}</select></label><label>来源明细<input value={draft.sourceDetail} onChange={e=>setDraft({...draft,sourceDetail:e.target.value})} placeholder="展会、广告系列、关键词、推荐人等"/></label><label>首次询盘时间<input type="date" value={draft.inquiryAt} onChange={e=>setDraft({...draft,inquiryAt:e.target.value})}/></label><label>进入系统时间<input type="date" value={draft.enteredAt} onChange={e=>setDraft({...draft,enteredAt:e.target.value})}/></label></div></div>
       <div className="lead-form-section"><h3>需求信息</h3><div className="lead-form-grid"><label>感兴趣的产品品类<input value={draft.product} onChange={e=>setDraft({...draft,product:e.target.value})} placeholder="产品类别"/></label><label>预估采购量<input value={draft.volume} onChange={e=>setDraft({...draft,volume:e.target.value})} placeholder="数量 / 周期"/></label><label>目标价格（选填）<input value={draft.targetPrice} onChange={e=>setDraft({...draft,targetPrice:e.target.value})} placeholder="币种与目标价格"/></label><label>客户类型<select value={draft.customerType} onChange={e=>setDraft({...draft,customerType:e.target.value})}><option value="">请选择</option>{customerTypes.map(s=><option key={s}>{s}</option>)}</select></label><label className="lead-form-full">询盘原文<textarea value={draft.inquiry} onChange={e=>setDraft({...draft,inquiry:e.target.value})} rows={4} placeholder="保留原始邮件或消息，不覆盖原文"/></label></div></div>
-      <div className="lead-form-section"><h3>分配与跟进</h3><div className="lead-form-grid"><label>负责人<input value={draft.owner} onChange={e=>setDraft({...draft,owner:e.target.value})} placeholder="负责人或公共线索池"/></label><label>线索状态<select value={draft.status} onChange={e=>setDraft({...draft,status:e.target.value as LeadStatus})}><option>新线索</option><option>跟进中</option><option>已确认</option><option>无效</option><option>暂缓</option></select></label><label>下次跟进日期<input type="date" value={draft.nextFollowUp} onChange={e=>setDraft({...draft,nextFollowUp:e.target.value})}/></label><label>无效 / 丢失原因<input value={draft.lossReason} onChange={e=>setDraft({...draft,lossReason:e.target.value})} placeholder="如垃圾询盘、同行、暂无需求"/></label></div><div className="lead-score-preview"><span>当前预估评分</span><strong>{calculateScore(draft)} / 100</strong><span className={'lead-grade grade-'+gradeOf(calculateScore(draft)).toLowerCase()}>{gradeOf(calculateScore(draft))} 级</span><small>评分由国家、客户类型、采购量、官网和企业邮箱计算。</small></div></div>
-      {error&&<p className="lead-form-error" role="alert">{error}</p>}<footer className="lead-modal-footer">{editing&&<Button variant="secondary" type="button" onClick={()=>updateStatus(draft,'已转化')}>检查转化条件</Button>}<Button variant="secondary" type="button" onClick={()=>setModalOpen(false)}>取消</Button><Button type="submit" renderIcon={CheckmarkFilled}>{editing?'保存修改':'创建线索'}</Button></footer></form></section></div>}
+      <div className="lead-form-section"><h3>分配与跟进</h3><div className="lead-form-grid"><label>负责人（当前账号）<input value={draft.owner} readOnly placeholder="由登录账号自动确定"/></label><label>线索状态<select value={draft.status} onChange={e=>setDraft({...draft,status:e.target.value as LeadStatus})}><option>新线索</option><option>跟进中</option><option>已确认</option><option>无效</option><option>暂缓</option></select></label><label>下次跟进日期<input type="date" value={draft.nextFollowUp} onChange={e=>setDraft({...draft,nextFollowUp:e.target.value})}/></label><label>无效 / 丢失原因<input value={draft.lossReason} onChange={e=>setDraft({...draft,lossReason:e.target.value})} placeholder="如垃圾询盘、同行、暂无需求"/></label></div><div className="lead-score-preview"><span>当前预估评分</span><strong>{calculateScore(draft)} / 100</strong><span className={'lead-grade grade-'+gradeOf(calculateScore(draft)).toLowerCase()}>{gradeOf(calculateScore(draft))} 级</span><small>评分由国家、客户类型、采购量、官网和企业邮箱计算。</small></div></div>
+      {error&&<p className="lead-form-error" role="alert">{error}</p>}<footer className="lead-modal-footer">{editing&&draft.status!=='已转化'&&<Button variant="secondary" type="button" onClick={()=>updateStatus(draft,'已转化')}>转化为客户与商机</Button>}<Button variant="secondary" type="button" onClick={()=>setModalOpen(false)}>取消</Button><Button type="submit" renderIcon={CheckmarkFilled}>{editing?'保存修改':'创建线索'}</Button></footer></form></section></div>}
   </div>;
 }
