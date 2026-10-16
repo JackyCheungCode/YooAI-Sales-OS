@@ -256,7 +256,13 @@ begin
         raise exception 'Finance confirmation fields may only be set by authorized finance users' using errcode='42501';
       end if;
     else
-      if new.received_amount is distinct from old.received_amount
+      if new.receivable_amount is distinct from old.receivable_amount
+        or new.schedule_id is distinct from old.schedule_id
+        or new.order_id is distinct from old.order_id
+        or new.customer_id is distinct from old.customer_id
+        or new.payment_type is distinct from old.payment_type
+        or new.currency_code is distinct from old.currency_code
+        or new.received_amount is distinct from old.received_amount
         or new.bank_fee is distinct from old.bank_fee
         or new.intermediary_fee is distinct from old.intermediary_fee
         or new.net_received_amount is distinct from old.net_received_amount
