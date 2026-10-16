@@ -1,2 +1,1 @@
-/* Intentionally no bespoke control styles.
-   Use @carbon/react controls and Carbon design tokens. */
+/* Controls are Carbon Web Components. Do not add bespoke control skins here. */
