@@ -210,6 +210,14 @@ begin
         else 'pending' end,
         updated_at=now()
       where s.id=v_payment.schedule_id;
+    if exists(select 1 from public.receivable_schedules s
+      where s.id=v_payment.schedule_id
+        and (select coalesce(sum(a.allocated_amount),0) from public.payment_allocations a where a.schedule_id=s.id) >= s.due_amount) then
+      update public.payment_records p set status='reconciled',updated_at=now()
+        where p.schedule_id=v_payment.schedule_id and p.owner_id=v_payment.owner_id
+          and p.finance_confirmed_at is not null and p.status='received';
+      select * into v_payment from public.payment_records where id=v_payment.id;
+    end if;
     if not exists (
       select 1 from public.receivable_schedules s
       where s.order_id=v_payment.order_id and s.owner_id=v_payment.owner_id
