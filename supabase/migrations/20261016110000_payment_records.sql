@@ -46,6 +46,8 @@ create table if not exists public.payment_records (
   shipment_id uuid,
   payment_type text not null check (payment_type in ('deposit','balance','full_payment','price_adjustment','refund','compensation')),
   receivable_amount numeric(14,2) not null check (receivable_amount >= 0),
+  remitted_amount numeric(14,2) not null default 0 check (remitted_amount >= 0),
+  remitted_at timestamptz,
   received_amount numeric(14,2) not null default 0 check (received_amount >= 0),
   currency_code char(3) not null,
   received_at timestamptz,
@@ -211,3 +213,85 @@ as $$
     else p_status
   end
 $$;
+
+-- Prevent non-finance users from writing bank-confirmed values directly through table updates.
+create or replace function public.guard_payment_finance_fields()
+returns trigger language plpgsql set search_path = ''
+as $$
+declare v_role text := coalesce(auth.jwt()->'app_metadata'->>'role','');
+begin
+  if v_role not in ('finance','admin','executive') then
+    if tg_op = 'INSERT' then
+      if coalesce(new.received_amount,0) <> 0 or new.finance_confirmed_at is not null
+        or new.finance_confirmed_by is not null or new.status in ('received','reconciled') then
+        raise exception 'Finance confirmation fields may only be set by authorized finance users' using errcode='42501';
+      end if;
+    else
+      if new.received_amount is distinct from old.received_amount
+        or new.bank_fee is distinct from old.bank_fee
+        or new.intermediary_fee is distinct from old.intermediary_fee
+        or new.net_received_amount is distinct from old.net_received_amount
+        or new.fx_rate is distinct from old.fx_rate
+        or new.fx_source is distinct from old.fx_source
+        or new.finance_confirmed_by is distinct from old.finance_confirmed_by
+        or new.finance_confirmed_at is distinct from old.finance_confirmed_at
+        or new.status in ('received','reconciled') and old.status not in ('received','reconciled') then
+        raise exception 'Finance confirmation fields may only be changed by authorized finance users' using errcode='42501';
+      end if;
+    end if;
+  end if;
+  return new;
+end $$;
+drop trigger if exists payment_finance_fields_guard on public.payment_records;
+create trigger payment_finance_fields_guard before insert or update on public.payment_records
+for each row execute function public.guard_payment_finance_fields();
+
+-- Idempotently create an order's receivable schedule from its stored payment terms.
+create or replace function public.generate_order_receivables(p_order_id uuid)
+returns jsonb language plpgsql security invoker set search_path = ''
+as $$
+declare
+  v_order public.orders%rowtype;
+  v_terms jsonb;
+  v_deposit_pct numeric := 0;
+  v_deposit_days integer := 7;
+  v_balance_days integer := 30;
+  v_due_date date;
+  v_created integer := 0;
+  v_number text;
+  v_base_date date;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='28000'; end if;
+  select * into v_order from public.orders where id=p_order_id and owner_id=auth.uid() for update;
+  if not found then raise exception 'Order not found or access denied' using errcode='P0002'; end if;
+  if exists(select 1 from public.receivable_schedules where order_id=v_order.id and owner_id=auth.uid()) then
+    return jsonb_build_object('order_id',v_order.id,'created',0,'already_exists',true);
+  end if;
+  v_terms := coalesce(v_order.payment_terms,'{}'::jsonb);
+  v_deposit_pct := greatest(0,least(100,coalesce((v_terms->>'deposit_percent')::numeric,0)));
+  v_deposit_days := greatest(0,least(3650,coalesce((v_terms->>'deposit_due_days')::integer,7)));
+  v_balance_days := greatest(0,least(3650,coalesce((v_terms->>'balance_due_days')::integer,30)));
+  v_base_date := coalesce(v_order.confirmed_at::date,v_order.created_at::date,current_date);
+  if v_deposit_pct > 0 then
+    v_number := 'AR-'||to_char(now(),'YYYYMMDD')||'-'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,8));
+    insert into public.receivable_schedules(owner_id,schedule_number,order_id,customer_id,payment_type,currency_code,due_amount,due_date,status,terms_snapshot)
+    values(auth.uid(),v_number,v_order.id,v_order.customer_id,'deposit',v_order.currency_code,round(v_order.total_amount*v_deposit_pct/100,2),v_base_date+v_deposit_days,'pending',jsonb_build_object('deposit_percent',v_deposit_pct,'deposit_due_days',v_deposit_days));
+    v_created := v_created+1;
+  end if;
+  if v_deposit_pct < 100 then
+    v_number := 'AR-'||to_char(now(),'YYYYMMDD')||'-'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,8));
+    v_due_date := case
+      when coalesce(v_terms->>'balance_due_from','order_confirmed') in ('bill_of_lading','arrival') then v_base_date+v_balance_days
+      else v_base_date+v_balance_days
+    end;
+    insert into public.receivable_schedules(owner_id,schedule_number,order_id,customer_id,payment_type,currency_code,due_amount,due_date,status,terms_snapshot)
+    values(auth.uid(),v_number,v_order.id,v_order.customer_id,'balance',v_order.currency_code,round(v_order.total_amount*(100-v_deposit_pct)/100,2),v_due_date,'pending',
+      jsonb_build_object('balance_due_from',coalesce(v_terms->>'balance_due_from','order_confirmed'),'balance_due_days',v_balance_days,'requires_shipment_date_update',coalesce(v_terms->>'balance_due_from','order_confirmed') in ('bill_of_lading','arrival')));
+    v_created := v_created+1;
+  end if;
+  insert into public.payment_audit_logs(owner_id,action,new_values,created_by)
+  values(auth.uid(),'receivable_schedules_generated',jsonb_build_object('order_id',v_order.id,'created',v_created),auth.uid());
+  return jsonb_build_object('order_id',v_order.id,'created',v_created,'already_exists',false);
+end $$;
+revoke all on function public.generate_order_receivables(uuid) from public,anon;
+grant execute on function public.generate_order_receivables(uuid) to authenticated;
