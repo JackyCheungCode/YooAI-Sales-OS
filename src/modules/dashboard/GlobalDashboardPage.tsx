@@ -1,5 +1,6 @@
 import { Column, Grid, Tag, Tile } from '@carbon/react';
 import { Activity, Ai, ArrowRight, Building, ChartLine, Globe, Map, Search, Task, UserMultiple } from '@carbon/react/icons';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import './dashboard.css';
@@ -8,7 +9,7 @@ type MetricCardProps = {
   label: string;
   value: string;
   note: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 };
 
 function MetricCard({ label, value, note, icon }: MetricCardProps) {
@@ -97,7 +98,7 @@ export function GlobalDashboardPage() {
                 <h2><Globe size={20} /> 全球客户分布</h2>
                 <p>按国家、地区与市场查看客户覆盖情况。</p>
               </div>
-              <Button kind="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/customers')}>客户档案</Button>
+              <Button variant="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/customers')}>客户档案</Button>
             </div>
             <div className="global-map-panel__canvas">
               <WorldMapIllustration />
@@ -169,7 +170,7 @@ export function GlobalDashboardPage() {
                 <span className="global-insight__icon"><Task size={18} /></span>
                 <div><strong>销售跟进提醒</strong><p>接入活动和任务记录后，识别逾期跟进、待回复客户与下一步行动。</p></div>
               </div>
-              <Button kind="ghost" renderIcon={ArrowRight} onClick={() => navigate('/agents')}>查看智能体工作台</Button>
+              <Button variant="ghost" renderIcon={ArrowRight} onClick={() => navigate('/agents')}>查看智能体工作台</Button>
             </div>
           </Tile>
         </Column>
@@ -183,7 +184,7 @@ export function GlobalDashboardPage() {
                 <h2><Activity size={20} /> 最近业务活动</h2>
                 <p>获客任务、客户跟进、报价和订单的统一时间线。</p>
               </div>
-              <Button kind="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/sales')}>查看跟进</Button>
+              <Button variant="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/sales')}>查看跟进</Button>
             </div>
             <div className="global-activity-empty">
               <Activity size={24} />
