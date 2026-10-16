@@ -1,3 +1,4 @@
+import { Tag } from '@carbon/react';
 import { Add, Download, Filter, Search, UserMultiple } from '@carbon/react/icons';
 import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
@@ -21,7 +22,7 @@ export function CustomersPage() {
       <div className="stat-card"><div className="stat-card__top"><span>重点客户</span><span className="stat-icon stat-icon--amber"><Filter size={17} /></span></div><div className="stat-value">—</div><div className="stat-foot">按客户等级统计</div></div>
     </section>
     <section className="panel">
-      <div className="panel__heading"><div><h2>客户档案</h2><p>搜索、筛选并维护客户信息</p></div><span className={'connection-pill ' + (isSupabaseConfigured ? 'connection-pill--ready' : '')}><span className="connection-dot" />{isSupabaseConfigured ? 'Supabase 配置已读取' : '等待配置 Supabase'}</span></div>
+      <div className="panel__heading"><div><h2>客户档案</h2><p>搜索、筛选并维护客户信息</p></div><Tag type={isSupabaseConfigured ? 'green' : 'warm-gray'}>{isSupabaseConfigured ? 'Supabase 配置已读取' : '等待配置 Supabase'}</Tag></div>
       <div className="filter-row">
         <div className="search-wrap"><Search size={17} /><TextInput id="customer-search" aria-label="搜索客户" placeholder="搜索客户名称、邮箱或联系人" value={keyword} onChange={(event) => setKeyword(event.target.value)} /></div>
         <div className="filter-select"><SelectInput id="customer-status" labelText="客户状态" value={status} onChange={(event) => setStatus(event.target.value)}>
