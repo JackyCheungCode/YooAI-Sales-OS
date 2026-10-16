@@ -20,7 +20,13 @@ alter table public.leads
   add column if not exists converted_customer_id uuid references public.customers(id) on delete set null,
   add column if not exists converted_contact_id uuid references public.contacts(id) on delete set null,
   add column if not exists converted_opportunity_id uuid,
-  add column if not exists conversion_note text;
+  add column if not exists conversion_note text,
+  add column if not exists country text,
+  add column if not exists city text,
+  add column if not exists website text,
+  add column if not exists product_interest text,
+  add column if not exists estimated_volume text,
+  add column if not exists target_price text;
 
 alter table public.leads drop constraint if exists leads_stage_check;
 alter table public.leads add constraint leads_stage_check
@@ -71,6 +77,11 @@ create index if not exists opportunities_customer_idx on public.opportunities(cu
 create index if not exists opportunity_contacts_contact_idx on public.opportunity_contacts(contact_id);
 create index if not exists audit_logs_owner_created_idx on public.audit_logs(owner_id, created_at desc);
 create index if not exists leads_converted_customer_idx on public.leads(converted_customer_id);
+create unique index if not exists contacts_one_primary_per_customer_idx
+  on public.contacts(customer_id) where is_primary and customer_id is not null;
+alter table public.leads drop constraint if exists leads_converted_opportunity_id_fkey;
+alter table public.leads add constraint leads_converted_opportunity_id_fkey
+  foreign key (converted_opportunity_id) references public.opportunities(id) on delete set null;
 
 drop trigger if exists opportunities_set_updated_at on public.opportunities;
 create trigger opportunities_set_updated_at before update on public.opportunities
@@ -99,8 +110,13 @@ create policy "Users can read own opportunity contacts" on public.opportunity_co
   for select to authenticated using (owner_id = (select auth.uid()));
 drop policy if exists "Users can manage own opportunity contacts" on public.opportunity_contacts;
 create policy "Users can manage own opportunity contacts" on public.opportunity_contacts
-  for all to authenticated using (owner_id = (select auth.uid()))
-  with check (owner_id = (select auth.uid()));
+  for all to authenticated
+  using (owner_id = (select auth.uid())
+    and exists (select 1 from public.opportunities o where o.id = opportunity_id and o.owner_id = (select auth.uid()))
+    and exists (select 1 from public.contacts c where c.id = contact_id and c.owner_id = (select auth.uid())))
+  with check (owner_id = (select auth.uid())
+    and exists (select 1 from public.opportunities o where o.id = opportunity_id and o.owner_id = (select auth.uid()))
+    and exists (select 1 from public.contacts c where c.id = contact_id and c.owner_id = (select auth.uid())));
 
 drop policy if exists "Users can read own audit logs" on public.audit_logs;
 create policy "Users can read own audit logs" on public.audit_logs
@@ -147,6 +163,7 @@ declare
   v_customer_name text;
   v_contact_name text;
   v_title text;
+  v_customer_reused boolean := false;
 begin
   if v_user is null then
     raise exception 'Authentication required' using errcode = '28000';
@@ -198,6 +215,7 @@ begin
       v_lead.email, v_lead.phone, null, v_lead.source, v_lead.notes, 'potential')
     returning * into v_customer;
   else
+    v_customer_reused := true;
     update public.customers
     set email = coalesce(email, v_lead.email),
         phone = coalesce(phone, v_lead.phone),
@@ -255,7 +273,7 @@ begin
     'customer_id', v_customer.id,
     'contact_id', v_contact.id,
     'opportunity_id', v_opportunity.id,
-    'customer_reused', (v_customer.created_at < now() - interval '1 second')
+    'customer_reused', v_customer_reused
   );
 end;
 $$;
