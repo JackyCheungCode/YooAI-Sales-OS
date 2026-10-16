@@ -1,17 +1,19 @@
 import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '@carbon/react';
-import { Building, Dashboard, Help, Settings, UserMultiple, Document } from '@carbon/react/icons';
-import type { MouseEvent } from 'react';
+import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Close } from '@carbon/react/icons';
+import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../app/AuthContext';
 
 export function AppLayout() {
   const { signOut } = useAuth();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const goTo = (path: string) => (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     navigate(path);
+    setMobileNavOpen(false);
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
   const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts', '/opportunities'].includes(location.pathname);
@@ -26,7 +28,8 @@ export function AppLayout() {
     : '经营智控中枢';
 
   return <div className="app-shell">
-    <aside className="sidebar">
+    {mobileNavOpen && <button type="button" className="mobile-nav-backdrop" aria-label="关闭导航菜单" onClick={() => setMobileNavOpen(false)} />}
+    <aside className={'sidebar ' + (mobileNavOpen ? 'sidebar--mobile-open' : '')}>
       <div className="brand"><div className="brand__mark"><Building size={19} /></div><div><div className="brand__name">YooAI Sales OS</div><div className="brand__caption">BUSINESS INTELLIGENCE</div></div></div>
       <div className="workspace-label">经营工作空间</div>
       <nav className="nav-list" aria-label="主导航"><SideNavItems>
@@ -49,10 +52,10 @@ export function AppLayout() {
     </aside>
     <div className="app-main">
       <header className="topbar">
+        <button type="button" className="mobile-nav-toggle" aria-label={mobileNavOpen ? "收起导航菜单" : "展开导航菜单"} aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen(v => !v)}>{mobileNavOpen ? <Close size={20} /> : <Menu size={20} />}<span>菜单</span></button>
         <div className="breadcrumb">经营工作空间 <span>/</span> <strong>{pageTitle}</strong></div>
         <div className="topbar__actions">
-          <Button variant="ghost" size="sm" renderIcon={Help} onClick={() => window.alert('帮助中心将在后续版本接入。')}>帮助</Button>
-          <Button variant="ghost" size="sm" onClick={() => void signOut()}>工作账户 · 退出登录</Button>
+          <Button variant="ghost" size="sm" onClick={() => void signOut()}>退出登录</Button>
         </div>
       </header>
       <main className="page-content"><Outlet /></main>
