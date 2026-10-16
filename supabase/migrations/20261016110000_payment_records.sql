@@ -195,6 +195,33 @@ begin
     difference_reason=p_difference_reason, difference_note=p_difference_note, status=v_status,
     finance_confirmed_by=auth.uid(), finance_confirmed_at=now(), updated_at=now()
     where id=p_payment_id returning * into v_payment;
+  if v_payment.schedule_id is not null and v_payment.received_amount > 0 and v_payment.payment_type <> 'refund' then
+    insert into public.payment_allocations(owner_id,payment_record_id,schedule_id,order_id,allocated_amount,currency_code)
+    values(v_payment.owner_id,v_payment.id,v_payment.schedule_id,v_payment.order_id,v_payment.received_amount,v_payment.currency_code);
+    update public.receivable_schedules s
+      set status = case
+        when (select coalesce(sum(a.allocated_amount),0) from public.payment_allocations a where a.schedule_id=s.id) >= s.due_amount then 'paid'
+        when (select coalesce(sum(a.allocated_amount),0) from public.payment_allocations a where a.schedule_id=s.id) > 0 then 'partially_paid'
+        when s.due_date < current_date then 'overdue'
+        else 'pending' end,
+        updated_at=now()
+      where s.id=v_payment.schedule_id;
+    if not exists (
+      select 1 from public.receivable_schedules s
+      where s.order_id=v_payment.order_id and s.owner_id=v_payment.owner_id
+        and (select coalesce(sum(a.allocated_amount),0) from public.payment_allocations a where a.schedule_id=s.id) < s.due_amount
+    ) then
+      update public.orders set status='closed',closed_at=coalesce(closed_at,now()),updated_at=now()
+        where id=v_payment.order_id and owner_id=v_payment.owner_id;
+      update public.customers c set
+        first_order_at=coalesce(c.first_order_at,now()),
+        lifetime_order_value=coalesce(c.lifetime_order_value,0)+v_payment.received_amount,
+        lifecycle_stage='existing',
+        status=case when status='inactive' then status else 'active' end,
+        updated_at=now()
+      where c.id=v_payment.customer_id and c.owner_id=v_payment.owner_id;
+    end if;
+  end if;
   insert into public.payment_audit_logs(owner_id,payment_record_id,action,new_values,created_by)
     values(v_payment.owner_id,v_payment.id,'finance_receipt_confirmed',to_jsonb(v_payment),auth.uid());
   return jsonb_build_object('payment_id',v_payment.id,'status',v_payment.status,'net_received_amount',v_net,'finance_confirmed_at',v_payment.finance_confirmed_at);
@@ -295,3 +322,17 @@ begin
 end $$;
 revoke all on function public.generate_order_receivables(uuid) from public,anon;
 grant execute on function public.generate_order_receivables(uuid) to authenticated;
+
+-- Private bucket for remittance advices and supporting payment documents.
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values ('payment-documents','payment-documents',false,15728640,array['application/pdf','image/png','image/jpeg'])
+on conflict (id) do nothing;
+drop policy if exists "payment documents owner upload" on storage.objects;
+create policy "payment documents owner upload" on storage.objects
+for insert to authenticated with check (bucket_id='payment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+drop policy if exists "payment documents owner read" on storage.objects;
+create policy "payment documents owner read" on storage.objects
+for select to authenticated using (bucket_id='payment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+drop policy if exists "payment documents owner delete" on storage.objects;
+create policy "payment documents owner delete" on storage.objects
+for delete to authenticated using (bucket_id='payment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
