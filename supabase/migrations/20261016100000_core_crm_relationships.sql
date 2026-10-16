@@ -42,7 +42,7 @@ alter table public.leads
 
 alter table public.leads drop constraint if exists leads_stage_check;
 alter table public.leads add constraint leads_stage_check
-  check (stage in ('new','contacted','qualified','proposal','won','lost','converted'));
+  check (stage in ('new','contacted','qualified','proposal','won','lost','on_hold','converted'));
 
 create table if not exists public.opportunities (
   id uuid primary key default gen_random_uuid(),
