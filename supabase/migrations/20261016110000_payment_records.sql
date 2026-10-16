@@ -299,6 +299,8 @@ begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='28000'; end if;
   select * into v_order from public.orders where id=p_order_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Order not found or access denied' using errcode='P0002'; end if;
+  if v_order.customer_id is null or v_order.total_amount <= 0 then raise exception 'Order must have a customer and a positive total before generating receivables' using errcode='22023'; end if;
+  if v_order.status not in ('confirmed','closed','partially_shipped','shipped') then raise exception 'Receivables can only be generated after order confirmation' using errcode='55000'; end if;
   if exists(select 1 from public.receivable_schedules where order_id=v_order.id and owner_id=auth.uid()) then
     return jsonb_build_object('order_id',v_order.id,'created',0,'already_exists',true);
   end if;
@@ -358,3 +360,18 @@ end $$;
 drop trigger if exists payment_allocations_finance_guard on public.payment_allocations;
 create trigger payment_allocations_finance_guard before insert or update or delete on public.payment_allocations
 for each row execute function public.guard_payment_allocations();
+
+create or replace function public.orders_generate_receivables_on_confirm()
+returns trigger language plpgsql set search_path = ''
+as $$
+begin
+  if new.status in ('confirmed','closed','partially_shipped','shipped')
+    and (tg_op='INSERT' or old.status not in ('confirmed','closed','partially_shipped','shipped')) then
+    perform public.generate_order_receivables(new.id);
+  end if;
+  return new;
+end $$;
+drop trigger if exists orders_generate_receivables_after_confirm on public.orders;
+create trigger orders_generate_receivables_after_confirm
+after insert or update of status on public.orders
+for each row execute function public.orders_generate_receivables_on_confirm();
