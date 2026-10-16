@@ -1,10 +1,35 @@
+/* Compatibility aliases only. Carbon Design System is the single source of design tokens. */
 :root {
- font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
- color-scheme: light; --color-brand:#3659d9; --color-brand-hover:#2948bd; --color-brand-soft:#eef2ff;
- --color-bg:#f6f7fb; --color-surface:#fff; --color-surface-muted:#f8fafc; --color-text:#182230;
- --color-text-secondary:#667085; --color-text-muted:#98a2b3; --color-border:#e4e7ec; --color-border-strong:#d0d5dd;
- --color-success:#16835d; --color-warning:#a15c07; --color-danger:#c43232;
- --radius-sm:6px; --radius-md:10px; --radius-lg:14px; --radius-xl:18px;
- --shadow-sm:0 1px 2px rgb(16 24 40 / 5%); --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
- --font-size-xs:12px; --font-size-sm:13px; --font-size-md:14px; --font-size-lg:16px; --font-size-xl:20px; --font-size-2xl:26px; --control-height:40px;
+  --color-brand: var(--cds-interactive);
+  --color-brand-hover: var(--cds-hover-primary);
+  --color-brand-soft: var(--cds-layer-accent);
+  --color-bg: var(--cds-background);
+  --color-surface: var(--cds-layer);
+  --color-surface-muted: var(--cds-layer-01);
+  --color-text: var(--cds-text-primary);
+  --color-text-secondary: var(--cds-text-secondary);
+  --color-text-muted: var(--cds-text-placeholder);
+  --color-border: var(--cds-border-subtle-01);
+  --color-border-strong: var(--cds-border-strong-01);
+  --color-success: var(--cds-support-success);
+  --color-warning: var(--cds-support-warning);
+  --color-danger: var(--cds-support-error);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --shadow-sm: none;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.625rem;
+  --control-height: 2.5rem;
 }
