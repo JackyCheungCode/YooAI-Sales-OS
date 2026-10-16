@@ -136,6 +136,7 @@ export function LeadsPage() {
         if(error) throw error;
         if(!data?.customer_id || !data?.contact_id || !data?.opportunity_id) throw new Error('服务端没有返回完整的客户、联系人和商机编号。');
         const rows = await fetchPersistedLeads(); setLeads(rows);
+        setModalOpen(false); setEditing(null);
         setNotice('线索已转化；客户、联系人、商机和审计记录已由数据库事务创建。');
       } catch(error) {
         setNotice('线索转化失败，数据库未确认完成：' + (error instanceof Error ? error.message : '未知错误'));
