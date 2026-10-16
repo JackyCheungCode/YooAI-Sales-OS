@@ -1,5 +1,5 @@
 import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '../../components/carbon/compat';
-import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
+import { Add, Download, Filter, UserMultiple } from '@carbon/icons-react';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
