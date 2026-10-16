@@ -14,7 +14,12 @@ export function AppLayout() {
     navigate(path);
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
-  const pageTitle = isDashboard ? '经营智控中枢' : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）' : location.pathname === '/leads' ? '线索（Lead）' : '经营智控中枢';
+  const isCustomerArea = ['/customers', '/accounts', '/leads', '/contacts'].includes(location.pathname);
+  const pageTitle = isDashboard ? '经营智控中枢'
+    : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）'
+    : location.pathname === '/leads' ? '线索（Lead）'
+    : location.pathname === '/contacts' ? '联系人（Contact）'
+    : '经营智控中枢';
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -22,9 +27,10 @@ export function AppLayout() {
       <div className="workspace-label">经营工作空间</div>
       <nav className="nav-list" aria-label="主导航"><SideNavItems>
         <SideNavLink href="/dashboard" isActive={isDashboard} renderIcon={Dashboard} onClick={goTo('/dashboard')}>经营智控中枢</SideNavLink>
-        <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={location.pathname === '/customers' || location.pathname === '/accounts' || location.pathname === '/leads'}>
-        <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
+        <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={isCustomerArea}>
+          <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
           <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
+          <SideNavMenuItem href="/contacts" isActive={location.pathname === '/contacts'} onClick={goTo('/contacts')}>联系人（Contact）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
