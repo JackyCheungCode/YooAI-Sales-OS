@@ -141,7 +141,7 @@ export function ProspectingPage() {
             </div>
             <div className="prospecting-channel-footer">
               <span>连接器状态由 API 与集成设置统一管理。</span>
-              <Button kind="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/integrations')}>管理连接器</Button>
+              <Button variant="ghost" size="sm" renderIcon={ArrowRight} onClick={() => navigate('/integrations')}>管理连接器</Button>
             </div>
           </Tile>
         </Column>
