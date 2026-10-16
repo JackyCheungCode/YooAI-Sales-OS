@@ -1,4 +1,5 @@
-import { Checkbox, Column, Grid, Select, SelectItem, Tag, Tile, TextInput } from '@carbon/react';
+import { Checkbox, Column, Grid, Tag, Tile } from '@carbon/react';
+import { SelectInput, SelectItem, TextInput } from '../../components/ui/Field';
 import { Ai, ArrowRight, Globe, Map, Search, UserMultiple } from '@carbon/react/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -91,7 +92,7 @@ export function ProspectingPage() {
               <TextInput id="prospecting-countries" labelText="目标国家 / 地区" placeholder="例如：德国、日本、阿联酋" value={countries} onChange={(event) => setCountries(event.target.value)} />
               <TextInput id="prospecting-industry" labelText="目标行业" placeholder="例如：工业设备、包装材料、汽车零部件" value={industry} onChange={(event) => setIndustry(event.target.value)} />
               <div className="prospecting-form__split">
-                <Select id="prospecting-customer-type" labelText="客户类型" value={customerType} onChange={(event) => setCustomerType(event.target.value)}>
+                <SelectInput id="prospecting-customer-type" labelText="客户类型" value={customerType} onChange={(event) => setCustomerType(event.target.value)}>
                   <SelectItem value="进口商" text="进口商" />
                   <SelectItem value="分销商" text="分销商" />
                   <SelectItem value="批发商" text="批发商" />
@@ -99,14 +100,14 @@ export function ProspectingPage() {
                   <SelectItem value="制造商" text="制造商" />
                   <SelectItem value="品牌商" text="品牌商" />
                   <SelectItem value="采购代理" text="采购代理" />
-                </Select>
-                <Select id="prospecting-target-count" labelText="目标企业数量" value={targetCount} onChange={(event) => setTargetCount(event.target.value)}>
+                </SelectInput>
+                <SelectInput id="prospecting-target-count" labelText="目标企业数量" value={targetCount} onChange={(event) => setTargetCount(event.target.value)}>
                   <SelectItem value="25" text="25 家" />
                   <SelectItem value="50" text="50 家" />
                   <SelectItem value="100" text="100 家" />
                   <SelectItem value="250" text="250 家" />
                   <SelectItem value="500" text="500 家" />
-                </Select>
+                </SelectInput>
               </div>
               <TextInput id="prospecting-keywords" labelText="产品 / 客户关键词" placeholder="例如：industrial pump, importer, distributor" value={keywords} onChange={(event) => setKeywords(event.target.value)} />
               {validationMessage ? <p className="prospecting-validation" role="alert">{validationMessage}</p> : null}
