@@ -1,4 +1,4 @@
-import { Column, Grid, Tag, Tile } from '@carbon/react';
+import { Column, Grid, InlineNotification, Tag, Tile } from '@carbon/react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
 import { Button } from '../../components/ui/Button';
@@ -113,12 +113,14 @@ export function DashboardPage() {
   const metrics = useMemo(() => metricSets[area], [area]);
   const activeTitle = areas.find(item => item.id === area)?.label ?? '管理层总览';
   const refresh = () => setUpdatedAt(new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }));
-  const showDrilldown = (name: string) => window.alert('“' + name + '”明细下钻入口已预留。明细入口尚待配置。');
+  const [notice, setNotice] = useState('');
+  const showDrilldown = (name: string) => setNotice('“' + name + '”明细下钻入口已预留，明细数据服务尚未接入。');
 
   return <div className="dashboard-page">
+    {notice && <InlineNotification kind="info" lowContrast title="功能状态" subtitle={notice} onCloseButtonClick={() => setNotice('')} />}
     <div className="page-heading dashboard-heading">
       <div><div className="eyebrow">YOOAI BUSINESS INTELLIGENCE</div><h1>经营智控中枢</h1><p className="page-subtitle">以统一指标看清增长、现金流、客户体验与经营风险。</p></div>
-      <div className="dashboard-heading__actions"><Button variant="secondary" renderIcon={Download} onClick={() => window.alert('报表导出入口尚待配置。')}>导出报表</Button><Button renderIcon={Renew} onClick={refresh}>刷新视图</Button></div>
+      <div className="dashboard-heading__actions"><Button variant="secondary" renderIcon={Download} onClick={() => setNotice('报表导出暂不可用：报表生成与下载服务尚未配置。')}>导出报表</Button><Button renderIcon={Renew} onClick={refresh}>刷新视图</Button></div>
     </div>
 
     <Tile className="dashboard-filter-panel">
