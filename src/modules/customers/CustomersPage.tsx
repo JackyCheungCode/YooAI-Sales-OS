@@ -1,4 +1,4 @@
-import { Search as CarbonSearch, Tag, Tile } from '@carbon/react';
+import { Column, Grid, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
 import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
@@ -25,12 +25,13 @@ export function CustomersPage() {
         <Button renderIcon={Add} onClick={() => window.alert('客户新增表单将在下一阶段接入数据库。')}>新建客户</Button>
       </div>
     </div>
-    <section className="stat-grid">
-      <StatTile label="客户总数" icon={<UserMultiple size={17} />} value="—" note="连接数据库后显示实时数据" />
-      <StatTile label="本月新增" icon={<Add size={17} />} value="—" note="按客户创建时间统计" />
-      <StatTile label="重点客户" icon={<Filter size={17} />} value="—" note="按客户等级统计" />
-    </section>
-    <Tile className="panel">
+    <Grid fullWidth className="stat-grid">
+      <Column sm={4} md={4} lg={5}><StatTile label="客户总数" icon={<UserMultiple size={17} />} value="—" note="连接数据库后显示实时数据" /></Column>
+      <Column sm={4} md={4} lg={5}><StatTile label="本月新增" icon={<Add size={17} />} value="—" note="按客户创建时间统计" /></Column>
+      <Column sm={4} md={4} lg={5}><StatTile label="重点客户" icon={<Filter size={17} />} value="—" note="按客户等级统计" /></Column>
+    </Grid>
+    <Grid fullWidth>
+      <Column sm={4} md={8} lg={16}><Tile className="panel">
       <div className="panel__heading">
         <div><h2>客户档案</h2><p>搜索、筛选并维护客户信息</p></div>
         <Tag type={isSupabaseConfigured ? 'green' : 'warm-gray'}>{isSupabaseConfigured ? 'Supabase 配置已读取' : '等待配置 Supabase'}</Tag>
@@ -54,6 +55,7 @@ export function CustomersPage() {
         <Button renderIcon={Add} onClick={() => window.alert('下一步将实现客户表结构、RLS 策略和新增/编辑流程。')}>规划客户数据接入</Button>
       </div>
       <div className="table-footer"><span>当前为基础界面阶段，未写入任何客户数据</span><span>第 1 页 <span className="footer-divider">·</span> 共 0 条</span></div>
-    </Tile>
+      </Tile></Column>
+    </Grid>
   </div>;
 }
