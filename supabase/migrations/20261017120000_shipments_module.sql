@@ -313,7 +313,7 @@ revoke all on function public.create_shipment_with_items(uuid,text,text,text,dat
 grant execute on function public.create_shipment_with_items(uuid,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,jsonb) to authenticated;
 
 create or replace function public.transition_shipment_status(p_shipment_id uuid,p_new_status text,p_reason text default null)
-returns jsonb language plpgsql security invoker set search_path = ''
+returns jsonb language plpgsql security definer set search_path = ''
 as $$
 declare
   v_shipment public.shipments%rowtype;
