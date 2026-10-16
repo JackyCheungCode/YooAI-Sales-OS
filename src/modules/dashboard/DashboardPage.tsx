@@ -1,12 +1,12 @@
 import { Column, Grid, Tag, Tile } from '@carbon/react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
 import './dashboard.css';
 
 type Area = 'overview' | 'sales' | 'orders' | 'service' | 'marketing' | 'commerce';
-type Metric = { label: string; value: string; delta: string; tone?: 'good' | 'warn' | 'neutral'; icon: React.ReactNode };
+type Metric = { label: string; value: string; delta: string; tone?: 'good' | 'warn' | 'neutral'; icon: ReactNode };
 
 const areas: { id: Area; label: string }[] = [
   { id: 'overview', label: '管理层总览' },
