@@ -104,7 +104,7 @@ export function SideNavLink({ isActive, renderIcon, children, ...props }: SideNa
 }
 
 export function SideNavMenu({ isActive, renderIcon, title, children, ...props }: SideNavBaseProps) {
-  return createElement('cds-side-nav-menu', { ...props, active: isActive, title }, slottedIcon(renderIcon), children);
+  return createElement('cds-side-nav-menu', { ...props, active: isActive, expanded: isActive, title }, slottedIcon(renderIcon), children);
 }
 
 export function SideNavMenuItem({ isActive, children, ...props }: SideNavBaseProps) {
