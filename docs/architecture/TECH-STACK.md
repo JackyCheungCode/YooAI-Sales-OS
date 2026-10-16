@@ -2,7 +2,7 @@
 
 ## Runtime
 - Frontend: Vite, React, TypeScript, React Router.
-- System UI and design language: IBM Carbon Design System via `@carbon/react`; Carbon icons via `@carbon/react/icons`; official Carbon Sass theme and tokens.
+- System UI and design language: IBM Carbon Design System via `@carbon/react`; Carbon icons via `@carbon/react/icons`; official Carbon Sass theme and tokens. The application uses the official `g10` theme.
 - Data and identity: Supabase PostgreSQL and Supabase Auth.
 - Hosting: Vercel static hosting with SPA fallback in `vercel.json`.
 - Source of truth: GitHub `main` branch.
@@ -12,7 +12,7 @@
 - Do not introduce another component or icon library or build parallel custom controls.
 - Shared components under `src/components/ui` are thin wrappers over Carbon components.
 - See `docs/architecture/DESIGN-SYSTEM.md` for the enforcement rules.
-- `src/styles/tokens.css` is a documentation marker only; Carbon itself is the sole source of design tokens.
+- `src/styles/carbon.scss` loads Carbon's official styles; `src/styles/carbon-tokens.css` contains only the approved `SimSun` font-stack extension. Carbon remains the sole source of design tokens.
 
 ## Frontend environment variables
 - `VITE_SUPABASE_URL`: Supabase project URL.
