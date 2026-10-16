@@ -3,6 +3,7 @@ import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Clos
 import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
+import { Grid, Column } from '../components/carbon/compat';
 import { useAuth } from '../app/AuthContext';
 
 export function AppLayout() {
@@ -60,7 +61,7 @@ export function AppLayout() {
           <Button variant="ghost" size="sm" onClick={() => void signOut()}>退出登录</Button>
         </div>
       </header>
-      <main className="page-content"><Outlet /></main>
+      <main className="page-content"><Grid fullWidth className="page-layout-grid"><Column sm={4} md={8} lg={16} xlg={16}><Outlet /></Column></Grid></main>
     </div>
   </div>;
 }
