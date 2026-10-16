@@ -386,3 +386,66 @@ drop trigger if exists orders_generate_receivables_after_confirm on public.order
 create trigger orders_generate_receivables_after_confirm
 after insert or update of status on public.orders
 for each row execute function public.orders_generate_receivables_on_confirm();
+
+-- Enforce tenant-consistent foreign-key relationships, not just UUID existence.
+create or replace function public.validate_payment_relationship_ownership()
+returns trigger language plpgsql set search_path = ''
+as $$
+declare v_owner uuid;
+declare v_customer uuid;
+declare v_order uuid;
+begin
+  if tg_table_name='orders' then
+    if new.customer_id is not null and not exists(select 1 from public.customers c where c.id=new.customer_id and c.owner_id=new.owner_id) then
+      raise exception 'Order customer must belong to the same owner' using errcode='42501';
+    end if;
+    if new.opportunity_id is not null and not exists(select 1 from public.opportunities o where o.id=new.opportunity_id and o.owner_id=new.owner_id) then
+      raise exception 'Order opportunity must belong to the same owner' using errcode='42501';
+    end if;
+  elsif tg_table_name='receivable_schedules' then
+    if not exists(select 1 from public.orders o where o.id=new.order_id and o.owner_id=new.owner_id and o.customer_id=new.customer_id) then
+      raise exception 'Receivable order and customer must belong to the same owner and match' using errcode='42501';
+    end if;
+  elsif tg_table_name='payment_records' then
+    if not exists(select 1 from public.orders o where o.id=new.order_id and o.owner_id=new.owner_id and o.customer_id=new.customer_id) then
+      raise exception 'Payment order and customer must belong to the same owner and match' using errcode='42501';
+    end if;
+    if new.schedule_id is not null and not exists(select 1 from public.receivable_schedules s where s.id=new.schedule_id and s.owner_id=new.owner_id and s.order_id=new.order_id and s.customer_id=new.customer_id) then
+      raise exception 'Payment schedule must match its order and customer' using errcode='42501';
+    end if;
+  elsif tg_table_name='payment_allocations' then
+    if not exists(select 1 from public.payment_records p where p.id=new.payment_record_id and p.owner_id=new.owner_id) then
+      raise exception 'Allocation payment must belong to the same owner' using errcode='42501';
+    end if;
+    if not exists(select 1 from public.receivable_schedules s where s.id=new.schedule_id and s.owner_id=new.owner_id and s.order_id=new.order_id and s.currency_code=new.currency_code) then
+      raise exception 'Allocation schedule must match its order and currency' using errcode='42501';
+    end if;
+    if not exists(select 1 from public.orders o where o.id=new.order_id and o.owner_id=new.owner_id) then
+      raise exception 'Allocation order must belong to the same owner' using errcode='42501';
+    end if;
+  elsif tg_table_name in ('payment_collection_logs','payment_documents') then
+    if not exists(select 1 from public.payment_records p where p.id=new.payment_record_id and p.owner_id=new.owner_id) then
+      raise exception 'Payment attachment/activity must belong to the same owner' using errcode='42501';
+    end if;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists orders_validate_payment_owner on public.orders;
+create trigger orders_validate_payment_owner before insert or update on public.orders
+for each row execute function public.validate_payment_relationship_ownership();
+drop trigger if exists schedules_validate_payment_owner on public.receivable_schedules;
+create trigger schedules_validate_payment_owner before insert or update on public.receivable_schedules
+for each row execute function public.validate_payment_relationship_ownership();
+drop trigger if exists records_validate_payment_owner on public.payment_records;
+create trigger records_validate_payment_owner before insert or update on public.payment_records
+for each row execute function public.validate_payment_relationship_ownership();
+drop trigger if exists allocations_validate_payment_owner on public.payment_allocations;
+create trigger allocations_validate_payment_owner before insert or update on public.payment_allocations
+for each row execute function public.validate_payment_relationship_ownership();
+drop trigger if exists collection_logs_validate_payment_owner on public.payment_collection_logs;
+create trigger collection_logs_validate_payment_owner before insert or update on public.payment_collection_logs
+for each row execute function public.validate_payment_relationship_ownership();
+drop trigger if exists documents_validate_payment_owner on public.payment_documents;
+create trigger documents_validate_payment_owner before insert or update on public.payment_documents
+for each row execute function public.validate_payment_relationship_ownership();
