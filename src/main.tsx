@@ -4,6 +4,7 @@ import { GlobalTheme } from '@carbon/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from './app/App';
 import { AuthProvider } from './app/AuthContext';
+import './components/carbon/register';
 import './styles/carbon.scss';
 import './styles/carbon-tokens.css';
 import './styles/global.css';
