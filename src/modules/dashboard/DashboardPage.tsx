@@ -1,4 +1,4 @@
-import { Column, Grid, InlineNotification, Tag, Tile } from '@carbon/react';
+import { Column, Grid, InlineNotification, Tag, Tile, Tabs, TabList, Tab } from '@carbon/react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
 import { Button } from '../../components/ui/Button';
@@ -134,7 +134,7 @@ export function DashboardPage() {
       </Grid>
     </Tile>
 
-    <div className="dashboard-area-nav" role="tablist" aria-label="经营分析板块">{areas.map(item=><Button key={item.id} type="button" role="tab" aria-selected={area===item.id} className={area===item.id?'is-active':''} onClick={()=>setArea(item.id)}>{item.label}</Button>)}</div>
+    <Tabs selectedIndex={Math.max(0,areas.findIndex(item=>item.id===area))} onChange={({selectedIndex})=>{const item=areas[selectedIndex];if(item)setArea(item.id);}}><TabList aria-label="经营分析板块">{areas.map(item=><Tab key={item.id}>{item.label}</Tab>)}</TabList></Tabs>
 
     <div className="dashboard-section-heading"><div><div className="eyebrow">BUSINESS PERFORMANCE</div><h2>{activeTitle}</h2><p>{area==='overview'?'核心经营指标、收入走势与需要管理层关注的风险。':'当前板块的关键指标与经营分析；选择图表或风险项目可进入对应明细。'}</p></div><div className="dashboard-refresh"><span className="refresh-dot"/><span>视图刷新于 {updatedAt}</span></div></div>
 
