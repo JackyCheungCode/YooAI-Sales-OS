@@ -14,7 +14,7 @@ export function AppLayout() {
     navigate(path);
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
-  const pageTitle = isDashboard ? '经营智控中枢' : location.pathname === '/customers' ? '客户管理' : location.pathname === '/leads' ? '线索（Lead）' : '经营智控中枢';
+  const pageTitle = isDashboard ? '经营智控中枢' : location.pathname === '/customers' || location.pathname === '/accounts' ? '客户（Account）' : location.pathname === '/leads' ? '线索（Lead）' : '经营智控中枢';
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -22,8 +22,8 @@ export function AppLayout() {
       <div className="workspace-label">经营工作空间</div>
       <nav className="nav-list" aria-label="主导航"><SideNavItems>
         <SideNavLink href="/dashboard" isActive={isDashboard} renderIcon={Dashboard} onClick={goTo('/dashboard')}>经营智控中枢</SideNavLink>
-        <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={location.pathname === '/customers' || location.pathname === '/leads'}>
-          <SideNavMenuItem href="/customers" isActive={location.pathname === '/customers'} onClick={goTo('/customers')}>客户档案</SideNavMenuItem>
+        <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={location.pathname === '/customers' || location.pathname === '/accounts' || location.pathname === '/leads'}>
+        <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
           <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
         </SideNavMenu>
       </SideNavItems></nav>
