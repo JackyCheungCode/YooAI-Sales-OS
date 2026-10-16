@@ -12,7 +12,7 @@
 - Do not introduce another component or icon library or build parallel custom controls.
 - Shared components under `src/components/ui` are thin wrappers over Carbon components.
 - See `docs/architecture/DESIGN-SYSTEM.md` for the enforcement rules.
-- `src/styles/tokens.css` is compatibility glue mapping legacy layout variables to Carbon tokens; it is not an independent design system.
+- `src/styles/tokens.css` is a documentation marker only; Carbon itself is the sole source of design tokens.
 
 ## Frontend environment variables
 - `VITE_SUPABASE_URL`: Supabase project URL.
