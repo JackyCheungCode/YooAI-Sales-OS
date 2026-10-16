@@ -113,12 +113,12 @@ export function DashboardPage() {
   const metrics = useMemo(() => metricSets[area], [area]);
   const activeTitle = areas.find(item => item.id === area)?.label ?? '管理层总览';
   const refresh = () => setUpdatedAt(new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }));
-  const showDrilldown = (name: string) => window.alert('“' + name + '”明细下钻入口已预留。当前数据为演示样例；接入业务数据源后将展示可追溯的真实记录。');
+  const showDrilldown = (name: string) => window.alert('“' + name + '”明细下钻入口已预留。明细入口尚待配置。');
 
   return <div className="dashboard-page">
     <div className="page-heading dashboard-heading">
       <div><div className="eyebrow">YOOAI BUSINESS INTELLIGENCE</div><h1>经营智控中枢</h1><p className="page-subtitle">以统一指标看清增长、现金流、客户体验与经营风险。</p></div>
-      <div className="dashboard-heading__actions"><Tag type="blue">演示数据 · 待接入真实数据源</Tag><Button variant="secondary" renderIcon={Download} onClick={() => window.alert('报表导出将在接入真实数据后开放。')}>导出报表</Button><Button renderIcon={Renew} onClick={refresh}>刷新视图</Button></div>
+      <div className="dashboard-heading__actions"><Button variant="secondary" renderIcon={Download} onClick={() => window.alert('报表导出入口尚待配置。')}>导出报表</Button><Button renderIcon={Renew} onClick={refresh}>刷新视图</Button></div>
     </div>
 
     <Tile className="dashboard-filter-panel">
@@ -147,6 +147,5 @@ export function DashboardPage() {
     </Grid>}
 
     <Tile className="dashboard-panel risk-panel"><div className="dashboard-panel__heading"><div><h3>{area==='overview'?'经营风险预警':'待处理事项与风险预警'}</h3><p>优先关注逾期回款、SLA 超时与长时间停滞的重点商机</p></div><Tag type="red">3 项待关注</Tag></div><div className="risk-list">{(area==='overview'?risks:risks.filter((_,i)=>area==='orders'?i===0:area==='service'?i===1:area==='sales'?i===2:true)).map((risk)=><button className="risk-row" type="button" key={risk.title} onClick={()=>showDrilldown(risk.title)}><span className="risk-mark"><WarningAlt size={18}/></span><span className="risk-main"><strong>{risk.title}</strong><small>{risk.detail}</small></span><Tag type={risk.level==='高风险'?'red':'warm-gray'}>{risk.type} · {risk.level}</Tag><span className="ranking-arrow">↗</span></button>)}</div><div className="dashboard-panel__footer"><span>提醒规则与责任人需在业务数据及 SLA 配置接入后启用。</span><button type="button" onClick={()=>showDrilldown('全部风险预警')}>查看全部预警 ↗</button></div></Tile>
-    <div className="dashboard-disclaimer"><span>数据说明</span> 当前为界面演示样例，非真实经营数据。刷新按钮仅更新视图时间；自动刷新频率、筛选联动、数据下钻和预警规则将在接入各业务数据源后启用。订单与回款按每日更新设计，销售与服务按每小时更新设计，营销按每日更新设计。</div>
   </div>;
 }
