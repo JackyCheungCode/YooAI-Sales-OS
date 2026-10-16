@@ -4,7 +4,7 @@ import {
   TextArea as CarbonTextArea,
   TextInput as CarbonTextInput,
 } from '@carbon/react';
-import type { ComponentProps, ReactNode } from 'react';
+import { useId, type ComponentProps, type ReactNode } from 'react';
 
 type Common = { label: string; hint?: string; error?: string; id: string };
 
@@ -18,24 +18,27 @@ export function Field({ label, hint, error, id, children }: Common & { children:
   );
 }
 
-type TextInputProps = Omit<ComponentProps<typeof CarbonTextInput>, 'labelText'> & { labelText?: string };
-export function TextInput({ labelText, ...props }: TextInputProps) {
+type TextInputProps = Omit<ComponentProps<typeof CarbonTextInput>, 'labelText' | 'id'> & { labelText?: string; id?: string };
+export function TextInput({ labelText, id, ...props }: TextInputProps) {
+  const generatedId = useId();
   const accessibleLabel = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '输入');
-  return <CarbonTextInput labelText={accessibleLabel} hideLabel={!labelText} {...props} />;
+  return <CarbonTextInput id={id ?? generatedId} labelText={accessibleLabel} hideLabel={!labelText} {...props} />;
 }
 
-type SelectInputProps = Omit<ComponentProps<typeof CarbonSelect>, 'labelText'> & { labelText?: string };
-export function SelectInput({ labelText, children, ...props }: SelectInputProps) {
+type SelectInputProps = Omit<ComponentProps<typeof CarbonSelect>, 'labelText' | 'id'> & { labelText?: string; id?: string };
+export function SelectInput({ labelText, id, children, ...props }: SelectInputProps) {
+  const generatedId = useId();
   return (
-    <CarbonSelect labelText={labelText ?? '请选择'} hideLabel={!labelText} {...props}>
+    <CarbonSelect id={id ?? generatedId} labelText={labelText ?? '请选择'} hideLabel={!labelText} {...props}>
       {children}
     </CarbonSelect>
   );
 }
 
-type TextAreaInputProps = Omit<ComponentProps<typeof CarbonTextArea>, 'labelText'> & { labelText?: string };
-export function TextAreaInput({ labelText, ...props }: TextAreaInputProps) {
-  return <CarbonTextArea labelText={labelText ?? '文本内容'} hideLabel={!labelText} {...props} />;
+type TextAreaInputProps = Omit<ComponentProps<typeof CarbonTextArea>, 'labelText' | 'id'> & { labelText?: string; id?: string };
+export function TextAreaInput({ labelText, id, ...props }: TextAreaInputProps) {
+  const generatedId = useId();
+  return <CarbonTextArea id={id ?? generatedId} labelText={labelText ?? '文本内容'} hideLabel={!labelText} {...props} />;
 }
 
 export { SelectItem };

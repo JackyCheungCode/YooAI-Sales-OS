@@ -1,4 +1,4 @@
-import { Column, Grid, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
+import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
 import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
@@ -16,13 +16,15 @@ function StatTile({ label, icon, value, note }: { label: string; icon: ReactNode
 export function CustomersPage() {
   const [keyword, setKeyword] = useState('');
   const [status, setStatus] = useState('all');
+  const [notice, setNotice] = useState('');
 
   return <div className="customers-page">
+    {notice && <InlineNotification kind="info" lowContrast title="功能状态" subtitle={notice} onCloseButtonClick={() => setNotice('')} />}
     <div className="page-heading">
       <div><div className="eyebrow">CUSTOMER RELATIONSHIP</div><h1>客户管理</h1><p className="page-subtitle">集中管理客户档案、联系人和业务关系。</p></div>
       <div className="heading-actions">
-        <Button variant="secondary" onClick={() => window.alert('导出功能将在客户数据接入后启用。')}><Download size={16} />导出</Button>
-        <Button renderIcon={Add} onClick={() => window.alert('客户新增表单将在下一阶段接入数据库。')}>新建客户</Button>
+        <Button variant="secondary" onClick={() => setNotice('导出暂不可用：客户数据查询与导出服务尚未接入。')}><Download size={16} />导出</Button>
+        <Button renderIcon={Add} onClick={() => setNotice('新建客户暂不可用：客户主数据的数据库写入流程尚未接入。')}>新建客户</Button>
       </div>
     </div>
     <Grid fullWidth className="stat-grid">
@@ -52,7 +54,7 @@ export function CustomersPage() {
         <div className="empty-state__icon"><UserMultiple size={25} /></div>
         <h3>{keyword ? '尚无匹配客户' : '客户数据准备就绪'}</h3>
         <p>{isSupabaseConfigured ? 'Supabase 连接配置已检测到。完成数据库表结构和权限策略后，这里将展示真实客户数据。' : '当前还没有加载客户数据。下一步将接入 Supabase 数据表与安全访问策略。'}</p>
-        <Button renderIcon={Add} onClick={() => window.alert('下一步将实现客户表结构、RLS 策略和新增/编辑流程。')}>规划客户数据接入</Button>
+        <Button renderIcon={Add} onClick={() => setNotice('客户数据尚未接入：需要完成 Supabase 表结构、RLS 权限策略和新增/编辑流程。')}>规划客户数据接入</Button>
       </div>
       <div className="table-footer"><span>当前为基础界面阶段，未写入任何客户数据</span><span>第 1 页 <span className="footer-divider">·</span> 共 0 条</span></div>
       </Tile></Column>
