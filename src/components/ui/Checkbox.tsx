@@ -1,4 +1,4 @@
-import { createElement, type ChangeEventHandler } from 'react';
+import { createElement } from 'react';
 
 type Props = {
   id?: string;
@@ -8,7 +8,7 @@ type Props = {
   disabled?: boolean;
   value?: string;
   children: string;
-  onChange?: ChangeEventHandler<HTMLElement>;
+  onChange?: (event: { target: HTMLInputElement }) => void;
   className?: string;
 };
 
