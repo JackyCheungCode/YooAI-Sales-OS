@@ -5,9 +5,9 @@
 html, body, #root { min-height: 100%; margin: 0; }
 body {
   font-family: 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: var(--cds-background, #f4f4f4);
-  color: var(--cds-text-primary, #161616);
+  background: var(--cds-background);
+  color: var(--cds-text-primary);
   font-size: 14px;
 }
 a { color: inherit; text-decoration: none; }
-::selection { background: var(--cds-highlight, #d0e2ff); }
+::selection { background: var(--cds-highlight); }
