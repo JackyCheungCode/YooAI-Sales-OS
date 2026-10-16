@@ -3,6 +3,7 @@ create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
   customer_id uuid references public.customers(id) on delete restrict,
+  opportunity_id uuid references public.opportunities(id) on delete set null,
   order_number text not null,
   status text not null default 'confirmed',
   currency_code char(3) not null default 'USD',
@@ -14,6 +15,8 @@ create table if not exists public.orders (
   updated_at timestamptz not null default now(),
   unique(owner_id, order_number)
 );
+
+alter table public.orders add column if not exists opportunity_id uuid references public.opportunities(id) on delete set null;
 
 create table if not exists public.receivable_schedules (
   id uuid primary key default gen_random_uuid(),
@@ -215,6 +218,9 @@ begin
       update public.orders set status='closed',closed_at=coalesce(closed_at,now()),updated_at=now()
         where id=v_payment.order_id and owner_id=v_payment.owner_id and status <> 'closed';
       if found then
+        update public.opportunities op set stage='won',updated_at=now()
+          where op.id=(select o.opportunity_id from public.orders o where o.id=v_payment.order_id)
+            and op.owner_id=v_payment.owner_id and op.stage not in ('won','lost');
         update public.customers c set
           first_order_at=coalesce(c.first_order_at,now()),
           lifetime_order_value=coalesce(c.lifetime_order_value,0)+coalesce((select o.total_amount from public.orders o where o.id=v_payment.order_id),v_payment.received_amount),
