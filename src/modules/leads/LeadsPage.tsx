@@ -1,6 +1,6 @@
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell, Tag, Tile } from '../../components/carbon/compat';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Add, Filter, Search, UserMultiple, Renew, ArrowRight, Close, CheckmarkFilled, WarningAlt } from '@carbon/react/icons';
+import { Add, Filter, Search, UserMultiple, Renew, ArrowRight, Close, CheckmarkFilled, WarningAlt } from '@carbon/icons-react';
 
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
