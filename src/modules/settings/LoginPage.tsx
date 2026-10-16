@@ -1,4 +1,5 @@
-import { InlineNotification, TextInput } from '@carbon/react';
+import { InlineNotification } from '../../components/carbon/compat';
+import { TextInput } from '../../components/ui/Field';
 import { useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
