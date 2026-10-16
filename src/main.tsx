@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './app/App';
 import { AuthProvider } from './app/AuthContext';
 import './styles/carbon.scss';
+import './styles/tokens.css';
 import './styles/global.css';
 
 createRoot(document.getElementById('root')!).render(
