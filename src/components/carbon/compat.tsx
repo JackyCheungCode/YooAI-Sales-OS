@@ -81,3 +81,32 @@ export function TableCell(props: CarbonProps) {
 export function FileUploaderButton(props: CarbonProps) {
   return createElement('cds-file-uploader-button', props, props.children);
 }
+
+type SideNavBaseProps = CarbonProps & {
+  href?: string;
+  isActive?: boolean;
+  renderIcon?: (props: { size?: number }) => ReactNode;
+  onClick?: (event: any) => void;
+  title?: string;
+};
+
+function slottedIcon(renderIcon?: (props: { size?: number }) => ReactNode) {
+  if (!renderIcon) return null;
+  return createElement('span', { slot: 'title-icon', 'aria-hidden': true }, renderIcon({ size: 16 }));
+}
+
+export function SideNavItems(props: CarbonProps) {
+  return createElement('cds-side-nav-items', props, props.children);
+}
+
+export function SideNavLink({ isActive, renderIcon, children, ...props }: SideNavBaseProps) {
+  return createElement('cds-side-nav-link', { ...props, active: isActive }, slottedIcon(renderIcon), children);
+}
+
+export function SideNavMenu({ isActive, renderIcon, title, children, ...props }: SideNavBaseProps) {
+  return createElement('cds-side-nav-menu', { ...props, active: isActive, title }, slottedIcon(renderIcon), children);
+}
+
+export function SideNavMenuItem({ isActive, children, ...props }: SideNavBaseProps) {
+  return createElement('cds-side-nav-menu-item', { ...props, active: isActive }, children);
+}
