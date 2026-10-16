@@ -86,11 +86,11 @@ function TrendChart() {
   return <div className="dash-chart" role="img" aria-label="近八个月收入趋势，整体呈增长趋势">
     <div className="chart-summary"><strong>¥ 2.49M</strong><span className="dash-positive">↗ 12.8%</span><span className="chart-summary__note">本期累计收入</span></div>
     <svg viewBox="0 0 380 145" className="trend-svg" preserveAspectRatio="none" aria-hidden="true">
-      <defs><linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0f62fe" stopOpacity=".20"/><stop offset="100%" stopColor="#0f62fe" stopOpacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--cds-interactive)" stopOpacity=".20"/><stop offset="100%" stopColor="var(--cds-interactive)" stopOpacity="0"/></linearGradient></defs>
       {[25,55,85,115].map(y=><line key={y} x1="0" x2="380" y1={y} y2={y} stroke="var(--cds-border-subtle-01)" strokeDasharray="3 4" />)}
       <polygon points={'20,130 '+points+' 356,130'} fill="url(#revenue-fill)" />
-      <polyline points={points} fill="none" stroke="#0f62fe" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {points.split(' ').map((point,i)=>{const [cx,cy]=point.split(',');return <circle key={i} cx={cx} cy={cy} r="3.5" fill="#ffffff" stroke="#0f62fe" strokeWidth="2"/>})}
+      <polyline points={points} fill="none" stroke="var(--cds-interactive)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      {points.split(' ').map((point,i)=>{const [cx,cy]=point.split(',');return <circle key={i} cx={cx} cy={cy} r="3.5" fill="var(--cds-background)" stroke="var(--cds-interactive)" strokeWidth="2"/>})}
     </svg>
     <div className="chart-axis"><span>3 月</span><span>4 月</span><span>5 月</span><span>6 月</span><span>7 月</span><span>8 月</span><span>9 月</span><span>10 月</span></div>
   </div>;
