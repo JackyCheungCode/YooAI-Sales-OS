@@ -11,11 +11,11 @@
 - 间距：https://carbondesignsystem.com/building-blocks/foundations/spacing/
 - Design Tokens 与主题：https://carbondesignsystem.com/building-blocks/foundations/themes/
 - Web Components Storybook：https://web-components.carbondesignsystem.com/
-- Carbon React 组件文档：https://www.carbondesignsystem.com/getting-started/developing/carbon-core/react
+- Carbon Web Components 组件文档：https://web-components.carbondesignsystem.com/
 
 ## 2. 主题与颜色
 
-- 后台默认主题必须为 Carbon Gray 10（g10）。通过 `GlobalTheme theme="g10"` 应用官方主题，不得自行仿制主题色板。
+- 后台默认主题必须为 Carbon Gray 10（g10）。由 `src/styles/carbon.scss` 通过 Carbon 官方 Sass 主题令牌应用，不得自行仿制主题色板。
 - 页面背景由 Carbon 背景令牌提供，Gray 10 对应 `#F4F4F4`。
 - 卡片和容器使用 Carbon layer 令牌，不得自行硬编码白色背景。
 - 主交互色使用 Carbon 官方交互令牌；Gray 10 主题对应蓝色为 `#0F62FE`。业务样式应引用令牌而不是直接写十六进制颜色。
@@ -32,13 +32,13 @@
 ## 4. 2x Grid 与间距
 
 - 页面容器、列宽、边距、内边距和响应式布局必须遵循 Carbon 2x Grid 的网格节奏。
-- 优先采用 Carbon React 的 `Grid`、`Column` 等官方布局组件；自定义页面布局必须遵守同样的 2x Grid 规则。
+- 使用本地 `@carbon/web-components` 提供的 `cds-grid`、`cds-column` 等官方 Web Components；项目兼容封装必须映射到对应的 `cds-*` 组件。自定义页面布局必须遵守同样的 2x Grid 规则。
 - 间距必须使用 Carbon 官方 spacing tokens（例如 `--cds-spacing-03`、`--cds-spacing-05`、`--cds-spacing-07`）。不得随意散落固定像素间距。
 - 固定像素只允许用于有明确依据的边框、图标尺寸、断点或组件固有尺寸；普通 margin、padding、gap 应使用间距令牌。
 
 ## 5. 组件与图标
 
-- 系统控件统一使用 `@carbon/react`；图标统一使用 `@carbon/react/icons`。
+- 系统控件统一使用本地 `@carbon/web-components` 对应的 `cds-*` 组件；图标使用 Carbon 官方图标包 `@carbon/icons-react`。不得用原生 HTML 控件或手写控件替代已有 Carbon 组件（仅允许隐藏的原生表单提交辅助节点等无视觉辅助节点）。
 - 按钮、输入框、下拉框、复选框、单选框、搜索、标签、表格、通知、弹窗和导航等，优先直接使用 Carbon 官方组件。
 - `src/components/ui/` 只允许存在薄封装：用于统一业务语义、默认值和项目接口；内部必须调用 Carbon 组件，不得重写其视觉或交互。
 - 禁止引入 Lucide、Material UI、Ant Design、Bootstrap 或其他并行组件/图标库。
@@ -69,4 +69,4 @@
 
 ## 8. 验证状态
 
-本仓库已接入 Carbon React、g10 主题和 SimSun 字体栈扩展，并开始替换现有控件。必须在本地依次运行 `npm install`、`npm run typecheck`、`npm run build`，再进行浏览器视觉和交互回归；在这些检查实际通过之前，不得宣称完整迁移已验收。
+本仓库已安装 `@carbon/web-components`、Carbon g10 主题和 SimSun 字体栈扩展，并持续将现有控件迁移为 `cds-*` Web Components。必须在本地依次运行 `npm install`、`npm run typecheck`、`npm run build`，再进行浏览器视觉和交互回归；在这些检查实际通过之前，不得宣称完整迁移已验收。
