@@ -92,4 +92,4 @@ export function TextAreaInput({ labelText, id, onChange, ...props }: CommonContr
   });
 }
 
-export { SelectItem as CarbonSelectItem };
+export { SelectInput as Select, SelectItem as CarbonSelectItem, TextAreaInput as TextArea };
