@@ -312,6 +312,72 @@ $$;
 revoke all on function public.create_shipment_with_items(uuid,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,jsonb) from public,anon;
 grant execute on function public.create_shipment_with_items(uuid,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,jsonb) to authenticated;
 
+create or replace function public.update_shipment_logistics(
+  p_shipment_id uuid,
+  p_shipping_mode text,
+  p_incoterm text,
+  p_origin_port text,
+  p_destination_port text,
+  p_latest_ship_date date,
+  p_etd date,
+  p_eta date,
+  p_responsible_name text,
+  p_consignee text,
+  p_notify_party text,
+  p_booking_number text,
+  p_bill_of_lading_number text,
+  p_bill_of_lading_type text,
+  p_vessel_voyage text,
+  p_container_numbers text,
+  p_seal_numbers text,
+  p_tracking_number text,
+  p_tracking_url text,
+  p_notes text
+) returns jsonb
+language plpgsql security definer set search_path = ''
+as $
+declare v_shipment public.shipments%rowtype;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
+  if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
+  if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot be edited' using errcode='22023'; end if;
+  if p_shipping_mode not in ('fcl','lcl','bulk','air','express','rail') then raise exception 'Invalid shipping mode' using errcode='22023'; end if;
+  if p_bill_of_lading_type is not null and p_bill_of_lading_type not in ('original','telex_release','sea_waybill') then raise exception 'Invalid bill of lading type' using errcode='22023'; end if;
+  update public.shipments set
+    shipping_mode=p_shipping_mode, incoterm=p_incoterm, origin_port=p_origin_port, destination_port=p_destination_port,
+    latest_ship_date=p_latest_ship_date, etd=p_etd, eta=p_eta, responsible_name=p_responsible_name,
+    consignee=p_consignee, notify_party=p_notify_party, booking_number=p_booking_number,
+    bill_of_lading_number=p_bill_of_lading_number, bill_of_lading_type=p_bill_of_lading_type,
+    vessel_voyage=p_vessel_voyage, container_numbers=p_container_numbers, seal_numbers=p_seal_numbers,
+    tracking_number=p_tracking_number, tracking_url=p_tracking_url, notes=p_notes
+  where id=p_shipment_id;
+  insert into public.shipment_events(owner_id,shipment_id,event_type,description)
+  values(auth.uid(),p_shipment_id,'logistics_updated','物流与出运信息已更新。');
+  return jsonb_build_object('shipment_id',p_shipment_id,'updated',true);
+end;
+$;
+revoke all on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) from public,anon;
+grant execute on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) to authenticated;
+
+create or replace function public.stamp_shipment_document_review()
+returns trigger language plpgsql set search_path = ''
+as $
+begin
+  if new.status='approved' and old.status is distinct from 'approved' then
+    new.reviewed_by := auth.uid();
+    new.reviewed_at := now();
+  end if;
+  if new.status='sent' and old.status is distinct from 'sent' then
+    new.sent_at := now();
+  end if;
+  return new;
+end;
+$;
+drop trigger if exists shipment_documents_stamp_review on public.shipment_documents;
+create trigger shipment_documents_stamp_review before update of status on public.shipment_documents
+for each row execute function public.stamp_shipment_document_review();
+
 create or replace function public.transition_shipment_status(p_shipment_id uuid,p_new_status text,p_reason text default null)
 returns jsonb language plpgsql security definer set search_path = ''
 as $$
@@ -346,7 +412,7 @@ begin
     if p_new_status='departed' and nullif(trim(v_shipment.bill_of_lading_number),'') is null then
       raise exception 'Bill of lading number is required before departure' using errcode='22023';
     end if;
-    if p_new_status='closed' and exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status<>'approved') then
+    if p_new_status='closed' and exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status not in ('approved','sent')) then
       raise exception 'All shipment documents must be approved before closing' using errcode='22023';
     end if;
     update public.shipments set status=p_new_status,
