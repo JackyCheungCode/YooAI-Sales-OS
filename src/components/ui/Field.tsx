@@ -28,7 +28,7 @@ function useCarbonChange(
       const value = target?.value ?? detail?.value;
       if (value !== undefined) onChange({ target: { value: String(value) } });
     };
-    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-text-area-input'];
+    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-textarea-input'];
     eventNames.forEach((name) => element.addEventListener(name, notify));
     return () => eventNames.forEach((name) => element.removeEventListener(name, notify));
   }, [ref, onChange]);
@@ -82,7 +82,7 @@ export function TextAreaInput({ labelText, id, onChange, ...props }: CommonContr
   const ref = useRef<HTMLElement | null>(null);
   useCarbonChange(ref, onChange);
   const label = labelText ?? '文本内容';
-  return createElement('cds-text-area', {
+  return createElement('cds-textarea', {
     ref,
     id: id ?? generatedId,
     label,
