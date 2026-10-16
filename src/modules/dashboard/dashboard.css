@@ -84,3 +84,6 @@
 .dashboard-metrics>.cds--col{grid-column:span 1!important;min-width:0}
 @media(max-width:1055px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:671px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.dashboard-area-nav [role="tab"]{flex-shrink:0;border-radius:0;border-bottom:3px solid transparent;color:var(--cds-text-secondary);white-space:nowrap}
+.dashboard-area-nav [role="tab"][aria-selected="true"]{border-bottom-color:var(--cds-interactive);color:var(--cds-text-primary);font-weight:600}
