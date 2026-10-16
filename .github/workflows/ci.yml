@@ -2,9 +2,9 @@ name: Build and typecheck
 
 on:
   push:
-    branches: [main, feature/core-crm-relationships]
+    branches: [main]
   pull_request:
-    branches: [main, feature/core-crm-relationships]
+    branches: [main]
 
 permissions:
   contents: read
