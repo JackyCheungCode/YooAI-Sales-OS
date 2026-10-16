@@ -1,4 +1,4 @@
--- Initial CRM schema. This file is a migration draft only; it has not been applied to Supabase.
+-- Initial CRM schema. Establishes base tables and row-level security before additive module migrations.
 create table if not exists public.companies (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
