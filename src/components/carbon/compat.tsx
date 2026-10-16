@@ -84,8 +84,23 @@ export function TableHeader(props: CarbonProps) {
 export function TableCell(props: CarbonProps) {
   return createElement('cds-table-cell', props, props.children);
 }
-export function FileUploaderButton(props: CarbonProps & { onChange?: (event: any) => void }) {
-  return createElement('cds-file-uploader-button', props, props.children);
+export function FileUploaderButton({ onChange, ...props }: CarbonProps & { onChange?: (event: any) => void }) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onChange) return;
+    const handleChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ addedFiles?: FileList | File[] }>).detail;
+      const files = detail?.addedFiles;
+      onChange({
+        target: { files },
+        currentTarget: { value: '' },
+      });
+    };
+    element.addEventListener('cds-file-uploader-button-changed', handleChange);
+    return () => element.removeEventListener('cds-file-uploader-button-changed', handleChange);
+  }, [onChange]);
+  return createElement('cds-file-uploader-button', { ref, ...props }, props.children);
 }
 
 type SideNavBaseProps = CarbonProps & {
