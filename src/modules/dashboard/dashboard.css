@@ -84,3 +84,9 @@
 .dashboard-disclaimer span{margin-right:.5rem;color:var(--cds-text-primary);font-weight:600}
 @media(max-width:1055px){.dashboard-heading{align-items:flex-start}.dashboard-heading__actions{justify-content:flex-start}.dashboard-section-heading{align-items:flex-start;flex-direction:column}.dashboard-refresh{align-self:flex-start}}
 @media(max-width:671px){.dashboard-page{gap:1rem}.dashboard-heading__actions{width:100%;gap:.5rem}.dashboard-filter-panel{padding:1rem}.dashboard-filter-title{align-items:flex-start}.dashboard-filter-title>div{gap:.35rem;flex-direction:column}.dashboard-section-heading h2{font-size:1.35rem}.dashboard-metric-card{min-height:8.5rem;padding:.875rem}.dashboard-metric-card__value{font-size:1.35rem}.dashboard-panel__heading{padding:1rem}.dashboard-panel__footer{align-items:flex-start;padding:.75rem 1rem}.risk-row{align-items:flex-start;gap:.6rem;padding:.875rem 1rem;flex-wrap:wrap}.risk-main{flex-basis:calc(100% - 3.25rem)}.risk-row .cds--tag{margin-left:2.85rem}.ranking-row{padding:.75rem 1rem}.journey-flow{gap:.25rem;padding:1.25rem .75rem}.journey-step{padding:.75rem .1rem}.journey-step strong{font-size:1rem}.journey-step i{right:-.45rem}.funnel-row{grid-template-columns:4.5rem minmax(2rem,1fr) auto;gap:.4rem}.funnel-row strong{font-size:.75rem}.dashboard-disclaimer{padding:.75rem}}
+
+/* Six executive KPIs fit on one desktop row, then reflow without horizontal overflow. */
+.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.dashboard-metrics>.cds--col{grid-column:span 1!important;min-width:0}
+@media(max-width:1055px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:671px){.dashboard-metrics.cds--css-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
