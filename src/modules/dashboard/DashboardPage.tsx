@@ -1,4 +1,4 @@
-import { Column, Grid, InlineNotification, Tag, Tile } from '@carbon/react';
+import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
 import { Button } from '../../components/ui/Button';
