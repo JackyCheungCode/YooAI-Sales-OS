@@ -1,0 +1,4 @@
+/* Carbon is the single source for all design tokens. This file adds only the approved Chinese font fallback. */
+body {
+  font-family: 'IBM Plex Sans', SimSun, sans-serif;
+}
