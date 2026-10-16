@@ -165,6 +165,7 @@ declare
   v_contact_name text;
   v_title text;
   v_customer_reused boolean := false;
+  v_make_primary boolean := false;
 begin
   if v_user is null then
     raise exception 'Authentication required' using errcode = '28000';
@@ -233,14 +234,17 @@ begin
   order by created_at limit 1 for update;
 
   if v_contact.id is null then
+    select not exists (
+      select 1 from public.contacts c
+      where c.customer_id = v_customer.id and c.is_primary
+    ) into v_make_primary;
     insert into public.contacts(owner_id, customer_id, company_id, full_name, job_title, email, phone, is_primary, roles)
-    values (v_user, v_customer.id, v_customer.company_id, v_contact_name, v_lead.contact_title, v_lead.email, v_lead.phone, true, array['buyer'])
+    values (v_user, v_customer.id, v_customer.company_id, v_contact_name, v_lead.contact_title, v_lead.email, v_lead.phone, v_make_primary, array['buyer'])
     returning * into v_contact;
   else
     update public.contacts
       set full_name = coalesce(nullif(full_name, ''), v_contact_name),
-          phone = coalesce(phone, v_lead.phone),
-          is_primary = true
+          phone = coalesce(phone, v_lead.phone)
     where id = v_contact.id
     returning * into v_contact;
   end if;
