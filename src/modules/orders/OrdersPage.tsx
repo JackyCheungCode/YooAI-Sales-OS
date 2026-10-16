@@ -1,8 +1,8 @@
-import { Tile } from '@carbon/react';
-import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell, Checkbox } from '@carbon/react';
+import { Tile, Tag, Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '../../components/carbon/compat';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { useMemo, useState } from 'react';
 import { Add, Search, Renew, Document, WarningAlt, CheckmarkFilled, Send, Download, ArrowRight, Time, Calendar, Money, Copy, Edit, Close, Checkmark } from '@carbon/react/icons';
-import { Tag } from '@carbon/react';
+
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './orders.css';
