@@ -1,6 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '../layouts/AppLayout';
 import { CustomersPage } from '../modules/customers/CustomersPage';
+import { LeadsPage } from '../modules/leads/LeadsPage';
+import { AccountsPage } from '../modules/accounts/AccountsPage';
+import { ContactsPage } from '../modules/contacts/ContactsPage';
+import { OpportunitiesPage } from '../modules/opportunities/OpportunitiesPage';
+import { QuotesPage } from '../modules/quotes/QuotesPage';
+import { OrdersPage } from '../modules/orders/OrdersPage';
 import { DashboardPage } from '../modules/dashboard/DashboardPage';
 import { LoginPage } from '../modules/settings/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -12,6 +18,12 @@ export default function App() {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/customers" element={<CustomersPage />} />
+      <Route path="/accounts" element={<AccountsPage />} />
+      <Route path="/leads" element={<LeadsPage />} />
+      <Route path="/contacts" element={<ContactsPage />} />
+      <Route path="/opportunities" element={<OpportunitiesPage />} />
+      <Route path="/quotes" element={<QuotesPage />} />
+      <Route path="/orders" element={<OrdersPage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>;
