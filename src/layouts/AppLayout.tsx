@@ -1,4 +1,4 @@
-import { SideNavItems, SideNavLink } from '@carbon/react';
+import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '@carbon/react';
 import { Building, Dashboard, Help, Settings, UserMultiple } from '@carbon/react/icons';
 import type { MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
@@ -14,7 +14,7 @@ export function AppLayout() {
     navigate(path);
   };
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
-  const pageTitle = isDashboard ? '经营智控中枢' : location.pathname === '/customers' ? '客户管理' : '经营智控中枢';
+  const pageTitle = isDashboard ? '经营智控中枢' : location.pathname === '/customers' ? '客户管理' : location.pathname === '/leads' ? '线索（Lead）' : '经营智控中枢';
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -22,7 +22,10 @@ export function AppLayout() {
       <div className="workspace-label">经营工作空间</div>
       <nav className="nav-list" aria-label="主导航"><SideNavItems>
         <SideNavLink href="/dashboard" isActive={isDashboard} renderIcon={Dashboard} onClick={goTo('/dashboard')}>经营智控中枢</SideNavLink>
-        <SideNavLink href="/customers" isActive={location.pathname === '/customers'} renderIcon={UserMultiple} onClick={goTo('/customers')}>客户管理</SideNavLink>
+        <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={location.pathname === '/customers' || location.pathname === '/leads'}>
+          <SideNavMenuItem href="/customers" isActive={location.pathname === '/customers'} onClick={goTo('/customers')}>客户档案</SideNavMenuItem>
+          <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
+        </SideNavMenu>
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
         <SideNavLink href="/dashboard" renderIcon={Help} onClick={goTo('/dashboard')}>帮助中心</SideNavLink>
@@ -31,7 +34,7 @@ export function AppLayout() {
     </aside>
     <div className="app-main">
       <header className="topbar">
-        <div className="breadcrumb">经营分析 <span>/</span> <strong>{pageTitle}</strong></div>
+        <div className="breadcrumb">经营工作空间 <span>/</span> <strong>{pageTitle}</strong></div>
         <div className="topbar__actions">
           <Button variant="ghost" size="sm" renderIcon={Help} onClick={() => window.alert('帮助中心将在后续版本接入。')}>帮助</Button>
           <Button variant="ghost" size="sm" onClick={() => void signOut()}>工作账户 · 退出登录</Button>
