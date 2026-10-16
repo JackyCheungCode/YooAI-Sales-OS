@@ -1,5 +1,5 @@
 import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '../components/carbon/compat';
-import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Close } from '@carbon/react/icons';
+import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Close } from '@carbon/icons-react';
 import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
