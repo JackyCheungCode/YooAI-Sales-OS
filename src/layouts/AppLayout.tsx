@@ -28,6 +28,7 @@ export function AppLayout() {
     : location.pathname === '/orders' ? '订单（Order）'
     : location.pathname === '/shipments' ? '出运单（Shipment）'
     : location.pathname === '/payments' ? '收汇记录（Payment）'
+    : location.pathname === '/settings/ai-providers' ? 'AI 模型与数据服务'
     : '经营智控中枢';
 
   return <div className="app-shell">
@@ -52,7 +53,7 @@ export function AppLayout() {
       </SideNavItems></nav>
       <div className="sidebar-bottom"><SideNavItems>
         <SideNavLink href="/dashboard" renderIcon={Help} onClick={goTo('/dashboard')}>帮助中心</SideNavLink>
-        <SideNavLink href="/dashboard" renderIcon={Settings} onClick={goTo('/dashboard')}>系统设置</SideNavLink>
+        <SideNavLink href="/settings/ai-providers" isActive={location.pathname.startsWith('/settings')} renderIcon={Settings} onClick={goTo('/settings/ai-providers')}>系统设置</SideNavLink>
       </SideNavItems></div>
     </aside>
     <div className="app-main">
