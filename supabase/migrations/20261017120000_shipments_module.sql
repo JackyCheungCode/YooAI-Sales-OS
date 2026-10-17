@@ -325,11 +325,11 @@ insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('shipment-documents','shipment-documents',false,26214400,array['application/pdf','image/png','image/jpeg','image/webp','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
 on conflict(id) do nothing;
 drop policy if exists "shipment documents object owner upload" on storage.objects;
-create policy "shipment documents object owner upload" on storage.objects for insert to authenticated with check(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+create policy "shipment documents object owner upload" on storage.objects for insert to authenticated with check(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 drop policy if exists "shipment documents object owner read" on storage.objects;
 create policy "shipment documents object owner read" on storage.objects for select to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
 drop policy if exists "shipment documents object owner delete" on storage.objects;
-create policy "shipment documents object owner delete" on storage.objects for delete to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+create policy "shipment documents object owner delete" on storage.objects for delete to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 
 -- Create an order and its product rows atomically for the real-order entry point.
 create or replace function public.create_order_with_items(
@@ -560,7 +560,7 @@ begin
   end if;
   v_balance_pct := 100-greatest(0,least(100,coalesce((v_order.payment_terms->>'deposit_percent')::numeric,0)));
   if coalesce(v_order.payment_terms->>'balance_due_from','')='bill_of_lading' and v_balance_pct>0 then
-    v_balance_due := not exists(select 1 from public.receivable_schedules s where s.order_id=v_order.id and s.owner_id=auth.uid() and s.payment_type='balance' and s.status in ('paid','closed'));
+    v_balance_due := not exists(select 1 from public.receivable_schedules s where s.order_id=v_order.id and s.owner_id=auth.uid() and s.payment_type='balance' and s.status in ('paid','closed','received','reconciled'));
   end if;
   if v_balance_due and (not p_finance_override or nullif(trim(p_override_reason),'') is null) then
     raise exception 'Balance payment is not confirmed. Finance override and a documented reason are required.' using errcode='22023';
