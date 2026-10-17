@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef, type FormEvent } from 'react';
 import { Add, Renew, Search, WarningAlt, CheckmarkFilled, Document, Checkmark } from '@carbon/icons-react';
-import { Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification } from '../../components/carbon/compat';
+import { Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification, Grid, Column } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput, TextAreaInput } from '../../components/ui/Field';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
@@ -292,15 +292,15 @@ export function ShipmentsPage() {
     {error&&<InlineNotification kind="error" title="操作未完成" subtitle={error} hideCloseButton />}
     {notice&&<InlineNotification kind="success" title="已完成" subtitle={notice} hideCloseButton />}
 
-    <section className="shipments-kpis" aria-label="出运摘要">
-      <Tile><span>出运批次</span><strong>{shipments.length}</strong><small>数据库记录</small></Tile>
-      <Tile><span>进行中</span><strong>{activeCount}</strong><small>未关闭出运单</small></Tile>
-      <Tile><span>运输途中</span><strong>{inTransitCount}</strong><small>已开船 / 运输中</small></Tile>
-      <Tile><span>风险关注</span><strong>{riskCount}</strong><small>需检查的记录</small></Tile>
-    </section>
+    <Grid fullWidth className="shipments-kpis" aria-label="出运摘要">
+      <Column sm={2} md={2} lg={4} xlg={4}><Tile><span>出运批次</span><strong>{shipments.length}</strong><small>数据库记录</small></Tile></Column>
+      <Column sm={2} md={2} lg={4} xlg={4}><Tile><span>进行中</span><strong>{activeCount}</strong><small>未关闭出运单</small></Tile></Column>
+      <Column sm={2} md={2} lg={4} xlg={4}><Tile><span>运输途中</span><strong>{inTransitCount}</strong><small>已开船 / 运输中</small></Tile></Column>
+      <Column sm={2} md={2} lg={4} xlg={4}><Tile><span>风险关注</span><strong>{riskCount}</strong><small>需检查的记录</small></Tile></Column>
+    </Grid>
 
-    <div className="shipments-workspace">
-      <section className="shipments-list-panel">
+    <Grid fullWidth className="shipments-workspace">
+      <Column sm={4} md={3} lg={5} xlg={5}><section className="shipments-list-panel">
         <div className="shipments-panel-heading"><h2>出运记录</h2><span>{filtered.length} 条</span></div>
         <div className="shipments-list-tools">
           <div className="shipments-search"><Search size={16}/><TextInput aria-label="搜索出运单" placeholder="编号、订单、客户、目的港" value={query} onChange={e=>setQuery(e.target.value)}/></div>
@@ -309,7 +309,7 @@ export function ShipmentsPage() {
         {loading?<p className="shipments-empty">正在读取云端出运记录…</p>:filtered.length===0?<p className="shipments-empty">{error?'请检查数据库连接与迁移状态。':'暂无匹配的出运记录。请从真实订单创建第一张出运单。'}</p>:<div className="shipments-records">{filtered.map(s=><Button type="button" variant={selectedId===s.id?'secondary':'ghost'} className="shipment-record" key={s.id} onClick={()=>{setSelectedId(s.id);setActiveTab('overview');}}><div className="shipment-record-top"><strong>{s.shipment_number}</strong><Tag type={s.status==='cancelled'?'red':s.status==='delivered'||s.status==='closed'?'green':s.status==='in_transit'||s.status==='departed'?'blue':'gray'}>{statusLabel[s.status]||s.status}</Tag></div><span>{s.orders?.order_number||'—'} · {s.customers?.name||'未关联客户'}</span><small>{s.origin_port||'起运港待定'} → {s.destination_port||'目的港待定'}</small><small>ETA：{s.eta||'未安排'}</small></Button>)}</div>}
       </section>
 
-      <section className="shipments-detail-panel">
+      </section></Column><Column sm={4} md={5} lg={11} xlg={11}><section className="shipments-detail-panel">
         {!selected?<div className="shipments-empty shipments-empty--detail"><Document size={28}/><strong>选择一张出运单</strong><span>查看摘要、物流进度、明细、单证和费用。</span></div>:<>
           <div className="shipment-detail-header"><div><div className="shipments-eyebrow">{selected.shipment_number}</div><h2>{selected.customers?.name||'客户待确认'}</h2><p>订单 {selected.orders?.order_number||'—'} · {modeLabel[selected.shipping_mode]||selected.shipping_mode}</p></div><Tag type={selected.status==='cancelled'?'red':selected.status==='delivered'||selected.status==='closed'?'green':'blue'}>{statusLabel[selected.status]||selected.status}</Tag></div>
           <div className="shipment-route"><div><small>起运港</small><strong>{selected.origin_port||'待安排'}</strong></div><span aria-hidden="true">→</span><div><small>目的港</small><strong>{selected.destination_port||'待安排'}</strong></div></div>
@@ -334,8 +334,8 @@ export function ShipmentsPage() {
           {activeTab==='exceptions'&&<div className="shipment-section"><h3>异常与处理</h3><div className="shipment-inline-form"><SelectInput aria-label="异常类型" value={exceptionType} onChange={e=>setExceptionType(e.target.value)}>{[{value:'delay',label:'延误'},{value:'rolled',label:'甩柜'},{value:'inspection',label:'查验'},{value:'damage',label:'破损'},{value:'shortage',label:'短装'},{value:'wrong_goods',label:'错发'},{value:'document_error',label:'单据错误'},{value:'other',label:'其他'}].map(x=><SelectItem key={x.value} value={x.value} text={x.label}/>)}</SelectInput><TextInput aria-label="异常原因" placeholder="原因（必填）" value={exceptionReason} onChange={e=>setExceptionReason(e.target.value)}/><TextInput aria-label="处理结果" placeholder="处理措施 / 结果" value={exceptionResolution} onChange={e=>setExceptionResolution(e.target.value)}/></div><Button onClick={()=>void addException()} disabled={!exceptionReason.trim()||saving}><Add size={16}/>记录异常</Button><div className="shipment-table-wrap"><Table className="shipment-table"><TableHead><TableRow><TableHeader>类型</TableHeader><TableHeader>发生时间</TableHeader><TableHeader>原因</TableHeader><TableHeader>处理结果</TableHeader><TableHeader>状态</TableHeader></TableRow></TableHead><TableBody>{exceptions.map(x=><TableRow key={x.id}><TableCell>{x.exception_type}</TableCell><TableCell>{new Date(x.occurred_at).toLocaleString()}</TableCell><TableCell>{x.reason}</TableCell><TableCell>{x.resolution||'待处理'}</TableCell><TableCell>{x.status==='resolved'?'已解决':'处理中'}</TableCell></TableRow>)}</TableBody></Table></div></div>}
           {activeTab==='timeline'&&<div className="shipment-section"><h3>操作时间线</h3><div className="shipment-inline-form"><TextInput aria-label="时间线备注" placeholder="记录跟进情况" value={timelineDescription} onChange={e=>setTimelineDescription(e.target.value)}/><Button onClick={()=>void addTimelineEvent()} disabled={!timelineDescription.trim()||saving}><Add size={16}/>添加记录</Button></div><ol className="shipment-timeline">{events.map(e=><li key={e.id}><span className="shipment-timeline-dot"/><div><strong>{e.event_type==='status_changed'?'状态变更':e.event_type==='created'?'创建出运单':'跟进记录'}</strong><p>{e.description}</p><small>{new Date(e.created_at).toLocaleString()}</small></div></li>)}</ol>{events.length===0&&<p className="shipments-empty">暂无时间线记录。</p>}</div>}
         </>}
-      </section>
-    </div>
+      </section></Column>
+    </Grid>
 
     {createOpen&&<div className="shipment-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setCreateOpen(false);}}><section className="shipment-modal" role="dialog" aria-modal="true" aria-labelledby="shipment-create-title"><header><div><div className="shipments-eyebrow">NEW SHIPMENT</div><h2 id="shipment-create-title">新建出运单</h2></div><Button variant="ghost" onClick={()=>setCreateOpen(false)}>关闭</Button></header><form ref={createFormRef} onSubmit={saveShipment}><button type="submit" hidden aria-hidden="true" tabIndex={-1} />
       <div className="shipment-form-grid">
