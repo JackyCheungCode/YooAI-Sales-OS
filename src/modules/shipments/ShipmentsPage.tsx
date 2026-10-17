@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef, type FormEvent } from 'react';
-import { Add, Renew, Search, WarningAlt, Document } from '@carbon/icons-react';
-import { Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification, Grid, Column, ProgressIndicator, ProgressStep, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody } from '../../components/carbon/compat';
+import { Add, Renew, WarningAlt, Document } from '@carbon/icons-react';
+import { Search as CarbonSearch, Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification, Grid, Column, ProgressIndicator, ProgressStep, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput, TextAreaInput } from '../../components/ui/Field';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
@@ -331,7 +331,7 @@ export function ShipmentsPage() {
       <Column sm={4} md={3} lg={5} xlg={5}><section className="shipments-list-panel">
         <div className="shipments-panel-heading"><h2>出运记录</h2><span>{filtered.length} 条</span></div>
         <Grid fullWidth className="shipments-list-tools">
-          <Column sm={4} md={4} lg={8} xlg={8}><div className="shipments-search"><Search size={16}/><TextInput aria-label="搜索出运单" placeholder="编号、订单、客户、目的港" value={query} onChange={e=>setQuery(e.target.value)}/></div></Column>
+          <Column sm={4} md={4} lg={8} xlg={8}><CarbonSearch className="shipments-search" labelText="搜索出运单" placeholder="编号、订单、客户、目的港" value={query} onChange={e=>setQuery(e.target.value)} /></Column>
           <Column sm={4} md={4} lg={8} xlg={8}><SelectInput aria-label="按状态筛选" value={filter} onChange={e=>setFilter(e.target.value)}><SelectItem value="all" text="全部状态"/>{statuses.map(s=><SelectItem key={s.value} value={s.value} text={s.label}/>)}</SelectInput></Column>
         </Grid>
         {loading?<p className="shipments-empty">正在读取云端出运记录…</p>:filtered.length===0?<p className="shipments-empty">{error?'请检查数据库连接与迁移状态。':'暂无匹配的出运记录。请从真实订单创建第一张出运单。'}</p>:<div className="shipments-records">{filtered.map(s=><Button type="button" variant={selectedId===s.id?'secondary':'ghost'} className="shipment-record" key={s.id} onClick={()=>{setSelectedId(s.id);setActiveTab('overview');}}><div className="shipment-record-top"><strong>{s.shipment_number}</strong><Tag type={s.status==='cancelled'?'red':s.status==='delivered'||s.status==='closed'?'green':s.status==='in_transit'||s.status==='departed'?'blue':'gray'}>{statusLabel[s.status]||s.status}</Tag></div><span>{s.orders?.order_number||'—'} · {s.customers?.name||'未关联客户'}</span><small>{s.origin_port||'起运港待定'} → {s.destination_port||'目的港待定'}</small><small>ETA：{s.eta||'未安排'}</small></Button>)}</div>}
