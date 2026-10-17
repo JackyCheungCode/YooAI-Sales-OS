@@ -69,13 +69,6 @@ const metricSets: Record<Area, Metric[]> = {
   ],
 };
 
-const funnel = [
-  { name: '潜在线索', amount: '¥ 12.8M', width: 100, count: '1,248' },
-  { name: '已确认需求', amount: '¥ 8.6M', width: 78, count: '684' },
-  { name: '方案与报价', amount: '¥ 5.4M', width: 59, count: '326' },
-  { name: '商务谈判', amount: '¥ 3.2M', width: 41, count: '142' },
-  { name: '赢单', amount: '¥ 1.9M', width: 25, count: '46' },
-];
 const risks = [
   { type: '逾期回款', title: '华东区域 · 星河工业', detail: '应收 ¥ 186,000 · 已逾期 18 天', level: '高风险' },
   { type: 'SLA 超时', title: '客户支持工单 #CS-2048', detail: '首次响应超时 42 分钟 · 指派服务组待处理', level: '高风险' },
@@ -129,6 +122,27 @@ const funnelChartOptions: any = {
 };
 function FunnelChart() {
   return <div className="funnel-chart"><BarChart data={funnelChartData} options={funnelChartOptions} /></div>;
+}
+
+
+const areaPerformanceData: Record<Exclude<Area, 'overview'>, { group: string; key: string; value: number }[]> = {
+  sales: [{group:'业绩',key:'预测业绩',value:86},{group:'业绩',key:'目标业绩',value:100},{group:'业绩',key:'已签订单',value:68},{group:'业绩',key:'加权商机',value:79}],
+  orders: [{group:'订单链路',key:'商机',value:100},{group:'订单链路',key:'报价',value:72},{group:'订单链路',key:'订单',value:54},{group:'订单链路',key:'开票',value:43},{group:'订单链路',key:'回款',value:36}],
+  service: [{group:'服务',key:'按时响应',value:96},{group:'服务',key:'SLA 达成',value:97},{group:'服务',key:'一次解决',value:81},{group:'服务',key:'满意度',value:94}],
+  marketing: [{group:'渠道',key:'自然搜索',value:74},{group:'渠道',key:'付费广告',value:91},{group:'渠道',key:'合作伙伴',value:63},{group:'渠道',key:'客户推荐',value:82}],
+  commerce: [{group:'商品',key:'商品 A',value:89},{group:'商品',key:'商品 B',value:72},{group:'商品',key:'商品 C',value:61},{group:'商品',key:'商品 D',value:48}],
+};
+const areaPerformanceOptions: any = {
+  axes: {
+    left: { mapsTo: 'key', scaleType: 'labels', title: '指标' },
+    bottom: { mapsTo: 'value', scaleType: 'linear', title: '达成率（%）' },
+  },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '20rem',
+};
+function AreaPerformanceChart({ area }: { area: Exclude<Area, 'overview'> }) {
+  return <BarChart data={areaPerformanceData[area]} options={areaPerformanceOptions} />;
 }
 
 export function DashboardPage() {
@@ -187,7 +201,7 @@ export function DashboardPage() {
       <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>月度收入趋势</h3><p>近 8 个月 · 按确认收入统计</p></div><Tag type="green">持续增长</Tag></div><TrendChart/><div className="dashboard-panel__footer"><span>收入趋势用于观察经营变化，不代表已连接实时财务数据。</span><Button type="button" onClick={()=>showDrilldown('月度收入趋势')}>下钻分析 ↗</Button></div></Tile></Column>
       <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>销售漏斗</h3><p>金额与阶段分布</p></div><Button type="button" variant="ghost" className="text-action" onClick={()=>setArea('sales')}>销售分析 ↗</Button></div><FunnelChart/><div className="funnel-summary"><div><span>漏斗总额</span><strong>¥ 12.84M</strong></div><div><span>预计赢单金额</span><strong>¥ 1.90M</strong></div></div></Tile></Column>
     </Grid> : <Grid fullWidth className="dashboard-charts">
-      <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'业绩预测 vs 目标':area==='orders'?'订单到回款全链路':area==='service'?'工单与 SLA 趋势':area==='marketing'?'营销渠道表现':'线上交易表现'}</h3><p>按所选时间与全局筛选条件汇总</p></div><Tag type="blue">趋势分析</Tag></div>{area==='orders'?<div className="journey-flow">{['商机','报价','订单','开票','回款'].map((s,i)=><div className="journey-step" key={s}><span>{s}</span><strong>{['100%','72%','54%','43%','36%'][i]}</strong>{i<4&&<i>→</i>}</div>)}</div>:area==='service'?<div className="service-bars">{[['按时响应',96],['SLA 达成',97],['一次解决',81],['满意度',94]].map(([name,val])=><div className="service-bar" key={String(name)}><span>{name}</span><div><i style={{width:String(val)+'%'}}/></div><strong>{val}%</strong></div>)}</div>:<div className="bar-comparison">{(area==='sales'?[['预测业绩',86],['目标业绩',100],['已签订单',68],['加权商机',79]]:area==='marketing'?[['自然搜索',74],['付费广告',91],['合作伙伴',63],['客户推荐',82]]:[['商品 A',89],['商品 B',72],['商品 C',61],['商品 D',48]]).map(([label,val])=><div className="comparison-bar" key={String(label)}><span>{label}</span><div><i style={{width:String(val)+'%'}}/></div><strong>{val}%</strong></div>)}</div>}<div className="dashboard-panel__footer"><span>图表 · 数据接口接入后按实际业务记录计算</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>查看分析明细 ↗</Button></div></Tile></Column>
+      <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'业绩预测 vs 目标':area==='orders'?'订单到回款全链路':area==='service'?'工单与 SLA 趋势':area==='marketing'?'营销渠道表现':'线上交易表现'}</h3><p>按所选时间与全局筛选条件汇总</p></div><Tag type="blue">趋势分析</Tag></div><AreaPerformanceChart area={area as Exclude<Area, 'overview'>} /><div className="dashboard-panel__footer"><span>图表 · 数据接口接入后按实际业务记录计算</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>查看分析明细 ↗</Button></div></Tile></Column>
       <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'销售个人排名':area==='orders'?'回款账龄分布':area==='service'?'坐席负载概览':area==='marketing'?'客户分群价值':'商品表现排行'}</h3><p>重点指标与待处理事项</p></div></div>{(area==='sales'?[['陈经理','¥ 680K'],['林经理','¥ 524K'],['王经理','¥ 416K'],['赵经理','¥ 308K']]:area==='orders'?[['未逾期','¥ 1.09M'],['1–30 天','¥ 126K'],['31–60 天','¥ 42K'],['60 天以上','¥ 18K']]:area==='service'?[['服务组 A','负载 82%'],['服务组 B','负载 74%'],['服务组 C','负载 68%'],['服务组 D','负载 51%']]:area==='marketing'?[['高价值客户','186 家'],['成长客户','524 家'],['待培育线索','1,248 条'],['流失预警','23 家']]:[['商品 A','¥ 286K'],['商品 B','¥ 218K'],['商品 C','¥ 164K'],['商品 D','¥ 98K']]).map(([name,val],i)=><Button type="button" variant="ghost" className="ranking-row" key={name} onClick={()=>showDrilldown(name)}><span className="ranking-number">{String(i+1).padStart(2,'0')}</span><span>{name}</span><strong>{val}</strong><span className="ranking-arrow">↗</span></Button>)}<div className="dashboard-panel__footer"><span>选择条目查看对应明细</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>全部明细 ↗</Button></div></Tile></Column>
     </Grid>}
 
