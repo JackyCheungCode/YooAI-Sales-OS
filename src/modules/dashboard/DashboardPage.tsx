@@ -190,7 +190,7 @@ export function DashboardPage() {
       </Grid>
     </Tile>
 
-    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} selectedIndex={areas.findIndex(item => item.id === area)} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel">{item.label}</cds-tab>)}</cds-tabs>
+    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel">{item.label}</cds-tab>)}</cds-tabs>
 
     <div id="dashboard-area-panel" role="tabpanel" aria-label={activeTitle}>
     <div className="dashboard-section-heading"><div><div className="eyebrow">BUSINESS PERFORMANCE</div><h2>{activeTitle}</h2><p>{area==='overview'?'核心经营指标、收入走势与需要管理层关注的风险。':'当前板块的关键指标与经营分析；选择图表或风险项目可进入对应明细。'}</p></div><div className="dashboard-refresh"><span className="refresh-dot"/><span>视图刷新于 {updatedAt}</span></div></div>
