@@ -93,7 +93,7 @@ const revenueTrendOptions: any = {
   },
   legend: { enabled: false },
   theme: 'g10',
-  height: '320px',
+  height: '20rem',
 };
 function TrendChart() {
   return <div className="dash-chart">
@@ -118,7 +118,7 @@ const funnelChartOptions: any = {
   bars: { orientation: 'horizontal' },
   legend: { enabled: false },
   theme: 'g10',
-  height: '320px',
+  height: '20rem',
 };
 function FunnelChart() {
   return <div className="funnel-chart"><BarChart data={funnelChartData} options={funnelChartOptions} /></div>;
