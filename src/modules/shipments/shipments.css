@@ -75,10 +75,10 @@
 .shipment-modal h2{margin:0;font-size:var(--cds-heading-03-font-size)}
 .shipment-modal h3{margin:var(--cds-spacing-05) 0 0;font-size:var(--cds-heading-compact-01-font-size)}
 .shipment-modal form{display:flex;flex-direction:column;gap:var(--cds-spacing-04);min-width:0}
-.shipment-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--cds-spacing-04)}
+.shipment-form-grid{min-width:0}
 .shipment-form-grid label,.shipment-form-wide{display:flex;flex-direction:column;gap:var(--cds-spacing-02);min-width:0;color:var(--cds-text-secondary)}
 .shipment-form-grid cds-text-input,.shipment-form-grid cds-select,.shipment-form-wide cds-textarea{width:100%;min-width:0}
 .shipment-form-wide{width:100%}
 .shipment-modal form>footer{display:flex;justify-content:flex-end;gap:var(--cds-spacing-03);padding-top:var(--cds-spacing-04);border-top:1px solid var(--cds-border-subtle-01)}
-@media(max-width:72rem){.shipment-milestones{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:var(--cds-spacing-04)}.shipment-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:56rem){.shipments-heading{flex-direction:column}.shipments-heading-actions{width:100%}.shipments-workspace{grid-template-columns:minmax(0,1fr)}.shipments-records{max-height:24rem}.shipment-facts{grid-template-columns:minmax(0,1fr)}.shipment-inline-form{grid-template-columns:minmax(0,1fr)}.shipment-form-grid{grid-template-columns:minmax(0,1fr)}.shipment-milestones{grid-template-columns:repeat(3,minmax(0,1fr))}.shipment-detail-header{flex-direction:column}.shipment-action-row{justify-content:flex-start}}
+@media(max-width:72rem){.shipment-milestones{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:var(--cds-spacing-04)}}
+@media(max-width:56rem){.shipments-heading{flex-direction:column}.shipments-heading-actions{width:100%}.shipments-records{max-height:24rem}.shipment-facts{grid-template-columns:minmax(0,1fr)}.shipment-inline-form{grid-template-columns:minmax(0,1fr)}.shipment-form-grid{grid-template-columns:minmax(0,1fr)}.shipment-milestones{grid-template-columns:repeat(3,minmax(0,1fr))}.shipment-detail-header{flex-direction:column}.shipment-action-row{justify-content:flex-start}}
