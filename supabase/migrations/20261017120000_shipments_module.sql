@@ -334,6 +334,14 @@ drop policy if exists "shipment documents object owner upload" on storage.object
 create policy "shipment documents object owner upload" on storage.objects for insert to authenticated with check(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 drop policy if exists "shipment documents object owner read" on storage.objects;
 create policy "shipment documents object owner read" on storage.objects for select to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
+drop policy if exists "shipment documents object customer read" on storage.objects;
+create policy "shipment documents object customer read" on storage.objects for select to authenticated
+using(bucket_id='shipment-documents' and exists(
+  select 1 from public.shipment_documents d
+  join public.shipments s on s.id=d.shipment_id
+  join public.customers c on c.id=s.customer_id
+  where d.storage_path=storage.objects.name and c.owner_id=(select auth.uid())
+));
 drop policy if exists "shipment documents object owner delete" on storage.objects;
 create policy "shipment documents object owner delete" on storage.objects for delete to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 
