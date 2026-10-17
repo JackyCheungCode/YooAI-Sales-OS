@@ -220,7 +220,7 @@ export function ShipmentsPage() {
     if (newId) setSelectedId(newId);
   };
   const updateStatus = async (next:ShipmentStatus,reason?:string) => {
-    if (!supabase||!selected||saving) return;
+    if (!supabase||!selected||saving||!canEditSelected) return;
     setSaving(true);setError('');setNotice('');
     const {error:statusError}=await supabase.rpc('transition_shipment_status',{p_shipment_id:selected.id,p_new_status:next,p_reason:next==='cancelled'?reason??null:null});
     setSaving(false);
@@ -243,7 +243,7 @@ export function ShipmentsPage() {
     await loadShipments(selected.id);
   };
   const saveLogistics = async () => {
-    if(!supabase||!selected||saving)return;
+    if(!supabase||!selected||saving||!canEditSelected)return;
     setSaving(true);setError('');setNotice('');
     const d=logisticsDraft;
     const {error:saveError}=await supabase.rpc('update_shipment_logistics',{
@@ -259,7 +259,7 @@ export function ShipmentsPage() {
     setNotice('物流信息已保存至数据库。');await loadShipments(selected.id);
   };
   const addDocument = async () => {
-    if(!supabase||!selected||!docFile||saving)return;
+    if(!supabase||!selected||!docFile||saving||!canEditSelected)return;
     setSaving(true);setError('');
     const safeName=docFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
     const path=selected.owner_id+'/'+selected.id+'/'+crypto.randomUUID()+'-'+safeName;
@@ -270,7 +270,7 @@ export function ShipmentsPage() {
     setDocFile(null);setNotice('单证已上传。');await loadDetails(selected.id);
   };
   const updateDocumentStatus=async(id:string,status:string)=>{
-    if(!supabase||saving)return;
+    if(!supabase||saving||!selected||!canEditSelected)return;
     if(status==='sent'&&selected?.release_status!=='ready_to_send'){setError('必须先由财务确认可寄单，才能将单证标记为已寄出。');return;}
     setSaving(true);setError('');
     const {error:changeError}=await supabase.from('shipment_documents').update({status}).eq('id',id);
@@ -286,19 +286,19 @@ export function ShipmentsPage() {
     setCostAmount('');setCostSupplier('');setCostPaid('no');setNotice('费用已记录。');await loadDetails(selected.id);
   };
   const updateExceptionStatus=async(id:string,status:'open'|'investigating'|'resolved')=>{
-    if(!supabase||saving||!selected)return;setSaving(true);setError('');
+    if(!supabase||saving||!selected||!canEditSelected)return;setSaving(true);setError('');
     const {error:updateError}=await supabase.from('shipment_exceptions').update({status}).eq('id',id);
     setSaving(false);if(updateError){setError('更新异常状态失败：'+updateError.message);return;}
     setNotice('异常处理状态已更新。');await loadDetails(selected.id);
   };
   const addException=async()=>{
-    if(!supabase||!selected||saving||!exceptionReason.trim())return;setSaving(true);setError('');
+    if(!supabase||!selected||saving||!canEditSelected||!exceptionReason.trim())return;setSaving(true);setError('');
     const {error:insertError}=await supabase.from('shipment_exceptions').insert({shipment_id:selected.id,owner_id:selected.owner_id,exception_type:exceptionType,reason:exceptionReason.trim(),resolution:exceptionResolution||null});
     setSaving(false);if(insertError){setError('保存异常失败：'+insertError.message);return;}
     setExceptionReason('');setExceptionResolution('');setNotice('异常已记录。');await loadDetails(selected.id);
   };
   const addTimelineEvent=async()=>{
-    if(!supabase||!selected||saving||!timelineDescription.trim())return;setSaving(true);setError('');
+    if(!supabase||!selected||saving||!canEditSelected||!timelineDescription.trim())return;setSaving(true);setError('');
     const {error:insertError}=await supabase.from('shipment_events').insert({shipment_id:selected.id,owner_id:selected.owner_id,event_type:'note',description:timelineDescription.trim()});
     setSaving(false);if(insertError){setError('保存时间线失败：'+insertError.message);return;}
     setTimelineDescription('');setNotice('时间线记录已添加。');await loadDetails(selected.id);
