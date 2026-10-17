@@ -293,6 +293,7 @@ declare
   v_batch integer;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('','followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot create shipments' using errcode='42501'; end if;
   if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 then raise exception 'At least one shipment item is required' using errcode='22023'; end if;
   select * into v_order from public.orders where id=p_order_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Order not found or access denied' using errcode='P0002'; end if;
@@ -358,6 +359,7 @@ as $body$
 declare v_shipment public.shipments%rowtype;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('','followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot edit logistics information' using errcode='42501'; end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot be edited' using errcode='22023'; end if;
@@ -443,6 +445,7 @@ declare
   v_item record;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('','followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot change shipment status' using errcode='42501'; end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot change status' using errcode='22023'; end if;
@@ -494,7 +497,17 @@ grant execute on function public.transition_shipment_status(uuid,text,text) to a
 create or replace function public.stamp_shipment_document_review()
 returns trigger language plpgsql set search_path = ''
 as $body$
+declare v_role text := coalesce(auth.jwt()->'app_metadata'->>'role','');
 begin
+  if v_role not in ('','documentation','admin','executive','manager','followup','finance') then
+    raise exception 'Only documentation, follow-up, finance, or management roles may edit shipment documents' using errcode='42501';
+  end if;
+  if tg_op='INSERT' then
+    if new.status not in ('pending','prepared') then
+      raise exception 'New documents must start as pending or prepared' using errcode='22023';
+    end if;
+    return new;
+  end if;
   if new.status='approved' and old.status is distinct from 'approved' then
     new.reviewed_by := auth.uid();
     new.reviewed_at := now();
@@ -509,6 +522,8 @@ begin
 end;
 $body$;
 drop trigger if exists shipment_documents_stamp_review on public.shipment_documents;
+drop trigger if exists shipment_documents_stamp_review_insert on public.shipment_documents;
+create trigger shipment_documents_stamp_review_insert before insert on public.shipment_documents for each row execute function public.stamp_shipment_document_review();
 create trigger shipment_documents_stamp_review before update of status on public.shipment_documents for each row execute function public.stamp_shipment_document_review();
 
 create or replace function public.sync_shipment_release_sent()
