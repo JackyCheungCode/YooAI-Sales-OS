@@ -70,3 +70,11 @@
 ## 8. 验证状态
 
 本仓库已安装 `@carbon/web-components`、Carbon g10 主题和 SimSun 字体栈扩展，并持续将现有控件迁移为 `cds-*` Web Components。必须在本地依次运行 `npm install`、`npm run typecheck`、`npm run build`，再进行浏览器视觉和交互回归；在这些检查实际通过之前，不得宣称完整迁移已验收。
+
+
+## 9. 全站 Carbon 组件合规补充（强制）
+
+- 全站控件、UI Shell 导航、固定五级文字层级、语义颜色、spacing token、表格对齐、响应式及图表规范，统一遵守 [CARBON-COMPONENT-COMPLIANCE.md](./CARBON-COMPONENT-COMPLIANCE.md)。
+- 该补充文档覆盖所有现有路由页面、公共组件、组件注册/兼容层和全部样式文件，作为后续开发 Prompt、代码审查与合并验收标准。
+- 当前依赖版本为 `@carbon/web-components@2.64.0`。必须逐个核对实际存在的标签、属性和事件；若需求中写出的标签名不是该版本的正式 API，不得创建空壳标签或假装已完成迁移，应采用官方等价组件并在审计清单注明。
+- 未实际执行并通过的 `npm run typecheck`、`npm run build` 和浏览器回归，必须标记为“未验证”；禁止宣称全站已验收，也不得擅自部署。
