@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useRef, type FormEvent } from 'react';
-import { Add, Renew, WarningAlt, Document } from '@carbon/icons-react';
+import { Add, Renew, WarningAlt, Document } from '../../components/carbon/icons';
 import { Search as CarbonSearch, Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification, Grid, Column, ProgressIndicator, ProgressStep, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput, TextAreaInput } from '../../components/ui/Field';
