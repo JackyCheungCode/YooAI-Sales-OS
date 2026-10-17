@@ -20,7 +20,7 @@
 .shipments-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:var(--cds-spacing-03);padding:var(--cds-spacing-05);border-bottom:1px solid var(--cds-border-subtle-01)}
 .shipments-panel-heading h2,.shipment-detail-header h2{margin:0;font-size:var(--cds-heading-compact-02-font-size);font-weight:600}
 .shipments-panel-heading>span{color:var(--cds-text-secondary)}
-.shipments-list-tools{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--cds-spacing-03);padding:var(--cds-spacing-04)}
+.shipments-list-tools{min-width:0;padding:var(--cds-spacing-04)}
 .shipments-search{display:flex;align-items:center;gap:var(--cds-spacing-03);min-width:0}
 .shipments-search cds-text-input{flex:1;min-width:0}
 .shipments-records{display:flex;flex-direction:column;gap:var(--cds-spacing-02);padding:0 var(--cds-spacing-03) var(--cds-spacing-03);max-height:70vh;overflow:auto}
