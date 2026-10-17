@@ -2,7 +2,7 @@ import { InlineNotification } from '../../components/carbon/compat';
 import { TextInput } from '../../components/ui/Field';
 import { useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../app/AuthContext';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -38,13 +38,18 @@ function LoginShell({ children }: { children: ReactNode }) {
 
 export function LoginPage() {
   const { session, loading, signIn } = useAuth();
+  const location = useLocation();
+  const requestedRoute = location.state?.from as { pathname?: string; search?: string; hash?: string } | undefined;
+  const redirectTo = requestedRoute?.pathname
+    ? `${requestedRoute.pathname}${requestedRoute.search ?? ''}${requestedRoute.hash ?? ''}`
+    : '/customers';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  if (session) return <Navigate to="/customers" replace />;
+  if (session) return <Navigate to={redirectTo} replace />;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

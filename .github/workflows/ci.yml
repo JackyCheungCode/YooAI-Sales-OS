@@ -2,7 +2,7 @@ name: Build and typecheck
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/shipment-carbon-module]
   pull_request:
     branches: [main]
 
@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
