@@ -15,10 +15,10 @@
 
 | 使用场景 | 强制目标 |
 |---|---|
-| 卡片、KPI、详情区、图表外框、弹窗内卡片 | `cds-card`；若当前官方版本未提供，核对官方可用容器并记录例外，禁止无说明地自制卡片 |
+| 卡片、KPI、详情区、图表外框、弹窗内卡片 | 本项目 `@carbon/web-components@2.64.0` 现有封装使用官方 `cds-tile`（`Tile`）；先核验包内是否存在 `cds-card`，若不存在，不得注册空标签，统一使用 `cds-tile` 并记录 API 差异 |
 | 操作按钮 | `cds-button`，按语义使用 primary、secondary、ghost；危险操作按官方支持的危险语义处理 |
 | 数据表格 | `cds-table` 及官方表头、行、单元格子组件；不得用 div/grid 模拟数据表 |
-| 普通文本输入 | 负责人要求 `cds-input`；必须核对当前版本的正式标签。当前版本若正式组件名不同，使用官方文本输入组件并记录差异 |
+| 普通文本输入 | 当前代码使用官方 `cds-text-input`；Carbon Web Components 版本若未提供 `cds-input`，以 `cds-text-input` 作为正式等价组件 |
 | 搜索输入 | Carbon 官方搜索组件；带搜索图标前缀和清除能力，优先使用原生属性/插槽，不得用 div 画搜索框 |
 | 数字输入 | `cds-number-input` 或当前版本正式等价组件 |
 | 单选下拉 | `cds-select` + 官方 select item 子组件 |
@@ -60,15 +60,16 @@
 - 顶部通栏：`cds-header`。
 - 产品名称：`cds-header-name`。
 - 顶部全局操作：`cds-header-global-action`，例如个人中心、退出登录。
-- 汉堡菜单：`cds-hamburger`。
+- 菜单开关：当前代码使用 Carbon UI Shell 的 `cds-header-menu-button`。只有在安装版本正式导出 `cds-hamburger` 时才可使用该标签；不得创建虚假标签。
 - 左侧导航容器：`cds-side-nav`。
 - 可折叠分组：`cds-side-nav-menu`。
-- 导航项：`cds-side-nav-menu-item`（或当前版本文档指定的 UI Shell 导航项组件）。
+- 导航项：`cds-side-nav-menu-item`；主导航和分组子项均需使用当前版本支持的 UI Shell 原生导航项，并为当前页设置 `aria-current="page"`。
 - 导航分隔：`cds-side-nav-divider`（若当前版本没有独立标签，使用官方 UI Shell 分隔模式并记录）。
 - 右侧滑出面板：`cds-side-panel`（仅在当前版本存在时使用；否则核对官方对应模式）。
 - 面包屑：`cds-breadcrumb`，禁止手写“经营工作空间 / 页面名称”作为替代导航组件。
 - 页面内选项卡：`cds-tabs` + `cds-tab`。
 - 当前页面菜单项必须设置原生 `aria-current="page"`；不得仅通过自定义背景色模拟激活状态。
+- 负责人指定的 `cds-card`、`cds-input`、`cds-hamburger` 等名称必须先与 `@carbon/web-components@2.64.0` 的实际导出核对；标签名称相似不等于组件存在。当前代码的已知等价映射为 `cds-tile`、`cds-text-input`、`cds-header-menu-button`。
 - 展开/收起和移动端导航状态必须由 UI Shell 组件的公开 API/事件驱动，禁止另写 div 侧栏开关逻辑。
 - 必须验证桌面、平板、手机、键盘焦点、当前页状态、路由跳转、浏览器刷新和退出登录。
 
