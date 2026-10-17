@@ -608,7 +608,16 @@ begin
       raise exception 'Shipment status must advance one step at a time' using errcode='22023';
     end if;
     if p_new_status='booked' and nullif(trim(v_shipment.booking_number),'') is null then raise exception 'Booking number is required before confirming booking' using errcode='22023'; end if;
-    if p_new_status='departed' and nullif(trim(v_shipment.bill_of_lading_number),'') is null then raise exception 'Bill of lading number is required before departure' using errcode='22023'; end if;
+    if p_new_status='containerized' and nullif(trim(v_shipment.container_numbers),'') is null
+      and not exists(select 1 from public.shipment_items si where si.shipment_id=p_shipment_id and si.package_count>0) then
+      raise exception 'Container number or package count is required before marking cargo loaded' using errcode='22023';
+    end if;
+    if p_new_status='customs_cleared' and not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='报关资料' and d.status='approved') then
+      raise exception 'Approved customs documents are required before customs clearance can be confirmed' using errcode='22023';
+    end if;
+    if p_new_status='departed' and nullif(trim(v_shipment.bill_of_lading_number),'') is null and nullif(trim(v_shipment.tracking_number),'') is null then
+      raise exception 'Bill of lading or transport tracking number is required before departure' using errcode='22023';
+    end if;
     if p_new_status='closed' and v_shipment.release_status<>'sent' then raise exception 'All documents must be sent before closing the shipment' using errcode='22023'; end if;
     if p_new_status='closed' and (not exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id) or exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status<>'sent')) then
       raise exception 'All shipment documents must be present and sent before closing' using errcode='22023';
