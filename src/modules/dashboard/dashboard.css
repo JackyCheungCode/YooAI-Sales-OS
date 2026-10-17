@@ -9,7 +9,7 @@
 .dashboard-filters{row-gap:var(--cds-spacing-05)}
 .dashboard-filters cds-column{min-width:0}
 .dashboard-filters cds-select{width:100%}
-.dashboard-area-nav{display:flex;gap:var(--cds-spacing-02);overflow-x:auto;border-bottom:1px solid var(--cds-border-subtle-01);scrollbar-width:thin}
+
 .dashboard-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--cds-spacing-05);margin:var(--cds-spacing-03) 0 var(--cds-spacing-02)}
 .dashboard-section-heading h2{margin:0;font-size:var(--cds-type-heading-02);font-weight:600}
 .dashboard-section-heading p{margin:var(--cds-spacing-03) 0 0;color:var(--cds-text-secondary)}
