@@ -12,7 +12,7 @@ type Shipment = {
   status: ShipmentStatus; release_status: 'pending'|'ready_to_send'|'sent'|'blocked'; shipping_mode: string; incoterm: string | null; origin_port: string | null;
   destination_port: string | null; latest_ship_date: string | null; etd: string | null; eta: string | null;
   actual_arrival_date: string | null; consignee: string | null; notify_party: string | null;
-  responsible_name: string | null; booking_number: string | null; bill_of_lading_number: string | null;
+  responsible_name: string | null; followup_name: string | null; documentation_name: string | null; booking_number: string | null; bill_of_lading_number: string | null;
   vessel_voyage: string | null; updated_at: string; container_numbers: string | null; seal_numbers: string | null; bill_of_lading_type: string | null; carrier_name: string | null; shipping_line: string | null; container_type: string | null; container_count: number; transshipment_info: string | null; tracking_number: string | null; tracking_url: string | null; notes: string | null; actual_departure_date: string | null; customer_pickup_date: string | null; created_at: string; customers?: { name: string } | null;
   orders?: { order_number: string; status: string } | null;
 };
