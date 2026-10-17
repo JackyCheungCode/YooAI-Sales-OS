@@ -54,14 +54,13 @@ export function Search({ labelText, onChange, ...props }: CarbonProps & { labelT
     if (!element || !onChange) return;
     const notify = (event: Event) => {
       const target = event.target as HTMLElement & { value?: string };
-      if (target.value !== undefined) onChange({ target: { value: target.value } });
+      const detail = (event as CustomEvent<{ value?: string }>).detail;
+      const value = target.value ?? detail?.value;
+      if (value !== undefined) onChange({ target: { value: String(value) } });
     };
-    element.addEventListener('input', notify);
-    element.addEventListener('change', notify);
-    return () => {
-      element.removeEventListener('input', notify);
-      element.removeEventListener('change', notify);
-    };
+    const eventNames = ['input', 'change', 'cds-search-input'];
+    eventNames.forEach((name) => element.addEventListener(name, notify));
+    return () => eventNames.forEach((name) => element.removeEventListener(name, notify));
   }, [onChange]);
   return createElement('cds-search', { ref, labelText, ...props });
 }
