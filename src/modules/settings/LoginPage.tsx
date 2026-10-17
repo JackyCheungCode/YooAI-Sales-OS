@@ -136,7 +136,7 @@ export function LoginPage() {
         <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
         <Button
           type="button"
-          onClick={() => formRef.current?.requestSubmit()}
+          onClick={() => { const form = formRef.current; if (!form) return; if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.querySelector('button[type="submit"]')?.click(); }}
           disabled={busy}
           className="auth-submit"
         >
