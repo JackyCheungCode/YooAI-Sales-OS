@@ -447,10 +447,12 @@ begin
     update public.order_items set shipped_quantity=shipped_quantity+v_quantity where id=v_order_item.id;
   end loop;
   update public.orders o set status=case
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity)
-      and exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'partially_shipped'
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then o.status
-    else 'shipped' end,
+    when not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity)
+      and exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status in ('departed','in_transit','arrived','delivered','closed'))
+      and not exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status not in ('delivered','closed','cancelled')) then 'shipped'
+    when exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status in ('departed','in_transit','arrived','delivered','closed')) then 'partially_shipped'
+    when exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status<>'cancelled') then 'preparing'
+    else 'confirmed' end,
     updated_at=now()
   where o.id=v_order.id and o.owner_id=auth.uid();
   if p_latest_ship_date is not null then
@@ -638,12 +640,12 @@ begin
     on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
   end if;
   update public.orders o set status=case
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0)
-      and exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then 'partially_shipped'
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id)
-      and not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then 'shipped'
-    when not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'confirmed'
-    else o.status end,updated_at=now()
+    when not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity)
+      and exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status in ('departed','in_transit','arrived','delivered','closed'))
+      and not exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status not in ('delivered','closed','cancelled')) then 'shipped'
+    when exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status in ('departed','in_transit','arrived','delivered','closed')) then 'partially_shipped'
+    when exists(select 1 from public.shipments s where s.order_id=o.id and s.owner_id=o.owner_id and s.status<>'cancelled') then 'preparing'
+    else 'confirmed' end,updated_at=now()
   where o.id=v_shipment.order_id and o.owner_id=auth.uid();
   return jsonb_build_object('shipment_id',p_shipment_id,'status',p_new_status);
 end;
