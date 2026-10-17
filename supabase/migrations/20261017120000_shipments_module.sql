@@ -70,6 +70,13 @@ create index if not exists shipments_owner_created_idx on public.shipments(owner
 create index if not exists shipments_order_idx on public.shipments(owner_id,order_id);
 create index if not exists shipments_status_eta_idx on public.shipments(owner_id,status,eta);
 
+alter table public.shipments
+  add column if not exists release_status text not null default 'pending'
+    check(release_status in ('pending','ready_to_send','sent','blocked')),
+  add column if not exists release_confirmed_by uuid references auth.users(id),
+  add column if not exists release_confirmed_at timestamptz,
+  add column if not exists release_override_reason text;
+
 create table if not exists public.shipment_items (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
@@ -429,6 +436,55 @@ $;
 drop trigger if exists shipment_documents_stamp_review on public.shipment_documents;
 create trigger shipment_documents_stamp_review before update of status on public.shipment_documents
 for each row execute function public.stamp_shipment_document_review();
+
+create or replace function public.confirm_shipment_release(
+  p_shipment_id uuid,
+  p_finance_override boolean default false,
+  p_override_reason text default null
+) returns jsonb
+language plpgsql security definer set search_path = ''
+as $
+declare
+  v_shipment public.shipments%rowtype;
+  v_order public.orders%rowtype;
+  v_balance_due boolean := false;
+  v_balance_pct numeric := 100;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('finance','admin','executive') then
+    raise exception 'Finance confirmation is required to release shipping documents' using errcode='42501';
+  end if;
+  select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
+  if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
+  if v_shipment.status in ('cancelled','closed') then raise exception 'Cancelled or closed shipments cannot be released' using errcode='22023'; end if;
+  if not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.status='approved') then
+    raise exception 'At least one shipment document must be approved before release' using errcode='22023';
+  end if;
+  if exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.status not in ('approved')) then
+    raise exception 'All shipment documents must be approved before release' using errcode='22023';
+  end if;
+  select * into v_order from public.orders where id=v_shipment.order_id and owner_id=auth.uid();
+  if not found then raise exception 'Related order not found' using errcode='P0002'; end if;
+  v_balance_pct := 100-greatest(0,least(100,coalesce((v_order.payment_terms->>'deposit_percent')::numeric,0)));
+  if coalesce(v_order.payment_terms->>'balance_due_from','')='bill_of_lading' and v_balance_pct>0 then
+    v_balance_due := not exists(select 1 from public.receivable_schedules s where s.order_id=v_order.id and s.owner_id=auth.uid() and s.payment_type='balance' and s.status in ('paid','closed'));
+  end if;
+  if v_balance_due and (not p_finance_override or nullif(trim(p_override_reason),'') is null) then
+    update public.shipments set release_status='blocked' where id=p_shipment_id;
+    raise exception 'Balance payment is not confirmed. Finance override and a documented reason are required.' using errcode='22023';
+  end if;
+  update public.shipments set release_status='ready_to_send',release_confirmed_by=auth.uid(),release_confirmed_at=now(),
+    release_override_reason=case when v_balance_due then trim(p_override_reason) else null end
+  where id=p_shipment_id;
+  insert into public.shipment_events(owner_id,shipment_id,event_type,description,metadata)
+  values(auth.uid(),p_shipment_id,'release_confirmed',
+    case when v_balance_due then '财务例外确认放单：尾款尚未确认到账。' else '财务确认单证齐套，出运单可寄单。' end,
+    jsonb_build_object('balance_due_unconfirmed',v_balance_due,'override_reason',case when v_balance_due then trim(p_override_reason) else null end));
+  return jsonb_build_object('shipment_id',p_shipment_id,'release_status','ready_to_send','balance_due_unconfirmed',v_balance_due);
+end;
+$;
+revoke all on function public.confirm_shipment_release(uuid,boolean,text) from public,anon;
+grant execute on function public.confirm_shipment_release(uuid,boolean,text) to authenticated;
 
 create or replace function public.transition_shipment_status(p_shipment_id uuid,p_new_status text,p_reason text default null)
 returns jsonb language plpgsql security definer set search_path = ''
