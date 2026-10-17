@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Add, Renew, Email, Phone, Chat, UserMultiple, WarningAlt, Calendar, Time, Link as LinkIcon, Close, CheckmarkFilled, Document } from '@carbon/icons-react';
-import { Search as CarbonSearch, Tag, Modal, ModalHeader, ModalHeading, ModalBody }, Tile from '../../components/carbon/compat';
+import { Search as CarbonSearch, Tag, Modal, ModalHeader, ModalHeading, ModalBody, Tile } from '../../components/carbon/compat';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
