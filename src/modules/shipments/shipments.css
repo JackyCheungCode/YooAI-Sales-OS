@@ -12,18 +12,19 @@
 .shipments-alert--error{border-inline-start-color:var(--cds-text-danger)}
 .shipments-alert--success{border-inline-start-color:var(--cds-text-success)}
 .shipments-kpis{min-width:0}
-.shipments-kpis cds-tile{display:flex;flex-direction:column;gap:var(--cds-spacing-03);min-width:0}
+.shipments-kpis cds-column{display:flex;min-width:0}
+.shipments-kpis .shipment-kpi-card{display:flex;flex:1;flex-direction:column;gap:var(--cds-spacing-03);min-width:0;width:100%}
 .shipments-kpis cds-tile span,.shipments-kpis cds-tile small{color:var(--cds-text-secondary)}
 .shipments-kpis cds-tile strong{font-size:var(--cds-type-expressive-heading-03);}
 .shipments-workspace{min-width:0}
-.shipments-list-panel,.shipments-detail-panel{min-width:0;}
+.shipments-list-panel,.shipments-detail-panel{min-width:0;}.shipments-list-panel{overflow:visible}
 .shipments-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:var(--cds-spacing-03);padding:var(--cds-spacing-05);border-bottom:1px solid var(--cds-border-subtle-01)}
 .shipments-panel-heading h2,.shipment-detail-header h2{margin:0;font-size:var(--cds-type-heading-02);}
 .shipments-panel-heading>span{color:var(--cds-text-secondary)}
 .shipments-list-tools{min-width:0;padding:var(--cds-spacing-04)}
 .shipments-search{display:block;min-width:0;width:100%}
 
-.shipments-records{display:flex;flex-direction:column;gap:var(--cds-spacing-02);padding:0 var(--cds-spacing-03) var(--cds-spacing-03);max-height:70vh;overflow:auto}
+.shipments-records{display:flex;flex-direction:column;gap:var(--cds-spacing-02);padding:0 var(--cds-spacing-03) var(--cds-spacing-03);max-height:70vh;overflow:auto;position:relative;z-index:0}
 .shipment-record{display:flex;flex-direction:column;align-items:stretch;gap:var(--cds-spacing-02);width:100%;padding:var(--cds-spacing-04);text-align:left;white-space:normal}
 .shipment-record-top{display:flex;align-items:center;justify-content:space-between;gap:var(--cds-spacing-03)}
 .shipment-record>span,.shipment-record>small{color:var(--cds-text-secondary);overflow-wrap:anywhere}
