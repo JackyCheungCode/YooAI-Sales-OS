@@ -125,7 +125,11 @@ export function SideNavItems(props: CarbonProps) {
 }
 
 export function SideNavLink({ isActive, renderIcon, children, ...props }: SideNavBaseProps) {
-  return createElement('cds-side-nav-link', { ...props, active: isActive }, slottedIcon(renderIcon), children);
+  return createElement('cds-side-nav-link', {
+    ...props,
+    active: isActive,
+    'aria-current': isActive ? 'page' : undefined,
+  }, slottedIcon(renderIcon), children);
 }
 
 export function SideNavMenu({ isActive, renderIcon, title, children, ...props }: SideNavBaseProps) {
@@ -133,7 +137,11 @@ export function SideNavMenu({ isActive, renderIcon, title, children, ...props }:
 }
 
 export function SideNavMenuItem({ isActive, children, ...props }: SideNavBaseProps) {
-  return createElement('cds-side-nav-menu-item', { ...props, active: isActive }, children);
+  return createElement('cds-side-nav-menu-item', {
+    ...props,
+    active: isActive,
+    'aria-current': isActive ? 'page' : undefined,
+  }, children);
 }
 
 export function SideNav(props: CarbonProps) {
