@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, type ComponentType, type ReactNode } from 'react';
+import { createElement, useEffect, useRef, type ElementType, type ReactNode } from 'react';
 
 type CarbonProps = Record<string, any> & {
   children?: ReactNode;
@@ -106,7 +106,7 @@ export function FileUploaderButton({ onChange, ...props }: CarbonProps & { onCha
 type SideNavBaseProps = CarbonProps & {
   href?: string;
   isActive?: boolean;
-  renderIcon?: ComponentType<{ size?: number }>;
+  renderIcon?: ElementType<{ size?: number }>;
   onClick?: (event: any) => void;
   title?: string;
 };
