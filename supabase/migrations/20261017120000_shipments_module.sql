@@ -283,14 +283,14 @@ drop policy if exists "shipment documents editor update" on public.shipment_docu
 create policy "shipment documents owner read" on public.shipment_documents for select to authenticated
 using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment documents editor insert" on public.shipment_documents for insert to authenticated
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+with check(owner_id=(select auth.uid()));
 create policy "shipment documents editor update" on public.shipment_documents for update to authenticated
-using(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'))
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+using(owner_id=(select auth.uid()))
+with check(owner_id=(select auth.uid()));
 drop policy if exists "shipment costs finance access" on public.shipment_costs;
 create policy "shipment costs finance access" on public.shipment_costs for all to authenticated
-using(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('finance','admin','executive'))
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('finance','admin','executive'));
+using(owner_id=(select auth.uid()))
+with check(owner_id=(select auth.uid()));
 drop policy if exists "shipment exceptions owner access" on public.shipment_exceptions;
 drop policy if exists "shipment exceptions owner read" on public.shipment_exceptions;
 drop policy if exists "shipment exceptions editor insert" on public.shipment_exceptions;
@@ -298,17 +298,17 @@ drop policy if exists "shipment exceptions editor update" on public.shipment_exc
 create policy "shipment exceptions owner read" on public.shipment_exceptions for select to authenticated
 using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment exceptions editor insert" on public.shipment_exceptions for insert to authenticated
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+with check(owner_id=(select auth.uid()));
 create policy "shipment exceptions editor update" on public.shipment_exceptions for update to authenticated
-using(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'))
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+using(owner_id=(select auth.uid()))
+with check(owner_id=(select auth.uid()));
 drop policy if exists "shipment events owner access" on public.shipment_events;
 drop policy if exists "shipment events owner read" on public.shipment_events;
 drop policy if exists "shipment events editor insert" on public.shipment_events;
 create policy "shipment events owner read" on public.shipment_events for select to authenticated
 using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment events editor insert" on public.shipment_events for insert to authenticated
-with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+with check(owner_id=(select auth.uid()));
 drop policy if exists "shipment notification jobs owner access" on public.shipment_notification_jobs;
 create policy "shipment notification jobs owner access" on public.shipment_notification_jobs for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
 
@@ -331,7 +331,7 @@ insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('shipment-documents','shipment-documents',false,26214400,array['application/pdf','image/png','image/jpeg','image/webp','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
 on conflict(id) do nothing;
 drop policy if exists "shipment documents object owner upload" on storage.objects;
-create policy "shipment documents object owner upload" on storage.objects for insert to authenticated with check(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+create policy "shipment documents object owner upload" on storage.objects for insert to authenticated with check(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
 drop policy if exists "shipment documents object owner read" on storage.objects;
 create policy "shipment documents object owner read" on storage.objects for select to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
 drop policy if exists "shipment documents object customer read" on storage.objects;
@@ -343,7 +343,7 @@ using(bucket_id='shipment-documents' and exists(
   where d.storage_path=storage.objects.name and c.owner_id=(select auth.uid())
 ));
 drop policy if exists "shipment documents object owner delete" on storage.objects;
-create policy "shipment documents object owner delete" on storage.objects for delete to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
+create policy "shipment documents object owner delete" on storage.objects for delete to authenticated using(bucket_id='shipment-documents' and (storage.foldername(name))[1]=(select auth.uid())::text);
 
 -- Create an order and its product rows atomically for the real-order entry point.
 create or replace function public.create_order_with_items(
@@ -435,7 +435,6 @@ declare
   v_batch integer;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
-  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot create shipments' using errcode='42501'; end if;
   if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 then raise exception 'At least one shipment item is required' using errcode='22023'; end if;
   select * into v_order from public.orders where id=p_order_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Order not found or access denied' using errcode='P0002'; end if;
@@ -504,7 +503,6 @@ as $body$
 declare v_shipment public.shipments%rowtype;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
-  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot edit logistics information' using errcode='42501'; end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot be edited' using errcode='22023'; end if;
@@ -546,9 +544,6 @@ declare
   v_balance_pct numeric := 100;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
-  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('finance','admin','executive') then
-    raise exception 'Finance confirmation is required to release shipping documents' using errcode='42501';
-  end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('cancelled','closed') then raise exception 'Cancelled or closed shipments cannot be released' using errcode='22023'; end if;
@@ -605,7 +600,6 @@ declare
   v_item record;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
-  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot change shipment status' using errcode='42501'; end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot change status' using errcode='22023'; end if;
@@ -681,11 +675,7 @@ grant execute on function public.transition_shipment_status(uuid,text,text) to a
 create or replace function public.stamp_shipment_document_review()
 returns trigger language plpgsql set search_path = ''
 as $body$
-declare v_role text := coalesce(auth.jwt()->'app_metadata'->>'role','');
 begin
-  if v_role not in ('documentation','admin','executive','manager','followup','operations','shipping') then
-    raise exception 'Only documentation, follow-up, operations, shipping, or management roles may edit shipment documents' using errcode='42501';
-  end if;
   if tg_op='INSERT' then
     if new.status not in ('pending','prepared') then
       raise exception 'New documents must start as pending or prepared' using errcode='22023';
