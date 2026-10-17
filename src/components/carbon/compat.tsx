@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, type ElementType, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
+import { createElement, createContext, useContext, useEffect, useRef, type ElementType, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
 
 type CarbonProps = Record<string, any> & {
   children?: ReactNode;
@@ -65,17 +65,28 @@ export function Search({ labelText, onChange, ...props }: CarbonProps & { labelT
   return createElement('cds-search', { ref, labelText, ...props });
 }
 
+const TableHeaderContext = createContext(false);
+
 export function Table(props: CarbonProps) {
   return createElement('cds-table', props, props.children);
 }
 export function TableHead(props: CarbonProps) {
-  return createElement('cds-table-head', props, props.children);
+  return createElement(
+    TableHeaderContext.Provider,
+    { value: true },
+    createElement('cds-table-head', props, props.children),
+  );
 }
 export function TableBody(props: CarbonProps) {
-  return createElement('cds-table-body', props, props.children);
+  return createElement(
+    TableHeaderContext.Provider,
+    { value: false },
+    createElement('cds-table-body', props, props.children),
+  );
 }
 export function TableRow(props: CarbonProps) {
-  return createElement('cds-table-row', props, props.children);
+  const isHeaderRow = useContext(TableHeaderContext);
+  return createElement(isHeaderRow ? 'cds-table-header-row' : 'cds-table-row', props, props.children);
 }
 export function TableHeader(props: CarbonProps) {
   return createElement('cds-table-header-cell', props, props.children);
