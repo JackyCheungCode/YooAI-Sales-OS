@@ -9,6 +9,7 @@ import '@carbon/web-components/es/components/breadcrumb/index.js';
 import '@carbon/web-components/es/components/checkbox/index.js';
 import '@carbon/web-components/es/components/grid/index.js';
 import '@carbon/web-components/es/components/notification/index.js';
+import '@carbon/web-components/es/components/number-input/index.js';
 import '@carbon/web-components/es/components/modal/index.js';
 import '@carbon/web-components/es/components/file-uploader/index.js';
 import '@carbon/web-components/es/components/radio-button/index.js';
