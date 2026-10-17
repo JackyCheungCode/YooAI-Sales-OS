@@ -1,5 +1,5 @@
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
-import { LineChart, BarChart } from '@carbon/charts-react';
+import { LineChart, SimpleBarChart } from '@carbon/charts-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '../../components/carbon/icons';
 import { Button } from '../../components/ui/Button';
@@ -121,7 +121,7 @@ const funnelChartOptions: any = {
   height: '20rem',
 };
 function FunnelChart() {
-  return <div className="funnel-chart"><BarChart data={funnelChartData} options={funnelChartOptions} /></div>;
+  return <div className="funnel-chart"><SimpleBarChart data={funnelChartData} options={funnelChartOptions} /></div>;
 }
 
 
@@ -142,7 +142,7 @@ const areaPerformanceOptions: any = {
   height: '20rem',
 };
 function AreaPerformanceChart({ area }: { area: Exclude<Area, 'overview'> }) {
-  return <BarChart data={areaPerformanceData[area]} options={areaPerformanceOptions} />;
+  return <SimpleBarChart data={areaPerformanceData[area]} options={areaPerformanceOptions} />;
 }
 
 export function DashboardPage() {
