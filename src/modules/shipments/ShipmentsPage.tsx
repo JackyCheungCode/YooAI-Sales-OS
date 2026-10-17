@@ -370,7 +370,7 @@ export function ShipmentsPage() {
 
     {createOpen&&<Modal ref={createModalRef} open size="lg" aria-label="新建出运单">
       <ModalHeader><div><ModalLabel>NEW SHIPMENT</ModalLabel><ModalHeading id="shipment-create-title">新建出运单</ModalHeading></div><Button variant="ghost" onClick={()=>setCreateOpen(false)}>关闭</Button></ModalHeader>
-      <ModalBody><form ref={createFormRef} className="shipment-modal-form" onSubmit={saveShipment}><button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+      <ModalBody><form ref={createFormRef} className="shipment-modal-form" onSubmit={saveShipment}><Button type="submit" hidden aria-hidden="true" tabIndex={-1} />
       <Grid fullWidth className="shipment-form-grid">
         <Column sm={4} md={4} lg={4} xlg={4}> <label>所属订单（必填）<SelectInput value={orderId} onChange={e=>void changeOrder(e.target.value)} required><SelectItem value="" text="选择真实订单"/>{orders.filter(o=>!['cancelled','closed'].includes(o.status)).map(o=><SelectItem key={o.id} value={o.id} text={o.order_number+' · '+(o.customers?.name||'未关联客户')}/>)}</SelectInput></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>装运方式<SelectInput value={shippingMode} onChange={e=>setShippingMode(e.target.value)}>{modes.map(m=><SelectItem key={m.value} value={m.value} text={m.label}/>)}</SelectInput></label> </Column>
