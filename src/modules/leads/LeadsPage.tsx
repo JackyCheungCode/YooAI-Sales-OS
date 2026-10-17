@@ -152,7 +152,7 @@ export function LeadsPage() {
   };
   return <div className="leads-page">
     <div className="page-heading leads-heading"><div><div className="eyebrow">LEAD MANAGEMENT</div><h1>线索管理</h1><p className="page-subtitle">集中管理尚未确认的潜在客户，从来源采集、资格判断到转化为正式客户关系。</p></div><div className="leads-heading-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>{fetchPersistedLeads().then(rows=>{setLeads(rows);setNotice('已刷新 Supabase 云端线索。');}).catch(error=>setNotice(error instanceof Error?error.message:'刷新云端线索失败。'));}}>刷新</Button><Button renderIcon={Add} onClick={openNew}>新建线索</Button></div></div>
-    <div className="leads-notice" role="status"><WarningAlt size={17}/><span>{notice}</span></div>
+    <InlineNotification kind="info" lowContrast title="操作提示" subtitle={notice} hideCloseButton />
     <div className="lead-stat-grid">
       <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='全部线索'?' active':'')} onClick={()=>setStatusFilter('全部线索')}><span>线索总数</span><strong>{counts.all}</strong><small>全部状态</small></Button>
       <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='新线索'?' active':'')} onClick={()=>setStatusFilter('新线索')}><span>新线索</span><strong>{counts.fresh}</strong><small>待首次处理</small></Button>
