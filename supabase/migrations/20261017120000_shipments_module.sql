@@ -543,6 +543,21 @@ begin
   end if;
   select * into v_order from public.orders where id=v_shipment.order_id and owner_id=auth.uid();
   if not found then raise exception 'Related order not found' using errcode='P0002'; end if;
+  if not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='商业发票' and d.status='approved') then
+    raise exception 'Approved commercial invoice is required before release' using errcode='22023';
+  end if;
+  if not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='装箱单' and d.status='approved') then
+    raise exception 'Approved packing list is required before release' using errcode='22023';
+  end if;
+  if v_shipment.shipping_mode in ('fcl','lcl','bulk') and not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='提单 / 海运单' and d.status='approved') then
+    raise exception 'Approved bill of lading or sea waybill is required before release' using errcode='22023';
+  elsif v_shipment.shipping_mode='air' and not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='空运单' and d.status='approved') then
+    raise exception 'Approved air waybill is required before release' using errcode='22023';
+  elsif v_shipment.shipping_mode='express' and not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='快递运单' and d.status='approved') then
+    raise exception 'Approved express waybill is required before release' using errcode='22023';
+  elsif v_shipment.shipping_mode='rail' and not exists(select 1 from public.shipment_documents d where d.shipment_id=p_shipment_id and d.document_type='铁路运单' and d.status='approved') then
+    raise exception 'Approved rail consignment note is required before release' using errcode='22023';
+  end if;
   v_balance_pct := 100-greatest(0,least(100,coalesce((v_order.payment_terms->>'deposit_percent')::numeric,0)));
   if coalesce(v_order.payment_terms->>'balance_due_from','')='bill_of_lading' and v_balance_pct>0 then
     v_balance_due := not exists(select 1 from public.receivable_schedules s where s.order_id=v_order.id and s.owner_id=auth.uid() and s.payment_type='balance' and s.status in ('paid','closed'));
