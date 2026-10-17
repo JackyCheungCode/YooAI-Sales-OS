@@ -17,6 +17,7 @@ import '@carbon/web-components/es/components/progress-indicator/index.js';
 import '@carbon/web-components/es/components/search/index.js';
 import '@carbon/web-components/es/components/select/index.js';
 import '@carbon/web-components/es/components/data-table/index.js';
+import '@carbon/web-components/es/components/date-picker/index.js';
 import '@carbon/web-components/es/components/tag/index.js';
 import '@carbon/web-components/es/components/tabs/index.js';
 import '@carbon/web-components/es/components/ui-shell/index.js';
