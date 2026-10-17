@@ -44,8 +44,8 @@
 .shipment-tab{flex:none}
 .shipment-section{display:flex;flex-direction:column;gap:var(--cds-spacing-04);padding:var(--cds-spacing-05);min-width:0}
 .shipment-section h3{margin:0;font-size:var(--cds-heading-compact-01-font-size);font-weight:600}
-.shipment-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0}
- .shipment-facts>cds-column>div{display:grid;grid-template-columns:minmax(6rem,.8fr) minmax(0,1.2fr);gap:var(--cds-spacing-03);padding:var(--cds-spacing-03) var(--cds-spacing-02);border-bottom:1px solid var(--cds-border-subtle-01);min-width:0}
+.shipment-facts{min-width:0;margin:0}
+ .shipment-facts>cds-column>div{display:flex;justify-content:space-between;gap:var(--cds-spacing-03);padding:var(--cds-spacing-03) var(--cds-spacing-02);border-bottom:1px solid var(--cds-border-subtle-01);min-width:0}
 .shipment-facts dt{color:var(--cds-text-secondary)}
 .shipment-facts dd{margin:0;overflow-wrap:anywhere}
 .shipment-risk-list{display:flex;flex-direction:column;gap:var(--cds-spacing-03);margin:0;padding:0;list-style:none}
