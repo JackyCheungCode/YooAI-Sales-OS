@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, type ReactNode } from 'react';
+import { createElement, useEffect, useRef, type ComponentType, type ReactNode } from 'react';
 
 type CarbonProps = Record<string, any> & {
   children?: ReactNode;
@@ -106,14 +106,14 @@ export function FileUploaderButton({ onChange, ...props }: CarbonProps & { onCha
 type SideNavBaseProps = CarbonProps & {
   href?: string;
   isActive?: boolean;
-  renderIcon?: (props: { size?: number }) => ReactNode;
+  renderIcon?: ComponentType<{ size?: number }>;
   onClick?: (event: any) => void;
   title?: string;
 };
 
-function slottedIcon(renderIcon?: (props: { size?: number }) => ReactNode) {
+function slottedIcon(renderIcon?: ComponentType<{ size?: number }>) {
   if (!renderIcon) return null;
-  return createElement('span', { slot: 'title-icon', 'aria-hidden': true }, renderIcon({ size: 16 }));
+  return createElement('span', { slot: 'title-icon', 'aria-hidden': true }, createElement(renderIcon, { size: 16 }));
 }
 
 export function SideNavItems(props: CarbonProps) {
