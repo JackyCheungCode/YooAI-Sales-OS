@@ -18,7 +18,8 @@
     "@carbon/web-components": "2.64.0",
     "@carbon/icons-react": "11.89.0",
     "@carbon/charts": "1.27.21",
-    "@carbon/charts-react": "1.27.21"
+    "@carbon/charts-react": "1.27.21",
+    "@carbon/icons": "11.89.0"
   },
   "devDependencies": {
     "@types/react": "19.0.12",
