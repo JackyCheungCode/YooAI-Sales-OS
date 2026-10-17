@@ -133,7 +133,7 @@ export function LoginPage() {
             subtitle={message}
           />
         ) : null}
-        <Button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+        <Button type="submit" hidden aria-hidden="true" tabIndex={-1}>提交</Button>
         <Button
           type="button"
           onClick={() => { const form = formRef.current; if (!form) return; if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.querySelector<HTMLElement>('cds-button[type="submit"]')?.click(); }}
