@@ -1,4 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Button } from '../components/ui/Button';
+import { Tile } from '../components/carbon/compat';
 
 type Props = { children: ReactNode };
 type State = { hasError: boolean; errorMessage: string; componentStack: string };
@@ -24,16 +26,14 @@ export class AppErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <main className="app-error-screen" role="alert">
-          <section className="app-error-card">
+          <Tile className="app-error-card">
             <p className="app-error-eyebrow">YOOAI SALES OS</p>
             <h1>页面暂时无法显示</h1>
             <p>应用遇到未处理的显示错误。请截图保存下面的错误信息，便于定位问题。</p>
             <p className="app-error-detail" role="status">{this.state.errorMessage || '未提供错误详情'}</p>
             {this.state.componentStack ? <details className="app-error-stack"><summary>组件调用位置</summary><pre>{this.state.componentStack}</pre></details> : null}
-            <button type="button" onClick={() => window.location.reload()}>
-              重新载入
-            </button>
-          </section>
+            <Button type="button" onClick={() => window.location.reload()}>重新载入</Button>
+          </Tile>
         </main>
       );
     }
