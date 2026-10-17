@@ -57,10 +57,10 @@ export function OpportunitiesPage(){
   <header className="opps-heading"><div><div className="opps-eyebrow">SALES PIPELINE / 商机管理</div><h1>商机管理</h1><p>从询盘确认到收款结案，统一管理交易阶段、预测和履约衔接。</p></div><div className="opps-heading-actions"><Button variant="ghost" renderIcon={Renew} onClick={()=>setToast('页面状态已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={()=>setShowCreate(true)}>新建商机</Button></div></header>
   
   <section className="opps-kpis">
-   <div className="opps-kpi"><span>开放管道总额</span><strong>US$236.4K</strong><small>3 笔商机 · 原币种分开展示</small></div>
-   <div className="opps-kpi"><span>加权预测金额</span><strong>¥1.06M</strong><small>按当前汇率 × 阶段概率折算</small></div>
-   <div className="opps-kpi"><span>需要关注</span><strong className="opps-kpi-risk">3 项</strong><small>停滞、逾期或决策人覆盖不足</small></div>
-   <div className="opps-kpi"><span>本月预计成交</span><strong>2 笔</strong><small>预测口径</small></div>
+   <Tile className="opps-kpi"><span>开放管道总额</span><strong>US$236.4K</strong><small>3 笔商机 · 原币种分开展示</small></Tile>
+   <Tile className="opps-kpi"><span>加权预测金额</span><strong>¥1.06M</strong><small>按当前汇率 × 阶段概率折算</small></Tile>
+   <Tile className="opps-kpi"><span>需要关注</span><strong className="opps-kpi-risk">3 项</strong><small>停滞、逾期或决策人覆盖不足</small></Tile>
+   <Tile className="opps-kpi"><span>本月预计成交</span><strong>2 笔</strong><small>预测口径</small></Tile>
   </section>
   <Tile className="opps-pipeline-card"><div className="opps-section-head"><div><h2>阶段管道</h2><p>选择商机后查看阶段；推进前必须满足对应退出条件。</p></div><Tag type="blue">{selected.stage}</Tag></div>
    <div className="opps-stage-track">{stages.map((s,i)=>{const current=stages.indexOf(selected.stage);return <Button variant="ghost" key={s} className={'opps-stage '+(i<current?'completed':i===current?'current':'')} onClick={()=>{if(i===current)return;setExitChecks({});setBackwardReason('');setTargetStage(s);setShowAdvance(true);}}><span className="opps-stage-dot">{i<current?<CheckmarkFilled size={14}/>:i+1}</span><span>{s}</span><small>{stageProbability[s]}%</small></Button>;})}</div>
