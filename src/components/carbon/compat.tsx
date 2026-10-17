@@ -106,14 +106,18 @@ export function FileUploaderButton({ onChange, ...props }: CarbonProps & { onCha
 type SideNavBaseProps = CarbonProps & {
   href?: string;
   isActive?: boolean;
-  renderIcon?: (props: { size?: number }) => ReactNode;
+  renderIcon?: React.ComponentType<{ size?: number }>;
   onClick?: (event: any) => void;
   title?: string;
 };
 
-function slottedIcon(renderIcon?: (props: { size?: number }) => ReactNode) {
+function slottedIcon(renderIcon?: React.ComponentType<{ size?: number }>) {
   if (!renderIcon) return null;
-  return createElement('span', { slot: 'title-icon', 'aria-hidden': true }, renderIcon({ size: 16 }));
+  return createElement(
+    'span',
+    { slot: 'title-icon', 'aria-hidden': true },
+    createElement(renderIcon, { size: 16 }),
+  );
 }
 
 export function SideNavItems(props: CarbonProps) {
