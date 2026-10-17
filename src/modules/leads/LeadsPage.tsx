@@ -1,6 +1,6 @@
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell, Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalHeading, ModalBody, InlineNotification } from '../../components/carbon/compat';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Add, Filter, UserMultiple, Renew, ArrowRight, Close, CheckmarkFilled, WarningAlt } from '@carbon/icons-react';
+import { Add, Filter, UserMultiple, Renew, ArrowRight, Close, CheckmarkFilled, WarningAlt } from '../../components/carbon/icons';
 
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
