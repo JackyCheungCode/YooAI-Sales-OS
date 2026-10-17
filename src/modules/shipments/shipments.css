@@ -14,7 +14,7 @@
 .shipments-kpis{min-width:0}
 .shipments-kpis cds-tile{display:flex;flex-direction:column;gap:var(--cds-spacing-03);min-width:0}
 .shipments-kpis cds-tile span,.shipments-kpis cds-tile small{color:var(--cds-text-secondary)}
-.shipments-kpis cds-tile strong{font-size:var(--cds-heading-05-font-size);font-weight:600;}
+.shipments-kpis cds-tile strong{font-size:var(--cds-type-heading-02);font-weight:600;}
 .shipments-workspace{min-width:0}
 .shipments-list-panel,.shipments-detail-panel{min-width:0;background:var(--cds-layer);border:1px solid var(--cds-border-subtle-01)}
 .shipments-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:var(--cds-spacing-03);padding:var(--cds-spacing-05);border-bottom:1px solid var(--cds-border-subtle-01)}
@@ -63,7 +63,7 @@
 .shipment-timeline li>div{display:flex;flex-direction:column;gap:var(--cds-spacing-02);min-width:0}
 .shipment-timeline p{margin:0;overflow-wrap:anywhere}
 .shipment-timeline small{color:var(--cds-text-secondary)}
-.shipment-timeline-dot{flex:none;width:var(--cds-spacing-03);height:var(--cds-spacing-03);margin-top:var(--cds-spacing-02);border-radius:50%;background:var(--cds-interactive)}
+.shipment-timeline-dot{flex:none;width:var(--cds-spacing-03);height:var(--cds-spacing-03);margin-top:var(--cds-spacing-02);border-radius:50%;background:var(--cds-text-primary)}
 .shipment-modal-form{display:flex;flex-direction:column;gap:var(--cds-spacing-04);min-width:0}
 .shipment-modal-form h3{margin:var(--cds-spacing-05) 0 0;font-size:var(--cds-type-heading-02);}
 .shipment-form-grid{min-width:0}
