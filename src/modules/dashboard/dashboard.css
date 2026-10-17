@@ -25,7 +25,7 @@
 .dashboard-metric-card__delta.is-warn{color:var(--cds-text-warning)}
 .metric-drilldown{display:flex;align-items:center;justify-content:space-between;gap:var(--cds-spacing-03);margin-top:auto;padding:var(--cds-spacing-02) 0 0;border:0;border-top:1px solid var(--cds-border-subtle-01);color:var(--cds-text-primary);background:transparent;text-align:left;font:inherit;font-size:var(--cds-type-body-02);cursor:pointer}
 .dashboard-charts{row-gap:var(--cds-spacing-05)}
-.dashboard-panel{height:100%;min-width:0;background:var(--cds-layer);padding:0}
+.dashboard-panel{height:100%;min-width:0;padding:0}
 .dashboard-panel__heading{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--cds-spacing-05);padding:var(--cds-spacing-05) var(--cds-spacing-05) var(--cds-spacing-05);border-bottom:1px solid var(--cds-border-subtle-01)}
 .dashboard-panel__heading h3{margin:0;font-size:var(--cds-type-heading-02);}
 .dashboard-panel__heading p{margin:var(--cds-spacing-03) 0 0;color:var(--cds-text-secondary);font-size:var(--cds-type-body-02)}
