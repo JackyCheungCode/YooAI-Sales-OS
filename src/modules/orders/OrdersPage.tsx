@@ -3,7 +3,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreateRealOrderModal } from './CreateRealOrderModal';
-import { Add, Renew, Document, Send, Download, ArrowRight, Money, Edit, Checkmark } from '../../components/carbon/icons';
+import { Add, Renew, Document, Send, Download, Money, Edit } from '../../components/carbon/icons';
 
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
