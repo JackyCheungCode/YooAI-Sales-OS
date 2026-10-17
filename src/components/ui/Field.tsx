@@ -24,7 +24,7 @@ function useCarbonChange(
     if (!element || !onChange) return;
     const notify = (event: Event) => {
       const target = event.target as HTMLElement & { value?: string };
-      const detail = (event as CustomEvent<{ value?: string }>).detail;
+      const detail = (event as CustomEvent<{ value?: string; item?: { value?: string }; selectedItem?: { value?: string } }>).detail;
       const value = target?.value ?? detail?.value ?? detail?.item?.value ?? detail?.selectedItem?.value;
       if (value !== undefined) onChange({ target: { value: String(value) } });
     };

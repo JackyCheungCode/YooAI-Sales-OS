@@ -35,7 +35,7 @@ export function QuotesPage() {
  const [filter, setFilter] = useState('全部状态');
  const [tab, setTab] = useState('报价明细');
  const tabsRef=useRef<HTMLElement|null>(null);
- useEffect(()=>{const tabs=tabsRef.current;if(!tabs)return;tabs.value=tab;const onSelected=(event:Event)=>{const target=event.target as HTMLElement&{value?:string};const detail=(event as CustomEvent<{value?:string;selectedTab?:HTMLElement}>).detail;const selected=detail?.selectedTab as (HTMLElement&{value?:string})|undefined;const next=selected?.value??target.value??detail?.value;if(['头信息','报价明细','条款与费用','审批与时间线','版本记录'].includes(next??''))setTab(next!);};tabs.addEventListener('cds-tabs-selected',onSelected);return()=>tabs.removeEventListener('cds-tabs-selected',onSelected);},[tab]);
+ useEffect(()=>{const tabs=tabsRef.current as (HTMLElement & {value?:string}) | null;if(!tabs)return;tabs.value=tab;const onSelected=(event:Event)=>{const target=event.target as HTMLElement&{value?:string};const detail=(event as CustomEvent<{value?:string;selectedTab?:HTMLElement}>).detail;const selected=detail?.selectedTab as (HTMLElement&{value?:string})|undefined;const next=selected?.value??target.value??detail?.value;if(['头信息','报价明细','条款与费用','审批与时间线','版本记录'].includes(next??''))setTab(next!);};tabs.addEventListener('cds-tabs-selected',onSelected);return()=>tabs.removeEventListener('cds-tabs-selected',onSelected);},[tab]);
  const [toast, setToast] = useState('');
  const [showReject, setShowReject] = useState(false);
  const [rejectReason, setRejectReason] = useState('');

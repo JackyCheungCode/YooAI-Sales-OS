@@ -44,7 +44,7 @@ export function ContactsPage() {
  const [statusFilter,setStatusFilter] = useState('全部状态');
  const [activeTab,setActiveTab] = useState('概览');
  const tabsRef=useRef<HTMLElement|null>(null);
- useEffect(()=>{const tabs=tabsRef.current;if(!tabs)return;tabs.value=activeTab;const onSelected=(event:Event)=>{const target=event.target as HTMLElement&{value?:string};const detail=(event as CustomEvent<{value?:string;selectedTab?:HTMLElement}>).detail;const selected=detail?.selectedTab as (HTMLElement&{value?:string})|undefined;const next=selected?.value??target.value??detail?.value;if(['概览','沟通时间线','关联列表','关系与合规','行业扩展'].includes(next??''))setActiveTab(next!);};tabs.addEventListener('cds-tabs-selected',onSelected);return()=>tabs.removeEventListener('cds-tabs-selected',onSelected);},[activeTab]);
+ useEffect(()=>{const tabs=tabsRef.current as (HTMLElement & {value?:string}) | null;if(!tabs)return;tabs.value=activeTab;const onSelected=(event:Event)=>{const target=event.target as HTMLElement&{value?:string};const detail=(event as CustomEvent<{value?:string;selectedTab?:HTMLElement}>).detail;const selected=detail?.selectedTab as (HTMLElement&{value?:string})|undefined;const next=selected?.value??target.value??detail?.value;if(['概览','沟通时间线','关联列表','关系与合规','行业扩展'].includes(next??''))setActiveTab(next!);};tabs.addEventListener('cds-tabs-selected',onSelected);return()=>tabs.removeEventListener('cds-tabs-selected',onSelected);},[activeTab]);
  const [showEditor,setShowEditor] = useState(false);
  const [notice,setNotice] = useState('联系人工作台已就绪。');
  const [showSensitive,setShowSensitive] = useState(false);

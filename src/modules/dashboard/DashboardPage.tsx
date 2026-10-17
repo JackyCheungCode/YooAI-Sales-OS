@@ -148,7 +148,7 @@ function AreaPerformanceChart({ area }: { area: Exclude<Area, 'overview'> }) {
 export function DashboardPage() {
   const [area, setArea] = useState<Area>('overview');
   const areaTabsRef = useRef<HTMLElement | null>(null);
-  useEffect(() => { const tabs = areaTabsRef.current; if (!tabs) return; tabs.value = area; const onSelected = (event: Event) => { const target = event.target as HTMLElement & { value?: string }; const detail = (event as CustomEvent<{ value?: string; selectedTab?: HTMLElement }>).detail; const selected = detail?.selectedTab as (HTMLElement & { value?: string }) | undefined; const next = selected?.value ?? target.value ?? detail?.value; if (areas.some(item => item.id === next)) setArea(next as Area); }; tabs.addEventListener('cds-tabs-selected', onSelected); return () => tabs.removeEventListener('cds-tabs-selected', onSelected); }, [area]);
+  useEffect(() => { const tabs = areaTabsRef.current as (HTMLElement & { value?: string }) | null; if (!tabs) return; tabs.value = area; const onSelected = (event: Event) => { const target = event.target as HTMLElement & { value?: string }; const detail = (event as CustomEvent<{ value?: string; selectedTab?: HTMLElement }>).detail; const selected = detail?.selectedTab as (HTMLElement & { value?: string }) | undefined; const next = selected?.value ?? target.value ?? detail?.value; if (areas.some(item => item.id === next)) setArea(next as Area); }; tabs.addEventListener('cds-tabs-selected', onSelected); return () => tabs.removeEventListener('cds-tabs-selected', onSelected); }, [area]);
   const [period, setPeriod] = useState('month');
   const [region, setRegion] = useState('all');
   const [product, setProduct] = useState('all');
