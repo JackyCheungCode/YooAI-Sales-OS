@@ -193,6 +193,10 @@ create table if not exists public.shipment_notification_jobs (
 );
 
 -- Shared updated-at trigger from the base CRM schema.
+drop trigger if exists orders_set_updated_at on public.orders;
+create trigger orders_set_updated_at before update on public.orders for each row execute function public.set_updated_at();
+drop trigger if exists receivable_schedules_set_updated_at on public.receivable_schedules;
+create trigger receivable_schedules_set_updated_at before update on public.receivable_schedules for each row execute function public.set_updated_at();
 drop trigger if exists order_items_set_updated_at on public.order_items;
 create trigger order_items_set_updated_at before update on public.order_items for each row execute function public.set_updated_at();
 drop trigger if exists shipments_set_updated_at on public.shipments;
@@ -202,6 +206,9 @@ create trigger shipment_documents_set_updated_at before update on public.shipmen
 drop trigger if exists shipment_exceptions_set_updated_at on public.shipment_exceptions;
 create trigger shipment_exceptions_set_updated_at before update on public.shipment_exceptions for each row execute function public.set_updated_at();
 
+alter table public.orders enable row level security;
+alter table public.receivable_schedules enable row level security;
+alter table public.order_audit_logs enable row level security;
 alter table public.order_items enable row level security;
 alter table public.shipments enable row level security;
 alter table public.shipment_items enable row level security;
@@ -211,6 +218,12 @@ alter table public.shipment_exceptions enable row level security;
 alter table public.shipment_events enable row level security;
 alter table public.shipment_notification_jobs enable row level security;
 
+drop policy if exists "orders owner read" on public.orders;
+create policy "orders owner read" on public.orders for select to authenticated using(owner_id=(select auth.uid()));
+drop policy if exists "receivable schedules owner read" on public.receivable_schedules;
+create policy "receivable schedules owner read" on public.receivable_schedules for select to authenticated using(owner_id=(select auth.uid()));
+drop policy if exists "order audit logs owner read" on public.order_audit_logs;
+create policy "order audit logs owner read" on public.order_audit_logs for select to authenticated using(owner_id=(select auth.uid()));
 drop policy if exists "order items owner access" on public.order_items;
 create policy "order items owner access" on public.order_items for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
 drop policy if exists "shipments owner access" on public.shipments;
@@ -251,6 +264,8 @@ drop policy if exists "shipment notification jobs owner access" on public.shipme
 create policy "shipment notification jobs owner access" on public.shipment_notification_jobs for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
 
 -- Explicit Data API grants; row-level security remains the authorization boundary.
+revoke insert,update,delete on public.orders,public.receivable_schedules,public.order_audit_logs from authenticated;
+grant select on public.orders,public.receivable_schedules,public.order_audit_logs to authenticated;
 revoke insert,update,delete on public.order_items,public.shipments,public.shipment_items from authenticated;
 revoke delete on public.shipment_documents,public.shipment_costs,public.shipment_exceptions from authenticated;
 revoke update,delete on public.shipment_events from authenticated;
