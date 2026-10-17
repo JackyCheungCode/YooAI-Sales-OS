@@ -100,7 +100,12 @@ export function FileUploaderButton({ onChange, ...props }: CarbonProps & { onCha
     element.addEventListener('cds-file-uploader-button-changed', handleChange);
     return () => element.removeEventListener('cds-file-uploader-button-changed', handleChange);
   }, [onChange]);
-  return createElement('cds-file-uploader-button', { ref, ...props }, props.children);
+  const { className, ...buttonProps } = props;
+  return createElement(
+    'cds-file-uploader',
+    { className },
+    createElement('cds-file-uploader-button', { ref, ...buttonProps }, props.children),
+  );
 }
 
 type SideNavBaseProps = CarbonProps & {
