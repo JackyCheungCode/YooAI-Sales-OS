@@ -508,6 +508,9 @@ begin
     end if;
     return new;
   end if;
+  if old.status is distinct from new.status and exists(select 1 from public.shipments s where s.id=new.shipment_id and s.release_status in ('ready_to_send','sent')) and new.status<>'sent' then
+    raise exception 'Document status cannot be downgraded after finance release confirmation' using errcode='22023';
+  end if;
   if new.status='approved' and old.status is distinct from 'approved' then
     new.reviewed_by := auth.uid();
     new.reviewed_at := now();
