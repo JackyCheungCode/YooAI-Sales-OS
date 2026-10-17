@@ -296,7 +296,7 @@ export function ShipmentsPage() {
     setSaving(false);if(insertError){setError('保存时间线失败：'+insertError.message);return;}
     setTimelineDescription('');setNotice('时间线记录已添加。');await loadDetails(selected.id);
   };
-  const progressStatuses=statuses.filter(s=>!['closed','cancelled'].includes(s.value));
+  const progressStatuses=statuses.filter(s=>!['draft','closed','cancelled'].includes(s.value));
   const progressIndex=selected?.status==='closed'?progressStatuses.length:selected?progressStatuses.findIndex(s=>s.value===selected.status):-1;
   const currentDocumentsReady=documents.length>0&&documents.every(d=>d.status==='approved');
   const canRelease=selected&&currentDocumentsReady;
