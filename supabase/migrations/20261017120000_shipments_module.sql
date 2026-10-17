@@ -260,22 +260,28 @@ alter table public.shipment_events enable row level security;
 alter table public.shipment_notification_jobs enable row level security;
 
 drop policy if exists "orders owner read" on public.orders;
-create policy "orders owner read" on public.orders for select to authenticated using(owner_id=(select auth.uid()));
+create policy "orders owner read" on public.orders for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.customers c where c.id=customer_id and c.owner_id=(select auth.uid())));
 drop policy if exists "receivable schedules owner read" on public.receivable_schedules;
 create policy "receivable schedules owner read" on public.receivable_schedules for select to authenticated using(owner_id=(select auth.uid()));
 drop policy if exists "order audit logs owner read" on public.order_audit_logs;
 create policy "order audit logs owner read" on public.order_audit_logs for select to authenticated using(owner_id=(select auth.uid()));
 drop policy if exists "order items owner access" on public.order_items;
-create policy "order items owner access" on public.order_items for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
+create policy "order items owner read" on public.order_items for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.orders o join public.customers c on c.id=o.customer_id where o.id=order_id and c.owner_id=(select auth.uid())));
 drop policy if exists "shipments owner access" on public.shipments;
-create policy "shipments owner access" on public.shipments for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
+drop policy if exists "shipments owner read" on public.shipments;
+create policy "shipments owner read" on public.shipments for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.customers c where c.id=customer_id and c.owner_id=(select auth.uid())));
 drop policy if exists "shipment items owner access" on public.shipment_items;
-create policy "shipment items owner access" on public.shipment_items for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
+create policy "shipment items owner read" on public.shipment_items for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 drop policy if exists "shipment documents owner access" on public.shipment_documents;
 drop policy if exists "shipment documents owner read" on public.shipment_documents;
 drop policy if exists "shipment documents editor insert" on public.shipment_documents;
 drop policy if exists "shipment documents editor update" on public.shipment_documents;
-create policy "shipment documents owner read" on public.shipment_documents for select to authenticated using(owner_id=(select auth.uid()));
+create policy "shipment documents owner read" on public.shipment_documents for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment documents editor insert" on public.shipment_documents for insert to authenticated
 with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 create policy "shipment documents editor update" on public.shipment_documents for update to authenticated
@@ -289,7 +295,8 @@ drop policy if exists "shipment exceptions owner access" on public.shipment_exce
 drop policy if exists "shipment exceptions owner read" on public.shipment_exceptions;
 drop policy if exists "shipment exceptions editor insert" on public.shipment_exceptions;
 drop policy if exists "shipment exceptions editor update" on public.shipment_exceptions;
-create policy "shipment exceptions owner read" on public.shipment_exceptions for select to authenticated using(owner_id=(select auth.uid()));
+create policy "shipment exceptions owner read" on public.shipment_exceptions for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment exceptions editor insert" on public.shipment_exceptions for insert to authenticated
 with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 create policy "shipment exceptions editor update" on public.shipment_exceptions for update to authenticated
@@ -298,7 +305,8 @@ with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'-
 drop policy if exists "shipment events owner access" on public.shipment_events;
 drop policy if exists "shipment events owner read" on public.shipment_events;
 drop policy if exists "shipment events editor insert" on public.shipment_events;
-create policy "shipment events owner read" on public.shipment_events for select to authenticated using(owner_id=(select auth.uid()));
+create policy "shipment events owner read" on public.shipment_events for select to authenticated
+using(owner_id=(select auth.uid()) or exists(select 1 from public.shipments s join public.customers c on c.id=s.customer_id where s.id=shipment_id and c.owner_id=(select auth.uid())));
 create policy "shipment events editor insert" on public.shipment_events for insert to authenticated
 with check(owner_id=(select auth.uid()) and coalesce(auth.jwt()->'app_metadata'->>'role','') in ('followup','documentation','admin','executive','manager','operations','shipping'));
 drop policy if exists "shipment notification jobs owner access" on public.shipment_notification_jobs;
