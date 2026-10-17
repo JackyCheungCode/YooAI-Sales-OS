@@ -1,6 +1,6 @@
 import { Search as CarbonSearch, Tile, Tag, Modal, ModalHeader, ModalHeading, ModalBody, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification } from '../../components/carbon/compat';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Add, Renew, ArrowRight, Building, UserMultiple, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '../../components/carbon/icons';
+import { Add, Renew, ArrowRight, Building, UserMultiple, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '../../components/carbon/icons';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
