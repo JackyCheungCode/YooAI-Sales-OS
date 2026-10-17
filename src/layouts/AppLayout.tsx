@@ -51,7 +51,8 @@ export function AppLayout() {
       <SideNavItems>
         <SideNavLink href="/dashboard" isActive={isDashboard} onClick={goTo('/dashboard')}>经营智控中枢</SideNavLink>
         <SideNavMenu title="客户管理" isActive={isCustomerArea}>
-          <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
+          <SideNavMenuItem href="/customers" isActive={location.pathname === '/customers'} onClick={goTo('/customers')}>客户总览</SideNavMenuItem>
+          <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts'} onClick={goTo('/accounts')}>客户档案（Account）</SideNavMenuItem>
           <SideNavMenuItem href="/leads" isActive={location.pathname === '/leads'} onClick={goTo('/leads')}>线索（Lead）</SideNavMenuItem>
           <SideNavMenuItem href="/contacts" isActive={location.pathname === '/contacts'} onClick={goTo('/contacts')}>联系人（Contact）</SideNavMenuItem>
           <SideNavMenuItem href="/opportunities" isActive={location.pathname === '/opportunities'} onClick={goTo('/opportunities')}>商机（Opportunity）</SideNavMenuItem>
