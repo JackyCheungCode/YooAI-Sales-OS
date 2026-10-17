@@ -1,7 +1,7 @@
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
 import { LineChart, BarChart } from '@carbon/charts-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/icons-react';
+import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '../../components/carbon/icons';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
 import './dashboard.css';
