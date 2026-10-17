@@ -133,10 +133,10 @@ export function LoginPage() {
             subtitle={message}
           />
         ) : null}
-        <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+        <Button type="submit" hidden aria-hidden="true" tabIndex={-1} />
         <Button
           type="button"
-          onClick={() => { const form = formRef.current; if (!form) return; if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.querySelector<HTMLButtonElement>('button[type="submit"]')?.click(); }}
+          onClick={() => { const form = formRef.current; if (!form) return; if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.querySelector<HTMLElement>('cds-button[type="submit"]')?.click(); }}
           disabled={busy}
           className="auth-submit"
         >
