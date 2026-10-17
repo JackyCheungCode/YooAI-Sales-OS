@@ -121,7 +121,17 @@ export function DropdownInput({ labelText, id, onChange, children, value, ...pro
     if (!isValidElement(child)) return child;
     const item = child.props as { value?: string | number; text?: string; children?: ReactNode };
     const itemValue = String(item.value ?? '');
-    return createElement('cds-dropdown-item', { value: itemValue, selected: String(value ?? '') === itemValue }, item.children ?? item.text ?? itemValue);
+    const selected = String(value ?? '') === itemValue;
+    const label = item.children ?? item.text ?? itemValue;
+    const labelText = typeof label === 'string' || typeof label === 'number' ? String(label) : itemValue;
+    const radio = createElement('cds-radio-button', {
+      'label-text': labelText,
+      value: itemValue,
+      name: (id ?? generatedId) + '-filter-options',
+      checked: selected,
+      onClick: () => onChange?.({ target: { value: itemValue } }),
+    });
+    return createElement('cds-dropdown-item', { value: itemValue, selected }, radio);
   });
   const selectedChild = Children.toArray(children).find((child) => {
     if (!isValidElement(child)) return false;
