@@ -60,6 +60,8 @@ export function ShipmentsPage() {
   const [etd, setEtd] = useState('');
   const [eta, setEta] = useState('');
   const [responsibleName, setResponsibleName] = useState('');
+  const [followupName, setFollowupName] = useState('');
+  const [documentationName, setDocumentationName] = useState('');
   const [consignee, setConsignee] = useState('');
   const [notifyParty, setNotifyParty] = useState('');
   const [bookingNumber, setBookingNumber] = useState('');
@@ -165,7 +167,7 @@ export function ShipmentsPage() {
 
   const resetCreate = () => {
     setOrderId(''); setBatchTotal(''); setOrderItems([]); setShippingMode('fcl'); setIncoterm('FOB'); setOriginPort(''); setDestinationPort('');
-    setLatestShipDate(''); setEtd(''); setEta(''); setResponsibleName(''); setConsignee(''); setNotifyParty('');
+    setLatestShipDate(''); setEtd(''); setEta(''); setResponsibleName(''); setFollowupName(''); setDocumentationName(''); setConsignee(''); setNotifyParty('');
     setBookingNumber(''); setBillNumber(''); setVesselVoyage(''); setContainerNumbers(''); setSealNumbers(''); setNotes('');
   };
   const changeOrder = async (nextOrderId:string) => {
@@ -202,7 +204,7 @@ export function ShipmentsPage() {
     const {data,error:saveError}=await supabase.rpc('create_shipment_with_items',{
       p_order_id:orderId,p_shipping_mode:shippingMode,p_incoterm:incoterm,p_origin_port:originPort||null,
       p_destination_port:destinationPort||null,p_latest_ship_date:latestShipDate||null,p_etd:etd||null,p_eta:eta||null,
-      p_responsible_name:responsibleName||null,p_consignee:consignee||null,p_notify_party:notifyParty||null,
+      p_responsible_name:responsibleName||null,p_followup_name:followupName||null,p_documentation_name:documentationName||null,p_consignee:consignee||null,p_notify_party:notifyParty||null,
       p_booking_number:bookingNumber||null,p_bill_of_lading_number:billNumber||null,p_vessel_voyage:vesselVoyage||null,
       p_container_numbers:containerNumbers||null,p_seal_numbers:sealNumbers||null,p_notes:notes||null,p_batch_total:batchTotal.trim()?Number(batchTotal):null,p_items:payload,
     });
@@ -370,6 +372,8 @@ export function ShipmentsPage() {
         <Column sm={4} md={4} lg={4} xlg={4}> <label>装运方式<SelectInput value={shippingMode} onChange={e=>setShippingMode(e.target.value)}>{modes.map(m=><SelectItem key={m.value} value={m.value} text={m.label}/>)}</SelectInput></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>贸易术语<SelectInput value={incoterm} onChange={e=>setIncoterm(e.target.value)}>{['EXW','FCA','FAS','FOB','CFR','CIF','CPT','CIP','DAP','DPU','DDP'].map(x=><SelectItem key={x} value={x} text={x}/>)}</SelectInput></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>负责人<TextInput value={responsibleName} onChange={e=>setResponsibleName(e.target.value)} placeholder="负责人姓名"/></label> </Column>
+        <Column sm={4} md={4} lg={4} xlg={4}> <label>跟单员<TextInput value={followupName} onChange={e=>setFollowupName(e.target.value)} placeholder="跟单员姓名"/></label> </Column>
+        <Column sm={4} md={4} lg={4} xlg={4}> <label>单证员<TextInput value={documentationName} onChange={e=>setDocumentationName(e.target.value)} placeholder="单证员姓名"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>起运港<TextInput value={originPort} onChange={e=>setOriginPort(e.target.value)} placeholder="港口 / 机场"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>目的港<TextInput value={destinationPort} onChange={e=>setDestinationPort(e.target.value)} placeholder="港口 / 机场"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>最晚装运日<TextInput type="date" value={latestShipDate} onChange={e=>setLatestShipDate(e.target.value)}/></label> </Column>
