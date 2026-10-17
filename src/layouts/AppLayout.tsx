@@ -26,7 +26,7 @@ export function AppLayout() {
     : location.pathname === '/opportunities' ? '商机（Opportunity）'
     : location.pathname === '/quotes' ? '报价单（Quote）'
     : location.pathname === '/orders' ? '订单（Order）'
-     : location.pathname === '/shipments' ? '出运单（Shipment）'
+    : location.pathname === '/shipments' ? '出运单（Shipment）'
     : location.pathname === '/payments' ? '收汇记录（Payment）'
     : '经营智控中枢';
 
