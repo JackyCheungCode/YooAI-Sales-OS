@@ -378,7 +378,7 @@ export function ShipmentsPage() {
         <Column sm={4} md={4} lg={4} xlg={4}> <label>收货人<TextInput value={consignee} onChange={e=>setConsignee(e.target.value)} placeholder="从客户信息带入，可调整"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>通知方<TextInput value={notifyParty} onChange={e=>setNotifyParty(e.target.value)} placeholder="通知方"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>订舱号<TextInput value={bookingNumber} onChange={e=>setBookingNumber(e.target.value)} placeholder="订舱确认后填写"/></label> </Column>
-        <Column sm={4} md={4} lg={4} xlg={4}> <label>提单号<TextInput value={billNumber} onChange={e=>setBillNumber(e.target.value)} placeholder="提单号"/></label> </Column>
+        <Column sm={4} md={4} lg={4} xlg={4}> <label>提单 / 运单号<TextInput value={billNumber} onChange={e=>setBillNumber(e.target.value)} placeholder="提单号"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>船名航次 / 航班<TextInput value={vesselVoyage} onChange={e=>setVesselVoyage(e.target.value)} placeholder="船名 / 航次"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>柜号<TextInput value={containerNumbers} onChange={e=>setContainerNumbers(e.target.value)} placeholder="多个柜号可用逗号分隔"/></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>封条号<TextInput value={sealNumbers} onChange={e=>setSealNumbers(e.target.value)} placeholder="封条号"/></label> </Column>
