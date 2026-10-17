@@ -1,8 +1,7 @@
 import { SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from '../components/carbon/compat';
-import { Building, Dashboard, Help, Settings, UserMultiple, Document, Menu, Close } from '@carbon/icons-react';
+import { Building, Dashboard, Help, Settings, UserMultiple, Document, Logout } from '@carbon/icons-react';
 import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
 import { Grid, Column } from '../components/carbon/compat';
 import { useAuth } from '../app/AuthContext';
 
@@ -32,11 +31,30 @@ export function AppLayout() {
     : '经营智控中枢';
 
   return <div className="app-shell">
-    {mobileNavOpen && <div className="mobile-nav-backdrop" role="presentation" onClick={() => setMobileNavOpen(false)} />}
-    <aside className={'sidebar ' + (mobileNavOpen ? 'sidebar--mobile-open' : '')}>
-      <div className="brand"><div className="brand__mark"><Building size={19} /></div><div><div className="brand__name">YooAI Sales OS</div><div className="brand__caption">BUSINESS INTELLIGENCE</div></div></div>
+    <cds-header aria-label="YooAI Sales OS">
+      <cds-header-menu-button
+        aria-label={mobileNavOpen ? '收起导航菜单' : '展开导航菜单'}
+        active={mobileNavOpen}
+        onClick={() => setMobileNavOpen(open => !open)}
+      />
+      <cds-header-name href="/dashboard" prefix="">YooAI Sales OS</cds-header-name>
+      <cds-header-global-action aria-label="退出登录" tooltip-text="退出登录" onClick={() => void signOut()}>
+        <Logout size={20} />
+      </cds-header-global-action>
+    </cds-header>
+    <cds-side-nav
+      className="sidebar"
+      aria-label="主导航"
+      expanded={mobileNavOpen}
+      isPersistent
+      onClick={() => setMobileNavOpen(false)}
+    >
+      <div className="brand" aria-hidden="true">
+        <div className="brand__mark"><Building size={19} /></div>
+        <div><div className="brand__name">YooAI Sales OS</div><div className="brand__caption">BUSINESS INTELLIGENCE</div></div>
+      </div>
       <div className="workspace-label">经营工作空间</div>
-      <nav className="nav-list" aria-label="主导航"><SideNavItems>
+      <SideNavItems>
         <SideNavLink href="/dashboard" isActive={isDashboard} renderIcon={Dashboard} onClick={goTo('/dashboard')}>经营智控中枢</SideNavLink>
         <SideNavMenu title="客户管理" renderIcon={UserMultiple} isActive={isCustomerArea}>
           <SideNavMenuItem href="/accounts" isActive={location.pathname === '/accounts' || location.pathname === '/customers'} onClick={goTo('/accounts')}>客户（Account）</SideNavMenuItem>
@@ -50,23 +68,29 @@ export function AppLayout() {
           <SideNavMenuItem href="/shipments" isActive={location.pathname === '/shipments'} onClick={goTo('/shipments')}>出运单（Shipment）</SideNavMenuItem>
           <SideNavMenuItem href="/payments" isActive={location.pathname === '/payments'} onClick={goTo('/payments')}>收汇记录（Payment）</SideNavMenuItem>
         </SideNavMenu>
-      </SideNavItems></nav>
-      <div className="sidebar-bottom"><SideNavItems>
+      </SideNavItems>
+      <cds-side-nav-divider />
+      <SideNavItems>
         <SideNavLink href="/dashboard" renderIcon={Help} onClick={goTo('/dashboard')}>帮助中心</SideNavLink>
         <SideNavMenu title="系统设置" isActive={location.pathname.startsWith('/settings')} renderIcon={Settings}>
           <SideNavMenuItem href="/settings/ai-providers" isActive={location.pathname === '/settings/ai-providers'} onClick={goTo('/settings/ai-providers')}>AI 模型与数据服务</SideNavMenuItem>
         </SideNavMenu>
-      </SideNavItems></div>
-    </aside>
+      </SideNavItems>
+    </cds-side-nav>
     <div className="app-main">
-      <header className="topbar">
-        <Button type="button" variant="ghost" size="sm" className="mobile-nav-toggle" aria-label={mobileNavOpen ? "收起导航菜单" : "展开导航菜单"} aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen(v => !v)}>{mobileNavOpen ? <Close size={20} /> : <Menu size={20} />}<span>菜单</span></Button>
-        <div className="breadcrumb">经营工作空间 <span>/</span> <strong>{pageTitle}</strong></div>
-        <div className="topbar__actions">
-          <Button variant="ghost" size="sm" onClick={() => void signOut()}>退出登录</Button>
+      <div className="topbar" aria-label="页面路径">
+        <div className="breadcrumb">
+          <cds-breadcrumb>
+            <cds-breadcrumb-item href="/dashboard">经营工作空间</cds-breadcrumb-item>
+            <cds-breadcrumb-item aria-current="page">{pageTitle}</cds-breadcrumb-item>
+          </cds-breadcrumb>
         </div>
-      </header>
-      <main className="page-content"><Grid fullWidth className="page-layout-grid"><Column sm={4} md={8} lg={16} xlg={16}><Outlet /></Column></Grid></main>
+      </div>
+      <main className="page-content">
+        <Grid fullWidth className="page-layout-grid">
+          <Column sm={4} md={8} lg={16} xlg={16}><Outlet /></Column>
+        </Grid>
+      </main>
     </div>
   </div>;
 }
