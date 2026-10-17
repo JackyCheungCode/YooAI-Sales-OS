@@ -44,7 +44,7 @@ export function ShipmentsPage() {
   const [loading, setLoading] = useState(true);
   const [isFinance, setIsFinance] = useState(false);
   const [canEditShipment, setCanEditShipment] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState('');
+
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
@@ -154,7 +154,7 @@ export function ShipmentsPage() {
     if (detailError) setError('读取出运详情失败：'+detailError.message);
   }, [canManageSelectedCosts]);
 
-  useEffect(() => { void loadShipments(); if(supabase) void supabase.auth.getUser().then(({data})=>{const signedIn=Boolean(data.user?.id);setCurrentUserId(data.user?.id??'');setIsFinance(signedIn);setCanEditShipment(signedIn);}); }, []);
+  useEffect(() => { void loadShipments(); if(supabase) void supabase.auth.getUser().then(({data})=>{const signedIn=Boolean(data.user?.id);setIsFinance(signedIn);setCanEditShipment(signedIn);}); }, []);
   useEffect(() => { if (selectedId) void loadDetails(selectedId); else { setDocuments([]); setEvents([]); setCosts([]); setExceptions([]); } }, [selectedId,loadDetails]);
   useEffect(() => {
     if (!selected) return;
