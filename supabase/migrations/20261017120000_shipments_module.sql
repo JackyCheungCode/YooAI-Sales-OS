@@ -273,8 +273,8 @@ begin
     insert into public.order_items(owner_id,order_id,line_number,product_name,sku,specification,quantity,unit,unit_price,currency_code,note)
     values(auth.uid(),v_order.id,v_line,trim(v_item->>'product_name'),nullif(v_item->>'sku',''),nullif(v_item->>'specification',''),v_quantity,coalesce(nullif(v_item->>'unit',''),'件'),v_price,p_currency_code,nullif(v_item->>'note',''));
   end loop;
-  insert into public.audit_logs(owner_id,entity_type,entity_id,action,new_values,metadata)
-  values(auth.uid(),'order',v_order.id,'created',jsonb_build_object('order_number',v_order.order_number,'total_amount',v_order.total_amount,'currency_code',v_order.currency_code),jsonb_build_object('source','shipment_module_order_entry'));
+  insert into public.payment_audit_logs(owner_id,action,new_values,created_by)
+  values(auth.uid(),'order_created',jsonb_build_object('order_id',v_order.id,'order_number',v_order.order_number,'total_amount',v_order.total_amount,'currency_code',v_order.currency_code,'source','shipment_module_order_entry'),auth.uid());
   return jsonb_build_object('order_id',v_order.id,'order_number',v_order.order_number,'customer_id',v_order.customer_id);
 end;
 $body$;
