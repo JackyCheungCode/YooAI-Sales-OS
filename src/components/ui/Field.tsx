@@ -50,13 +50,15 @@ export function TextInput({ labelText, id, onChange, ...props }: CommonControlPr
   const ref = useRef<HTMLElement | null>(null);
   useCarbonChange(ref, onChange);
   const label = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '输入');
-  return createElement('cds-text-input', {
+  const isNumber = props.type === 'number';
+  const { type: _type, ...controlProps } = props;
+  return createElement(isNumber ? 'cds-number-input' : 'cds-text-input', {
     ref,
     id: id ?? generatedId,
     label,
     labelText: label,
     hideLabel: !labelText,
-    ...props,
+    ...controlProps,
   });
 }
 
