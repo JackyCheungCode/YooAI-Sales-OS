@@ -350,6 +350,7 @@ create or replace function public.update_shipment_logistics(
   p_shipment_id uuid,p_shipping_mode text,p_incoterm text,p_origin_port text,p_destination_port text,
   p_latest_ship_date date,p_etd date,p_eta date,p_responsible_name text,p_consignee text,p_notify_party text,
   p_booking_number text,p_bill_of_lading_number text,p_bill_of_lading_type text,p_vessel_voyage text,
+  p_carrier_name text,p_shipping_line text,p_container_type text,p_container_count integer,p_transshipment_info text,
   p_container_numbers text,p_seal_numbers text,p_tracking_number text,p_tracking_url text,p_notes text
 ) returns jsonb
 language plpgsql security definer set search_path = ''
@@ -365,8 +366,9 @@ begin
   update public.shipments set shipping_mode=p_shipping_mode,incoterm=p_incoterm,origin_port=p_origin_port,destination_port=p_destination_port,
     latest_ship_date=p_latest_ship_date,etd=p_etd,eta=p_eta,responsible_name=p_responsible_name,consignee=p_consignee,notify_party=p_notify_party,
     booking_number=p_booking_number,bill_of_lading_number=p_bill_of_lading_number,bill_of_lading_type=p_bill_of_lading_type,
-    vessel_voyage=p_vessel_voyage,container_numbers=p_container_numbers,seal_numbers=p_seal_numbers,tracking_number=p_tracking_number,
-    tracking_url=p_tracking_url,notes=p_notes where id=p_shipment_id;
+    vessel_voyage=p_vessel_voyage,carrier_name=p_carrier_name,shipping_line=p_shipping_line,container_type=p_container_type,
+    container_count=greatest(0,coalesce(p_container_count,0)),transshipment_info=p_transshipment_info,container_numbers=p_container_numbers,
+    seal_numbers=p_seal_numbers,tracking_number=p_tracking_number,tracking_url=p_tracking_url,notes=p_notes where id=p_shipment_id;
   if p_latest_ship_date is not null then
     insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
     values(auth.uid(),p_shipment_id,'latest_ship_date_warning','documentation','shipment_latest_ship_date_warning','zh-CN',greatest(now(),(p_latest_ship_date::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
@@ -384,8 +386,8 @@ begin
   return jsonb_build_object('shipment_id',p_shipment_id,'updated',true);
 end;
 $body$;
-revoke all on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) from public,anon;
-grant execute on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) to authenticated;
+revoke all on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,integer,text,text,text,text,text,text) from public,anon;
+grant execute on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,integer,text,text,text,text,text,text) to authenticated;
 
 create or replace function public.confirm_shipment_release(p_shipment_id uuid,p_finance_override boolean default false,p_override_reason text default null)
 returns jsonb language plpgsql security definer set search_path = ''
