@@ -11,10 +11,12 @@ import './styles/global.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <AppErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
           <App />
         </AuthProvider>
       </BrowserRouter>
+    </AppErrorBoundary>
   </StrictMode>,
 );
