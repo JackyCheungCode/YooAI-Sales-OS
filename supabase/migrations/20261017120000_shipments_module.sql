@@ -465,9 +465,9 @@ begin
     end if;
     if p_new_status='booked' and nullif(trim(v_shipment.booking_number),'') is null then raise exception 'Booking number is required before confirming booking' using errcode='22023'; end if;
     if p_new_status='departed' and nullif(trim(v_shipment.bill_of_lading_number),'') is null then raise exception 'Bill of lading number is required before departure' using errcode='22023'; end if;
-    if p_new_status='closed' and v_shipment.release_status not in ('ready_to_send','sent') then raise exception 'Finance must confirm document release before closing' using errcode='22023'; end if;
-    if p_new_status='closed' and (not exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id) or exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status not in ('approved','sent'))) then
-      raise exception 'All shipment documents must be present and approved before closing' using errcode='22023';
+    if p_new_status='closed' and v_shipment.release_status<>'sent' then raise exception 'All documents must be sent before closing the shipment' using errcode='22023'; end if;
+    if p_new_status='closed' and (not exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id) or exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status<>'sent')) then
+      raise exception 'All shipment documents must be present and sent before closing' using errcode='22023';
     end if;
     update public.shipments set status=p_new_status,
       actual_departure_date=case when p_new_status='departed' then current_date else actual_departure_date end,
@@ -483,9 +483,11 @@ begin
     on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
   end if;
   update public.orders o set status=case
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity)
-      and exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'partially_shipped'
-    when exists(select 1 from public.order_items oi where oi.order_id=o.id) and not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then 'shipped'
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0)
+      and exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then 'partially_shipped'
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id)
+      and not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then 'shipped'
+    when not exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'confirmed'
     else o.status end,updated_at=now()
   where o.id=v_shipment.order_id and o.owner_id=auth.uid();
   return jsonb_build_object('shipment_id',p_shipment_id,'status',p_new_status);
