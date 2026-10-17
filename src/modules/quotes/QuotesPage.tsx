@@ -1,7 +1,7 @@
 import { Search as CarbonSearch, Tile, Tag, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, Modal, ModalHeader, ModalHeading, ModalBody, InlineNotification } from '../../components/carbon/compat';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Add, Renew, Document, CheckmarkFilled, WarningAlt, Close, Copy, Send, Download, ArrowRight, Time, Money, TrashCan } from '../../components/carbon/icons';
+import { Add, Renew, Document, CheckmarkFilled, WarningAlt, Copy, Send, Download, ArrowRight, Time, Money, TrashCan } from '../../components/carbon/icons';
 
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
