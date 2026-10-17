@@ -14,7 +14,7 @@
 .dashboard-section-heading h2{margin:0;font-size:var(--cds-type-heading-02);font-weight:600}
 .dashboard-section-heading p{margin:var(--cds-spacing-03) 0 0;color:var(--cds-text-secondary)}
 .dashboard-refresh{display:flex;align-items:center;gap:var(--cds-spacing-03);flex:0 0 auto;color:var(--cds-text-secondary);font-size:var(--cds-type-body-02)}
-.refresh-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--cds-support-warning)}
+.refresh-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--cds-text-warning)}
 .dashboard-metrics{row-gap:var(--cds-spacing-05)}
 .dashboard-metric-card{height:100%;min-height:9.5rem;padding:var(--cds-spacing-05) var(--cds-spacing-05);border:1px solid var(--cds-border-subtle-01);display:flex;flex-direction:column;gap:var(--cds-spacing-03)}
 .dashboard-metric-card__label{display:flex;align-items:center;justify-content:space-between;gap:var(--cds-spacing-03);color:var(--cds-text-secondary);font-size:var(--cds-type-body-02);font-weight:600}
@@ -68,13 +68,13 @@
 .comparison-bar>div,.service-bar>div{height:.75rem;background:var(--cds-layer-accent);overflow:hidden}
 .comparison-bar i,.service-bar i{display:block;height:100%;background:var(--cds-text-primary)}
 .comparison-bar strong,.service-bar strong{font-size:var(--cds-type-body-02);text-align:right}
-.service-bar i{background:var(--cds-support-success)}
+.service-bar i{background:var(--cds-text-success)}
 .journey-flow{display:flex;align-items:stretch;gap:var(--cds-spacing-03);padding:var(--cds-spacing-07) var(--cds-spacing-05);min-height:15rem}
 .journey-step{position:relative;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:var(--cds-spacing-04);padding:var(--cds-spacing-04) var(--cds-spacing-02);background:var(--cds-layer-01);text-align:center}
 .journey-step span{font-size:var(--cds-type-body-02);color:var(--cds-text-secondary)}
 .journey-step strong{font-size:var(--cds-type-heading-02)}
 .journey-step i{position:absolute;right:-.6rem;z-index:1;font-style:normal;color:var(--cds-text-secondary)}
-.dashboard-disclaimer{padding:var(--cds-spacing-04) var(--cds-spacing-05);background:var(--cds-layer-01);border-left:3px solid var(--cds-support-warning);color:var(--cds-text-secondary);font-size:var(--cds-type-body-02)}
+.dashboard-disclaimer{padding:var(--cds-spacing-04) var(--cds-spacing-05);background:var(--cds-layer-01);border-left:3px solid var(--cds-text-warning);color:var(--cds-text-secondary);font-size:var(--cds-type-body-02)}
 .dashboard-disclaimer span{margin-right:var(--cds-spacing-03);color:var(--cds-text-primary);font-weight:600}
 @media(max-width:1055px){.dashboard-heading{align-items:flex-start}.dashboard-heading__actions{justify-content:flex-start}.dashboard-section-heading{align-items:flex-start;flex-direction:column}.dashboard-refresh{align-self:flex-start}}
 @media(max-width:671px){.dashboard-page{gap:var(--cds-spacing-05)}.dashboard-heading__actions{width:100%;gap:var(--cds-spacing-03)}.dashboard-filter-panel{padding:var(--cds-spacing-05)}.dashboard-filter-title{align-items:flex-start}.dashboard-filter-title>div{gap:var(--cds-spacing-02);flex-direction:column}.dashboard-section-heading h2{font-size:var(--cds-type-heading-02)}.dashboard-metric-card{min-height:8.5rem;padding:var(--cds-spacing-04)}.dashboard-metric-card__value{font-size:var(--cds-type-heading-02)}.dashboard-panel__heading{padding:var(--cds-spacing-05)}.dashboard-panel__footer{align-items:flex-start;padding:var(--cds-spacing-04) var(--cds-spacing-05)}.risk-row{align-items:flex-start;gap:var(--cds-spacing-03);padding:var(--cds-spacing-04) var(--cds-spacing-05);flex-wrap:wrap}.risk-main{flex-basis:calc(100% - 3.25rem)}.risk-row cds-tag{margin-left:var(--cds-spacing-09)}.ranking-row{padding:var(--cds-spacing-04) var(--cds-spacing-05)}.journey-flow{gap:var(--cds-spacing-02);padding:var(--cds-spacing-05) var(--cds-spacing-04)}.journey-step{padding:var(--cds-spacing-04) var(--cds-spacing-05)}.journey-step strong{font-size:var(--cds-type-body-01)}.journey-step i{right:-.45rem}.funnel-row{grid-template-columns:4.5rem minmax(2rem,1fr) auto;gap:var(--cds-spacing-03)}.funnel-row strong{font-size:var(--cds-type-body-02)}.dashboard-disclaimer{padding:var(--cds-spacing-04)}}
