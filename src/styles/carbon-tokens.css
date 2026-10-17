@@ -1,5 +1,8 @@
-/* Carbon tokens remain the source of truth; this alias names the page-level background explicitly. */
-:root { --cds-bg-page: var(--cds-background); }
+/* Project aliases must resolve to Carbon theme/type tokens, never hard-coded values. */
+:root {
+  --cds-bg-page: var(--cds-background);
+  --cds-font-family-sans: 'IBM Plex Sans', 'Songti TC', 'Songti SC', SimSun, serif;
+}
 body {
-  font-family: 'IBM Plex Sans', SimSun, sans-serif;
+  font-family: var(--cds-font-family-sans);
 }
