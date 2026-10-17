@@ -1,4 +1,4 @@
-import { createElement, type ComponentType, type KeyboardEventHandler, type MouseEventHandler, type ReactNode } from 'react';
+import { createElement, type ElementType, type KeyboardEventHandler, type MouseEventHandler, type ReactNode } from 'react';
 
 type Props = {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -9,7 +9,7 @@ type Props = {
   className?: string;
   onClick?: MouseEventHandler<HTMLElement>;
   onKeyDown?: KeyboardEventHandler<HTMLElement>;
-  renderIcon?: ComponentType<{ size?: number }>;
+  renderIcon?: ElementType<{ size?: number }>;
   [key: string]: unknown;
 };
 
