@@ -259,7 +259,7 @@ export function ShipmentsPage() {
     const {error:uploadError}=await supabase.storage.from('shipment-documents').upload(path,docFile,{upsert:false,contentType:docFile.type||'application/octet-stream'});
     if(uploadError){setSaving(false);setError('文件上传失败：'+uploadError.message);return;}
     const {error:recordError}=await supabase.from('shipment_documents').insert({shipment_id:selected.id,owner_id:selected.owner_id,document_type:docType,file_name:docFile.name,storage_path:path,mime_type:docFile.type||null,file_size:docFile.size,status:docStatus});
-    setSaving(false);if(recordError){setError('文件记录保存失败：'+recordError.message);return;}
+    setSaving(false);if(recordError){await supabase.storage.from('shipment-documents').remove([path]);setError('文件记录保存失败：'+recordError.message);return;}
     setDocFile(null);setNotice('单证已上传。');await loadDetails(selected.id);
   };
   const updateDocumentStatus=async(id:string,status:string)=>{
