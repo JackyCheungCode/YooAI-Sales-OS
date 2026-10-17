@@ -501,7 +501,7 @@ grant select on public.shipments to authenticated;
 revoke insert,update,delete on public.order_items from authenticated;
 grant select on public.order_items to authenticated;
  then raise exception 'Currency must be a three-letter ISO code' using errcode='22023'; end if;
-  if p_total_amount < 0 then raise exception 'Order amount cannot be negative' using errcode='22023'; end if;
+  if p_total_amount <= 0 then raise exception 'Order amount must be positive' using errcode='22023'; end if;
   if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 then raise exception 'At least one order item is required' using errcode='22023'; end if;
   if not exists(select 1 from public.customers c where c.id=p_customer_id and c.owner_id=auth.uid()) then
     raise exception 'Customer not found or access denied' using errcode='42501';
