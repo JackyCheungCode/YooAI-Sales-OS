@@ -132,3 +132,22 @@
 - [ ] 未经明确授权不部署 Preview 或生产环境。
 
 未执行的检查必须标记为“未验证”，不得宣称全站通过。
+
+
+## 8. 弹窗与详情侧面板强制规范
+
+- 创建业务记录（例如客户、联系人、线索、商机、订单、报价、收汇、出运单）必须使用已安装版本支持的 Carbon 原生 `cds-modal` 及其官方子组件；禁止用自定义遮罩、`role="dialog"` 的 section/div 或手写弹窗模拟。
+- 查看单条记录详情、编辑既有记录详情必须使用官方 `cds-side-panel` 及其官方子组件。实施前必须核验 `@carbon/web-components@2.64.0` 是否包含该组件和对应 footer 子组件；若组件 API 不存在或不兼容，必须记录阻塞并先核验官方等价方案，不得创建空标签或用自定义 div 冒充。
+- 弹窗操作按钮必须放在原生 `cds-modal-footer` 轨道内；详情侧面板操作按钮必须放在原生 `cds-side-panel-footer` 轨道内。Footer 应使用当前版本支持的官方 footer 组件/按钮子组件，不得用普通 `footer`、自定义 `div` 或自定义类名容器替代。
+- 通用封装必须明确暴露 Modal、Modal Footer、Side Panel、Side Panel Footer 的原生组件映射，并统一处理关闭事件、焦点管理、键盘操作和可访问性属性。
+- 全站审计须检索所有页面、共用组件、样式文件中的 `cds-modal`、`cds-side-panel`、`role="dialog"`、`modal-backdrop`、`<footer>`、`modal-footer`、`side-panel-footer` 等引用，逐项判断用途并记录迁移结果。
+- 新建记录表单使用 Modal；查看/编辑现有记录使用 Side Panel；与记录详情无关的轻量确认、风险提示等对话框可继续使用 Modal，但必须使用原生 Carbon footer。
+- 未完成真实版本 API 核验、代码构建和交互回归前，不得标记为通过或部署。
+
+## 9. PR/合并前强制验收（弹窗与侧面板补充）
+
+- [ ] 创建记录均使用原生 `cds-modal`，无自制遮罩层或 `role="dialog"` 模拟实现。
+- [ ] 查看/编辑现有记录详情均使用官方 `cds-side-panel`，或有经过负责人确认并记录的官方等价方案。
+- [ ] 所有 Modal 操作按钮均位于原生 `cds-modal-footer`；所有 Side Panel 操作按钮均位于原生 `cds-side-panel-footer`。
+- [ ] 全站无用普通 `footer` 或自定义 `div` 充当弹窗/侧面板操作轨道的实现。
+- [ ] 已验证关闭按钮、遮罩关闭、Escape、焦点陷阱/还原、键盘操作、移动端布局及表单提交行为。
