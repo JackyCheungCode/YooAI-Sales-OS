@@ -298,6 +298,12 @@ declare
   v_line integer := 0;
   v_quantity numeric(14,3);
   v_price numeric(14,4);
+  v_deposit_percent numeric(5,2);
+  v_deposit_due_days integer;
+  v_balance_due_days integer;
+  v_deposit_amount numeric(14,2);
+  v_balance_amount numeric(14,2);
+  v_schedule_number text;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
   if nullif(trim(p_order_number),'') is null then raise exception 'Order number is required' using errcode='22023'; end if;
@@ -320,8 +326,26 @@ begin
     insert into public.order_items(owner_id,order_id,line_number,product_name,sku,specification,quantity,unit,unit_price,currency_code,note)
     values(auth.uid(),v_order.id,v_line,trim(v_item->>'product_name'),nullif(v_item->>'sku',''),nullif(v_item->>'specification',''),v_quantity,coalesce(nullif(v_item->>'unit',''),'件'),v_price,p_currency_code,nullif(v_item->>'note',''));
   end loop;
-  insert into public.payment_audit_logs(owner_id,action,new_values,created_by)
-  values(auth.uid(),'order_created',jsonb_build_object('order_id',v_order.id,'order_number',v_order.order_number,'total_amount',v_order.total_amount,'currency_code',v_order.currency_code,'source','shipment_module_order_entry'),auth.uid());
+  v_deposit_percent := greatest(0,least(100,coalesce(nullif(v_order.payment_terms->>'deposit_percent','')::numeric,0)));
+  v_deposit_due_days := greatest(0,coalesce(nullif(v_order.payment_terms->>'deposit_due_days','')::integer,7));
+  v_balance_due_days := greatest(0,coalesce(nullif(v_order.payment_terms->>'balance_due_days','')::integer,30));
+  v_deposit_amount := round(v_order.total_amount*v_deposit_percent/100,2);
+  v_balance_amount := greatest(0,v_order.total_amount-v_deposit_amount);
+
+  if v_deposit_amount>0 then
+    v_schedule_number := 'AR-'||to_char(current_date,'YYYYMMDD')||'-'||lpad(nextval('public.receivable_schedule_number_seq')::text,6,'0');
+    insert into public.receivable_schedules(owner_id,order_id,customer_id,schedule_number,payment_type,currency_code,due_amount,due_date,status)
+    values(auth.uid(),v_order.id,v_order.customer_id,v_schedule_number,'deposit',v_order.currency_code,v_deposit_amount,current_date+v_deposit_due_days,'pending');
+  end if;
+
+  if v_balance_amount>0 then
+    v_schedule_number := 'AR-'||to_char(current_date,'YYYYMMDD')||'-'||lpad(nextval('public.receivable_schedule_number_seq')::text,6,'0');
+    insert into public.receivable_schedules(owner_id,order_id,customer_id,schedule_number,payment_type,currency_code,due_amount,due_date,status)
+    values(auth.uid(),v_order.id,v_order.customer_id,v_schedule_number,'balance',v_order.currency_code,v_balance_amount,current_date+v_balance_due_days,'pending');
+  end if;
+
+  insert into public.order_audit_logs(owner_id,order_id,action,new_values,created_by)
+  values(auth.uid(),v_order.id,'order_created',jsonb_build_object('order_number',v_order.order_number,'total_amount',v_order.total_amount,'currency_code',v_order.currency_code,'source','shipment_module_order_entry'),auth.uid());
   return jsonb_build_object('order_id',v_order.id,'order_number',v_order.order_number,'customer_id',v_order.customer_id);
 end;
 $body$;
