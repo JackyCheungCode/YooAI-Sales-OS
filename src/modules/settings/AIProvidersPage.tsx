@@ -40,7 +40,7 @@ function ProviderCard({ provider, testResult, testing, onTest }: {
       {provider.canTest
         ? <Button variant="primary" size="sm" disabled={!provider.configured || testing} onClick={() => onTest(provider.id)} renderIcon={testing ? Renew : Api}>{testing ? '正在测试' : '测试连接'}</Button>
         : <span className="ai-provider-card__helper">数据服务连接测试将在客户发现模块接入时启用</span>}
-      <a className="ai-provider-card__external" href={provider.consoleUrl} target="_blank" rel="noreferrer">供应商控制台 <Launch size={14} aria-hidden="true" /></a>
+      <cds-link className="ai-provider-card__external" href={provider.consoleUrl} target="_blank" rel="noreferrer">供应商控制台 <Launch size={14} aria-hidden="true" /></cds-link>
     </div>
   </Tile>;
 }
