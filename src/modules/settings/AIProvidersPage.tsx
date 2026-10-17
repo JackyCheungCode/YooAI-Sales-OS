@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Api, CheckmarkFilled, Launch, Renew, WarningFilled } from '../../components/carbon/icons';
+import { Api, Launch, Renew } from '../../components/carbon/icons';
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../app/AuthContext';
