@@ -25,3 +25,4 @@ import '@carbon/web-components/es/components/ui-shell/index.js';
 import '@carbon/web-components/es/components/textarea/index.js';
 import '@carbon/web-components/es/components/text-input/index.js';
 import '@carbon/web-components/es/components/tile/index.js';
+import '@carbon/web-components/es/components/skip-to-content/index.js';
