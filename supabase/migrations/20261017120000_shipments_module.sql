@@ -561,6 +561,54 @@ drop trigger if exists shipment_documents_stamp_review_insert on public.shipment
 create trigger shipment_documents_stamp_review_insert before insert on public.shipment_documents for each row execute function public.stamp_shipment_document_review();
 create trigger shipment_documents_stamp_review before update of status on public.shipment_documents for each row execute function public.stamp_shipment_document_review();
 
+create or replace function public.audit_shipment_record_change()
+returns trigger language plpgsql security definer set search_path = ''
+as $body$
+declare
+  v_owner_id uuid;
+  v_shipment_id uuid;
+  v_record_id uuid;
+  v_description text;
+begin
+  if tg_op='DELETE' then
+    v_owner_id := old.owner_id;
+    v_shipment_id := old.shipment_id;
+    v_record_id := old.id;
+  else
+    v_owner_id := new.owner_id;
+    v_shipment_id := new.shipment_id;
+    v_record_id := new.id;
+  end if;
+
+  if tg_table_name='shipment_documents' then
+    v_description := case when tg_op='INSERT' then '出运单已新增单证记录。' else '出运单单证状态或资料已更新。' end;
+  elsif tg_table_name='shipment_costs' then
+    v_description := case when tg_op='INSERT' then '出运物流费用已新增或登记。' else '出运物流费用记录已更新。' end;
+  elsif tg_table_name='shipment_exceptions' then
+    v_description := case when tg_op='INSERT' then '出运异常已登记。' else '出运异常处理记录已更新。' end;
+  else
+    v_description := '出运记录已更新。';
+  end if;
+
+  insert into public.shipment_events(owner_id,shipment_id,event_type,description,metadata,created_by)
+  values(v_owner_id,v_shipment_id,'record_changed',v_description,
+    jsonb_build_object('table',tg_table_name,'operation',tg_op,'record_id',v_record_id),auth.uid());
+
+  if tg_op='DELETE' then return old; end if;
+  return new;
+end;
+$body$;
+
+drop trigger if exists shipment_documents_audit_change on public.shipment_documents;
+create trigger shipment_documents_audit_change after insert or update on public.shipment_documents
+for each row execute function public.audit_shipment_record_change();
+drop trigger if exists shipment_costs_audit_change on public.shipment_costs;
+create trigger shipment_costs_audit_change after insert or update on public.shipment_costs
+for each row execute function public.audit_shipment_record_change();
+drop trigger if exists shipment_exceptions_audit_change on public.shipment_exceptions;
+create trigger shipment_exceptions_audit_change after insert or update on public.shipment_exceptions
+for each row execute function public.audit_shipment_record_change();
+
 create or replace function public.sync_shipment_release_sent()
 returns trigger language plpgsql security definer set search_path = ''
 as $body$
