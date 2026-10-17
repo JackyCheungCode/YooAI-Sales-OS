@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Add, Renew, WarningAlt, CheckmarkFilled, Money, Document, Send, Close } from '@carbon/icons-react';
 import { FileUploaderButton, Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalHeading, ModalBody, Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '../../components/carbon/compat';
-import { Select, SelectItem, TextArea, TextInput } from '../../components/ui/Field';
+import { SelectInput as Select, SelectItem, TextAreaInput as TextArea, TextInput } from '../../components/ui/Field';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabase';
 import './payments.css';
