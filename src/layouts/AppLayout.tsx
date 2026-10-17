@@ -3,10 +3,10 @@ import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Grid, Column } from '../components/carbon/compat';
 import { useAuth } from '../app/AuthContext';
-import { Logout } from '../components/carbon/icons';
+import { Logout, UserAvatar } from '../components/carbon/icons';
 
 export function AppLayout() {
-  const { signOut } = useAuth();
+  const { signOut, session } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -40,10 +40,20 @@ export function AppLayout() {
       />
       <cds-header-name href="/dashboard" prefix="">YooAI Sales OS</cds-header-name>
       <div className="cds--header__global">
+        <cds-header-global-action aria-label="个人中心" tooltip-text="个人中心" panel-id="profile-panel">
+          <UserAvatar size={20} slot="icon" />
+        </cds-header-global-action>
         <cds-header-global-action aria-label="退出登录" tooltip-text="退出登录" onClick={() => void signOut()}>
           <Logout size={20} slot="icon" />
         </cds-header-global-action>
       </div>
+      <cds-header-panel id="profile-panel" aria-label="个人中心">
+        <div className="profile-panel-content">
+          <h2>个人中心</h2>
+          <p>当前账号</p>
+          <p>{session?.user.email ?? '当前没有可用的登录账号'}</p>
+        </div>
+      </cds-header-panel>
     </cds-header>
     <cds-side-nav
       className="sidebar"
