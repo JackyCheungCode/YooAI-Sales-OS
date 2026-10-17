@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Add, Renew, WarningAlt, CheckmarkFilled, Money, Document, Send, Close } from '../../components/carbon/icons';
+import { Add, Renew, WarningAlt, CheckmarkFilled, Money, Document, Send } from '../../components/carbon/icons';
 import { FileUploaderButton, Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalHeading, ModalBody, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification } from '../../components/carbon/compat';
 import { SelectInput as Select, SelectItem, TextAreaInput as TextArea, TextInput } from '../../components/ui/Field';
 import { Button } from '../../components/ui/Button';
