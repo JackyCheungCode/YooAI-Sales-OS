@@ -62,3 +62,7 @@ cds-tabs { --cds-border-interactive: transparent; display:block; max-width:100%;
 cds-dropdown { display:block; min-width:0; position:relative; z-index:2; }
 .account-list-filters,.contacts-filters,.lead-filter,.opps-filters,.orders-filter,.quotes-filter,.shipments-list-tools,.filter-row { position:relative; z-index:2; }
 .account-list-items,.contacts-list-items,.opps-list,.orders-list-items,.quotes-list-items,.shipments-records,.payments-list-items { position:relative; z-index:0; }
+
+/* Empty detail state before the user explicitly chooses a Carbon tab. */
+.tab-selection-prompt { margin: var(--cds-spacing-05) 0; padding: var(--cds-spacing-05); color: var(--cds-text-secondary); }
+.tab-selection-prompt p { margin: 0; font-size: var(--cds-type-body-01); }
