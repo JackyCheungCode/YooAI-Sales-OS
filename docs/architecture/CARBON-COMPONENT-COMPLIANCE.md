@@ -65,7 +65,7 @@
 - 可折叠分组：`cds-side-nav-menu`。
 - 导航项：`cds-side-nav-menu-item`；主导航和分组子项均需使用当前版本支持的 UI Shell 原生导航项，并为当前页设置 `aria-current="page"`。
 - 导航分隔：`cds-side-nav-divider`（若当前版本没有独立标签，使用官方 UI Shell 分隔模式并记录）。
-- 右侧滑出面板：`cds-side-panel`（仅在当前版本存在时使用；否则核对官方对应模式）。
+- 右侧滑出面板：当前 UI Shell 通过 `cds-header-global-action` 的 `panel-id` 触发 `cds-header-panel`；不创建不存在的 `cds-side-panel` 标签，也不手写遮罩或滑出动画。
 - 面包屑：`cds-breadcrumb`，禁止手写“经营工作空间 / 页面名称”作为替代导航组件。
 - 页面内选项卡：`cds-tabs` + `cds-tab`。
 - 当前页面菜单项必须设置原生 `aria-current="page"`；不得仅通过自定义背景色模拟激活状态。
