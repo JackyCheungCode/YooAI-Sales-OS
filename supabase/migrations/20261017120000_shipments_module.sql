@@ -403,7 +403,7 @@ grant execute on function public.create_order_with_items(text,uuid,text,numeric,
 -- Atomic shipment creation serializes on the order row and validates each remaining quantity.
 create or replace function public.create_shipment_with_items(
   p_order_id uuid,p_shipping_mode text,p_incoterm text,p_origin_port text,p_destination_port text,
-  p_latest_ship_date date,p_etd date,p_eta date,p_responsible_name text,p_consignee text,p_notify_party text,
+  p_latest_ship_date date,p_etd date,p_eta date,p_responsible_name text,p_followup_name text,p_documentation_name text,p_consignee text,p_notify_party text,
   p_booking_number text,p_bill_of_lading_number text,p_vessel_voyage text,p_container_numbers text,p_seal_numbers text,
   p_notes text,p_batch_total integer,p_items jsonb
 ) returns jsonb
@@ -428,8 +428,8 @@ begin
   select coalesce(max(batch_number),0)+1 into v_batch from public.shipments where order_id=p_order_id and owner_id=auth.uid();
   if p_batch_total is not null and (p_batch_total<1 or p_batch_total<v_batch) then raise exception 'Total shipment batches cannot be less than the current batch number' using errcode='22023'; end if;
   v_number := 'SHP-'||to_char(current_date,'YYYYMMDD')||'-'||lpad(nextval('public.shipment_number_seq')::text,6,'0');
-  insert into public.shipments(owner_id,shipment_number,order_id,customer_id,batch_number,batch_total,status,shipping_mode,incoterm,origin_port,destination_port,latest_ship_date,etd,eta,responsible_name,consignee,notify_party,booking_number,bill_of_lading_number,vessel_voyage,container_numbers,seal_numbers,notes)
-  values(auth.uid(),v_number,p_order_id,v_order.customer_id,v_batch,p_batch_total,'draft',p_shipping_mode,p_incoterm,p_origin_port,p_destination_port,p_latest_ship_date,p_etd,p_eta,p_responsible_name,p_consignee,p_notify_party,p_booking_number,p_bill_of_lading_number,p_vessel_voyage,p_container_numbers,p_seal_numbers,p_notes)
+  insert into public.shipments(owner_id,shipment_number,order_id,customer_id,batch_number,batch_total,status,shipping_mode,incoterm,origin_port,destination_port,latest_ship_date,etd,eta,responsible_name,followup_name,documentation_name,consignee,notify_party,booking_number,bill_of_lading_number,vessel_voyage,container_numbers,seal_numbers,notes)
+  values(auth.uid(),v_number,p_order_id,v_order.customer_id,v_batch,p_batch_total,'draft',p_shipping_mode,p_incoterm,p_origin_port,p_destination_port,p_latest_ship_date,p_etd,p_eta,p_responsible_name,p_followup_name,p_documentation_name,p_consignee,p_notify_party,p_booking_number,p_bill_of_lading_number,p_vessel_voyage,p_container_numbers,p_seal_numbers,p_notes)
   returning * into v_shipment;
   for v_item in select value from jsonb_array_elements(p_items) loop
     if nullif(v_item->>'order_item_id','') is null then raise exception 'Order item is required' using errcode='22023'; end if;
@@ -473,8 +473,8 @@ begin
   return jsonb_build_object('shipment_id',v_shipment.id,'shipment_number',v_shipment.shipment_number,'batch_number',v_shipment.batch_number);
 end;
 $body$;
-revoke all on function public.create_shipment_with_items(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,integer,jsonb) from public,anon;
-grant execute on function public.create_shipment_with_items(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,integer,jsonb) to authenticated;
+revoke all on function public.create_shipment_with_items(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,integer,jsonb) from public,anon;
+grant execute on function public.create_shipment_with_items(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,integer,jsonb) to authenticated;
 
 create or replace function public.update_shipment_logistics(
   p_shipment_id uuid,p_shipping_mode text,p_incoterm text,p_origin_port text,p_destination_port text,
