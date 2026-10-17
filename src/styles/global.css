@@ -6,7 +6,7 @@ html, body, #root { min-height: 100%; margin: 0; }
 body {
   background: var(--cds-bg-page);
   color: var(--cds-text-primary);
-  font-size: var(--cds-body-compact-01-font-size);
+  font-size:var(--cds-type-body-01);
 }
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--cds-highlight); }
@@ -30,19 +30,19 @@ a { color: inherit; text-decoration: none; }
 .app-error-eyebrow {
   margin: 0 0 1rem;
   color: var(--cds-text-secondary, #525252);
-  font-size: .75rem;
+  font-size:var(--cds-type-body-02);
   font-weight: 600;
-  letter-spacing: .08em;
+  
 }
 .app-error-card h1 {
   margin: 0 0 1rem;
-  font-size: 1.5rem;
-  line-height: 1.3;
+  font-size:var(--cds-type-heading-01);
+  
 }
 .app-error-card p:not(.app-error-eyebrow) {
   margin: 0 0 1.5rem;
   color: var(--cds-text-secondary, #525252);
-  line-height: 1.6;
+  
 }
 .app-error-card button {
   min-height: 3rem;
@@ -64,7 +64,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--cds-layer-02, #f4f4f4);
   color: var(--cds-text-primary, #161616);
   font-family: var(--cds-code-01-font-family, monospace);
-  font-size: .875rem;
+  font-size:var(--cds-type-body-02);
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
@@ -81,5 +81,5 @@ a { color: inherit; text-decoration: none; }
   overflow: auto;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font-size: .75rem;
+  font-size:var(--cds-type-body-02);
 }
