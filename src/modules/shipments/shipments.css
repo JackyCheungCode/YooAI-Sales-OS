@@ -53,7 +53,7 @@
 .shipment-risk-list svg{flex:none;color:var(--cds-support-warning)}
 .shipment-table-wrap{width:100%;overflow:auto}
 .shipment-table{width:100%}
-.shipment-inline-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--cds-spacing-03);align-items:end}
+.shipment-inline-form{min-width:0;align-items:end}
 .shipment-inline-form>input[type=file]{grid-column:1/-1;max-width:100%}
 .shipment-cost-total{display:flex;flex-direction:column;gap:var(--cds-spacing-02);margin:0}
 .shipment-cost-total strong{font-size:var(--cds-heading-03-font-size)}
@@ -76,4 +76,4 @@
 .shipment-form-wide{width:100%}
 .shipment-modal form>footer{display:flex;justify-content:flex-end;gap:var(--cds-spacing-03);padding-top:var(--cds-spacing-04);border-top:1px solid var(--cds-border-subtle-01)}
 
-@media(max-width:56rem){.shipments-heading{flex-direction:column}.shipments-heading-actions{width:100%}.shipments-records{max-height:24rem}.shipment-facts{grid-template-columns:minmax(0,1fr)}.shipment-inline-form{grid-template-columns:minmax(0,1fr)}.shipment-form-grid{grid-template-columns:minmax(0,1fr)}.shipment-detail-header{flex-direction:column}.shipment-action-row{justify-content:flex-start}}
+@media(max-width:56rem){.shipments-heading{flex-direction:column}.shipments-heading-actions{width:100%}.shipments-records{max-height:24rem}.shipment-facts{grid-template-columns:minmax(0,1fr)}.shipment-detail-header{flex-direction:column}.shipment-action-row{justify-content:flex-start}}
