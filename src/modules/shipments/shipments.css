@@ -59,10 +59,7 @@
 .shipment-risk-list li{display:flex;align-items:flex-start;gap:var(--cds-spacing-03);line-height:1.5}
 .shipment-risk-list svg{flex:none;color:var(--cds-support-warning)}
 .shipment-table-wrap{width:100%;overflow:auto}
-.shipment-table{width:100%;border-collapse:collapse;text-align:left;font-size:var(--cds-body-compact-01-font-size)}
-.shipment-table th,.shipment-table td{padding:var(--cds-spacing-03);border-bottom:1px solid var(--cds-border-subtle-01);vertical-align:top;white-space:normal;min-width:5rem}
-.shipment-table th{background:var(--cds-layer-02);font-weight:600}
-.shipment-table td small{display:block;margin-top:var(--cds-spacing-02);color:var(--cds-text-secondary)}
+.shipment-table{width:100%}
 .shipment-inline-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--cds-spacing-03);align-items:end}
 .shipment-inline-form>input[type=file]{grid-column:1/-1;max-width:100%}
 .shipment-cost-total{display:flex;flex-direction:column;gap:var(--cds-spacing-02);margin:0}
