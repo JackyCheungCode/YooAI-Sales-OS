@@ -32,7 +32,7 @@ const statuses: { value: ShipmentStatus; label: string }[] = [
 const statusLabel = Object.fromEntries(statuses.map(s => [s.value, s.label])) as Record<ShipmentStatus, string>;
 const modes = [{value:'fcl',label:'整柜'},{value:'lcl',label:'拼柜'},{value:'bulk',label:'散货'},{value:'air',label:'空运'},{value:'express',label:'快递'},{value:'rail',label:'铁路'}];
 const modeLabel: Record<string,string> = Object.fromEntries(modes.map(m=>[m.value,m.label]));
-const documentTypes = ['商业发票','装箱单','提单 / 海运单','原产地证','检验检疫证书','熏蒸 / 消毒证书','保险单','报关资料','订舱确认','装柜照片','客户指定文件'];
+const documentTypes = ['商业发票','装箱单','提单 / 海运单','空运单','快递运单','铁路运单','原产地证','检验检疫证书','熏蒸 / 消毒证书','保险单','报关资料','订舱确认','装柜照片','客户指定文件'];
 const currency = (value:number, code='USD') => { try { return new Intl.NumberFormat('zh-CN',{style:'currency',currency:code,maximumFractionDigits:2}).format(value); } catch { return code+' '+value.toFixed(2); } };
 
 export function ShipmentsPage() {
@@ -222,7 +222,7 @@ export function ShipmentsPage() {
   };
   const confirmRelease = async () => {
     if(!supabase||!selected||saving||!isFinance)return;
-    if(!currentDocumentsReady){setError('所有出运单证都必须处于“已审核”状态后才能申请放单。');return;}
+    if(!currentDocumentsReady){setError('商业发票、装箱单及对应运输方式的运单必须已审核，且所有已上传单证都必须审核通过后才能申请放单。');return;}
     setSaving(true);setError('');setNotice('');
     const reason=releaseOverrideReason.trim();
     const {data,error:releaseError}=await supabase.rpc('confirm_shipment_release',{
@@ -298,7 +298,8 @@ export function ShipmentsPage() {
   };
   const progressStatuses=statuses.filter(s=>!['draft','closed','cancelled'].includes(s.value));
   const progressIndex=selected?.status==='closed'?progressStatuses.length:selected?progressStatuses.findIndex(s=>s.value===selected.status):-1;
-  const currentDocumentsReady=documents.length>0&&documents.every(d=>d.status==='approved');
+  const requiredDocumentTypes=selected?['商业发票','装箱单',...(selected.shipping_mode==='air'?['空运单']:selected.shipping_mode==='express'?['快递运单']:selected.shipping_mode==='rail'?['铁路运单']:['提单 / 海运单'])]:[];
+  const currentDocumentsReady=documents.length>0&&documents.every(d=>d.status==='approved')&&requiredDocumentTypes.every(type=>documents.some(d=>d.document_type===type&&d.status==='approved'));
   const canRelease=selected&&currentDocumentsReady;
   const totalCostByCurrency=costs.reduce<Record<string,number>>((totals,c)=>({...totals,[c.currency_code]:(totals[c.currency_code]||0)+Number(c.amount)}),{});
 
