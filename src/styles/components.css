@@ -1,3 +1,1 @@
-/* Intentionally no bespoke component styles.
-   Buttons, inputs, selects, tags, checkboxes, radio groups and future system controls
-   must use @carbon/react and its official Carbon styles. */
+/* Shared UI primitives are implemented with cds-* Carbon Web Components. */

@@ -1,44 +1,133 @@
-import {
-  Select as CarbonSelect,
-  SelectItem,
-  TextArea as CarbonTextArea,
-  TextInput as CarbonTextInput,
-} from '@carbon/react';
-import { useId, type ComponentProps, type ReactNode } from 'react';
+import { createElement, useEffect, useId, useRef, type ReactNode } from 'react';
+
+type ValueEvent = { target: { value: string } };
+type CommonControlProps = {
+  id?: string;
+  labelText?: string;
+  value?: string | number;
+  defaultValue?: string | number;
+  disabled?: boolean;
+  required?: boolean;
+  placeholder?: string;
+  name?: string;
+  className?: string;
+  onChange?: (event: ValueEvent) => void;
+  [key: string]: unknown;
+};
+
+function useCarbonChange(
+  ref: { current: HTMLElement | null },
+  onChange: CommonControlProps['onChange'],
+) {
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onChange) return;
+    const notify = (event: Event) => {
+      const target = event.target as HTMLElement & { value?: string };
+      const detail = (event as CustomEvent<{ value?: string }>).detail;
+      const value = target?.value ?? detail?.value;
+      if (value !== undefined) onChange({ target: { value: String(value) } });
+    };
+    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-textarea-input', 'cds-number-input-changed', 'cds-date-picker-changed'];
+    eventNames.forEach((name) => element.addEventListener(name, notify));
+    return () => eventNames.forEach((name) => element.removeEventListener(name, notify));
+  }, [ref, onChange]);
+}
 
 type Common = { label: string; hint?: string; error?: string; id: string };
 
 export function Field({ label, hint, error, id, children }: Common & { children: ReactNode }) {
-  return (
-    <div className="field">
-      <label className="field__label" htmlFor={id}>{label}</label>
-      {children}
-      {error ? <div className="field__error" role="alert">{error}</div> : hint ? <div className="field__hint">{hint}</div> : null}
-    </div>
+  return createElement('div', { className: 'field' },
+    createElement('label', { className: 'field__label', htmlFor: id }, label),
+    children,
+    error ? createElement('div', { className: 'field__error', role: 'alert' }, error)
+      : hint ? createElement('div', { className: 'field__hint' }, hint) : null,
   );
 }
 
-type TextInputProps = Omit<ComponentProps<typeof CarbonTextInput>, 'labelText' | 'id'> & { labelText?: string; id?: string };
-export function TextInput({ labelText, id, ...props }: TextInputProps) {
+export function TextInput({ labelText, id, onChange, ...props }: CommonControlProps) {
   const generatedId = useId();
-  const accessibleLabel = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '输入');
-  return <CarbonTextInput id={id ?? generatedId} labelText={accessibleLabel} hideLabel={!labelText} {...props} />;
+  const ref = useRef<HTMLElement | null>(null);
+  useCarbonChange(ref, onChange);
+  const label = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '输入');
+  const isNumber = props.type === 'number';
+  const isDate = props.type === 'date';
+  const { type: _type, min, max, ...controlProps } = props;
+  if (isDate) {
+    return createElement('cds-date-picker', {
+      ref,
+      id: id ?? generatedId,
+      value: props.value ?? props.defaultValue ?? '',
+      minDate: min,
+      maxDate: max,
+      ...controlProps,
+    }, createElement('cds-date-picker-input', {
+      kind: 'single',
+      labelText: label,
+      hideLabel: !labelText,
+      placeholder: props.placeholder ?? 'YYYY-MM-DD',
+      value: props.value ?? props.defaultValue ?? '',
+      required: props.required,
+      disabled: props.disabled,
+    }));
+  }
+  return createElement(isNumber ? 'cds-number-input' : 'cds-text-input', {
+    ref,
+    id: id ?? generatedId,
+    label,
+    labelText: label,
+    hideLabel: !labelText,
+    ...(min !== undefined ? { min } : {}),
+    ...(max !== undefined ? { max } : {}),
+    ...controlProps,
+  });
 }
 
-type SelectInputProps = Omit<ComponentProps<typeof CarbonSelect>, 'labelText' | 'id'> & { labelText?: string; id?: string };
-export function SelectInput({ labelText, id, children, ...props }: SelectInputProps) {
+export function NumberInput({ labelText, id, onChange, ...props }: CommonControlProps) {
   const generatedId = useId();
-  return (
-    <CarbonSelect id={id ?? generatedId} labelText={labelText ?? '请选择'} hideLabel={!labelText} {...props}>
-      {children}
-    </CarbonSelect>
-  );
+  const ref = useRef<HTMLElement | null>(null);
+  useCarbonChange(ref, onChange);
+  const label = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '数字输入');
+  return createElement('cds-number-input', {
+    ref,
+    id: id ?? generatedId,
+    label,
+    labelText: label,
+    hideLabel: !labelText,
+    ...props,
+  });
 }
 
-type TextAreaInputProps = Omit<ComponentProps<typeof CarbonTextArea>, 'labelText' | 'id'> & { labelText?: string; id?: string };
-export function TextAreaInput({ labelText, id, ...props }: TextAreaInputProps) {
+export function SelectInput({ labelText, id, onChange, children, ...props }: CommonControlProps & { children?: ReactNode }) {
   const generatedId = useId();
-  return <CarbonTextArea id={id ?? generatedId} labelText={labelText ?? '文本内容'} hideLabel={!labelText} {...props} />;
+  const ref = useRef<HTMLElement | null>(null);
+  useCarbonChange(ref, onChange);
+  return createElement('cds-select', {
+    ref,
+    id: id ?? generatedId,
+    labelText: labelText ?? '请选择',
+    hideLabel: !labelText,
+    ...props,
+  }, children);
 }
 
-export { SelectItem };
+export function SelectItem({ value, text, children }: { value: string; text?: string; children?: ReactNode }) {
+  return createElement('cds-select-item', { value, text }, children ?? text);
+}
+
+export function TextAreaInput({ labelText, id, onChange, ...props }: CommonControlProps) {
+  const generatedId = useId();
+  const ref = useRef<HTMLElement | null>(null);
+  useCarbonChange(ref, onChange);
+  const label = labelText ?? '文本内容';
+  return createElement('cds-textarea', {
+    ref,
+    id: id ?? generatedId,
+    label,
+    labelText: label,
+    hideLabel: !labelText,
+    ...props,
+  });
+}
+
+export { SelectInput as Select, SelectItem as CarbonSelectItem, TextAreaInput as TextArea };

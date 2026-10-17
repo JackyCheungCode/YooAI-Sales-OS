@@ -1,7 +1,8 @@
-import { InlineNotification, TextInput } from '@carbon/react';
-import { useState } from 'react';
+import { InlineNotification } from '../../components/carbon/compat';
+import { TextInput } from '../../components/ui/Field';
+import { useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../app/AuthContext';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -37,15 +38,22 @@ function LoginShell({ children }: { children: ReactNode }) {
 
 export function LoginPage() {
   const { session, loading, signIn } = useAuth();
+  const location = useLocation();
+  const requestedRoute = location.state?.from as { pathname?: string; search?: string; hash?: string } | undefined;
+  const redirectTo = requestedRoute?.pathname
+    ? `${requestedRoute.pathname}${requestedRoute.search ?? ''}${requestedRoute.hash ?? ''}`
+    : '/customers';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  if (session) return <Navigate to="/customers" replace />;
+  if (session) return <Navigate to={redirectTo} replace />;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
     setMessage('');
     setBusy(true);
     try {
@@ -93,7 +101,7 @@ export function LoginPage() {
       <h2>登录你的工作空间</h2>
       <p className="auth-form__intro">使用管理员为你开通的账户继续。</p>
 
-      <form className="auth-form" onSubmit={submit}>
+      <form ref={formRef} className="auth-form" onSubmit={submit}>
         <TextInput
           id="login-email"
           type="email"
@@ -125,7 +133,13 @@ export function LoginPage() {
             subtitle={message}
           />
         ) : null}
-        <Button type="submit" disabled={busy} className="auth-submit">
+        <Button type="submit" hidden aria-hidden="true" tabIndex={-1}>提交</Button>
+        <Button
+          type="button"
+          onClick={() => { const form = formRef.current; if (!form) return; if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.querySelector<HTMLElement>('cds-button[type="submit"]')?.click(); }}
+          disabled={busy}
+          className="auth-submit"
+        >
           {busy ? '正在验证…' : '登录'}
         </Button>
       </form>

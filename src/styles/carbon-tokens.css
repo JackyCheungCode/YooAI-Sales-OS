@@ -1,4 +1,8 @@
-/* Carbon is the single source for all design tokens. This file adds only the approved Chinese font fallback. */
+/* Project aliases must resolve to Carbon theme/type tokens, never hard-coded values. */
+:root {
+  --cds-bg-page: var(--cds-background);
+  --cds-font-family-sans: 'IBM Plex Sans', 'Songti TC', 'Songti SC', SimSun, serif;
+}
 body {
-  font-family: 'IBM Plex Sans', SimSun, sans-serif;
+  font-family: var(--cds-font-family-sans);
 }

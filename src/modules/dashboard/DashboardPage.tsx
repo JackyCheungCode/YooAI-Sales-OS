@@ -1,6 +1,7 @@
-import { Column, Grid, InlineNotification, Tag, Tile } from '@carbon/react';
-import { useMemo, useState, type ReactNode } from 'react';
-import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/react/icons';
+import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
+import { LineChart, SimpleBarChart } from '@carbon/charts-react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Dashboard, UserMultiple, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '../../components/carbon/icons';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
 import './dashboard.css';
@@ -68,42 +69,97 @@ const metricSets: Record<Area, Metric[]> = {
   ],
 };
 
-const funnel = [
-  { name: '潜在线索', amount: '¥ 12.8M', width: 100, count: '1,248' },
-  { name: '已确认需求', amount: '¥ 8.6M', width: 78, count: '684' },
-  { name: '方案与报价', amount: '¥ 5.4M', width: 59, count: '326' },
-  { name: '商务谈判', amount: '¥ 3.2M', width: 41, count: '142' },
-  { name: '赢单', amount: '¥ 1.9M', width: 25, count: '46' },
-];
 const risks = [
   { type: '逾期回款', title: '华东区域 · 星河工业', detail: '应收 ¥ 186,000 · 已逾期 18 天', level: '高风险' },
   { type: 'SLA 超时', title: '客户支持工单 #CS-2048', detail: '首次响应超时 42 分钟 · 指派服务组待处理', level: '高风险' },
   { type: '大单停滞', title: '北美区域 · Orion Systems', detail: '商机金额 ¥ 820,000 · 14 天无活动', level: '需关注' },
 ];
 
+
+const revenueTrendData = [
+  { group: '收入', key: '3 月', value: 1.42 },
+  { group: '收入', key: '4 月', value: 1.68 },
+  { group: '收入', key: '5 月', value: 1.61 },
+  { group: '收入', key: '6 月', value: 1.98 },
+  { group: '收入', key: '7 月', value: 2.08 },
+  { group: '收入', key: '8 月', value: 2.34 },
+  { group: '收入', key: '9 月', value: 2.27 },
+  { group: '收入', key: '10 月', value: 2.49 },
+];
+const revenueTrendOptions: any = {
+  axes: {
+    bottom: { mapsTo: 'key', scaleType: 'labels', title: '月份' },
+    left: { mapsTo: 'value', scaleType: 'linear', title: '收入（百万）' },
+  },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '20rem',
+};
 function TrendChart() {
-  const points = '20,112 68,92 116,101 164,63 212,72 260,42 308,55 356,24';
-  return <div className="dash-chart" role="img" aria-label="近八个月收入趋势，整体呈增长趋势">
+  return <div className="dash-chart">
     <div className="chart-summary"><strong>¥ 2.49M</strong><span className="dash-positive">↗ 12.8%</span><span className="chart-summary__note">本期累计收入</span></div>
-    <svg viewBox="0 0 380 145" className="trend-svg" preserveAspectRatio="none" aria-hidden="true">
-      <defs><linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--cds-interactive)" stopOpacity=".20"/><stop offset="100%" stopColor="var(--cds-interactive)" stopOpacity="0"/></linearGradient></defs>
-      {[25,55,85,115].map(y=><line key={y} x1="0" x2="380" y1={y} y2={y} stroke="var(--cds-border-subtle-01)" strokeDasharray="3 4" />)}
-      <polygon points={'20,130 '+points+' 356,130'} fill="url(#revenue-fill)" />
-      <polyline points={points} fill="none" stroke="var(--cds-interactive)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {points.split(' ').map((point,i)=>{const [cx,cy]=point.split(',');return <circle key={i} cx={cx} cy={cy} r="3.5" fill="var(--cds-background)" stroke="var(--cds-interactive)" strokeWidth="2"/>})}
-    </svg>
-    <div className="chart-axis"><span>3 月</span><span>4 月</span><span>5 月</span><span>6 月</span><span>7 月</span><span>8 月</span><span>9 月</span><span>10 月</span></div>
+    <LineChart data={revenueTrendData} options={revenueTrendOptions} />
+    <p className="chart-summary__note">演示指标；实时财务数据服务尚未接入。</p>
   </div>;
 }
 
+const funnelChartData = [
+  { group: '销售漏斗', key: '潜在线索', value: 12.8 },
+  { group: '销售漏斗', key: '已确认需求', value: 8.6 },
+  { group: '销售漏斗', key: '方案与报价', value: 5.4 },
+  { group: '销售漏斗', key: '商务谈判', value: 3.2 },
+  { group: '销售漏斗', key: '赢单', value: 1.9 },
+];
+const funnelChartOptions: any = {
+  axes: {
+    left: { mapsTo: 'key', scaleType: 'labels', title: '阶段' },
+    bottom: { mapsTo: 'value', scaleType: 'linear', title: '金额（百万）' },
+  },
+  bars: { orientation: 'horizontal' },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '20rem',
+};
 function FunnelChart() {
-  return <div className="funnel-chart">{funnel.map((item,i)=><div className="funnel-row" key={item.name}>
-    <span className="funnel-name">{item.name}</span><div className="funnel-track"><div className="funnel-fill" style={{width: item.width+'%',opacity:1-i*.12}} /></div><strong>{item.amount}</strong><span className="funnel-count">{item.count} 个</span>
-  </div>)}</div>;
+  return <div className="funnel-chart"><SimpleBarChart data={funnelChartData} options={funnelChartOptions} /></div>;
+}
+
+
+const areaPerformanceData: Record<Exclude<Area, 'overview'>, { group: string; key: string; value: number }[]> = {
+  sales: [{group:'业绩',key:'预测业绩',value:86},{group:'业绩',key:'目标业绩',value:100},{group:'业绩',key:'已签订单',value:68},{group:'业绩',key:'加权商机',value:79}],
+  orders: [{group:'订单链路',key:'商机',value:100},{group:'订单链路',key:'报价',value:72},{group:'订单链路',key:'订单',value:54},{group:'订单链路',key:'开票',value:43},{group:'订单链路',key:'回款',value:36}],
+  service: [{group:'服务',key:'按时响应',value:96},{group:'服务',key:'SLA 达成',value:97},{group:'服务',key:'一次解决',value:81},{group:'服务',key:'满意度',value:94}],
+  marketing: [{group:'渠道',key:'自然搜索',value:74},{group:'渠道',key:'付费广告',value:91},{group:'渠道',key:'合作伙伴',value:63},{group:'渠道',key:'客户推荐',value:82}],
+  commerce: [{group:'商品',key:'商品 A',value:89},{group:'商品',key:'商品 B',value:72},{group:'商品',key:'商品 C',value:61},{group:'商品',key:'商品 D',value:48}],
+};
+const areaPerformanceOptions: any = {
+  axes: {
+    left: { mapsTo: 'key', scaleType: 'labels', title: '指标' },
+    bottom: { mapsTo: 'value', scaleType: 'linear', title: '达成率（%）' },
+  },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '20rem',
+};
+function AreaPerformanceChart({ area }: { area: Exclude<Area, 'overview'> }) {
+  return <SimpleBarChart data={areaPerformanceData[area]} options={areaPerformanceOptions} />;
 }
 
 export function DashboardPage() {
   const [area, setArea] = useState<Area>('overview');
+  const areaTabsRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const tabs = areaTabsRef.current;
+    if (!tabs) return;
+    const onSelected = (event: Event) => {
+      const target = event.target as HTMLElement & { value?: string };
+      const detail = (event as CustomEvent<{ value?: string }>).detail;
+      const next = target.value ?? detail?.value;
+      if (areas.some(item => item.id === next)) setArea(next as Area);
+    };
+    tabs.addEventListener('cds-tabs-selected', onSelected);
+    return () => tabs.removeEventListener('cds-tabs-selected', onSelected);
+  }, []);
   const [period, setPeriod] = useState('month');
   const [region, setRegion] = useState('all');
   const [product, setProduct] = useState('all');
@@ -124,7 +180,7 @@ export function DashboardPage() {
     </div>
 
     <Tile className="dashboard-filter-panel">
-      <div className="dashboard-filter-title"><div><strong>全局分析条件</strong><span>所有经营板块共享当前筛选条件</span></div><Button type="button" className="filter-reset" onClick={()=>{setPeriod('month');setRegion('all');setProduct('all');setTeam('all');setTier('all')}}>重置筛选</Button></div>
+      <div className="dashboard-filter-title"><div><strong>全局分析条件</strong><span>所有经营板块共享当前筛选条件</span></div><Button type="button" variant="ghost" className="filter-reset" onClick={()=>{setPeriod('month');setRegion('all');setProduct('all');setTeam('all');setTier('all')}}>重置筛选</Button></div>
       <Grid fullWidth className="dashboard-filters">
         <Column sm={4} md={4} lg={3}><SelectInput id="dash-period" labelText="统计时间" value={period} onChange={e=>setPeriod(e.target.value)}><SelectItem value="day" text="今日"/><SelectItem value="week" text="本周"/><SelectItem value="month" text="本月"/><SelectItem value="quarter" text="本季度"/><SelectItem value="year" text="本年度"/></SelectInput></Column>
         <Column sm={4} md={4} lg={3}><SelectInput id="dash-region" labelText="区域" value={region} onChange={e=>setRegion(e.target.value)}><SelectItem value="all" text="全部区域"/><SelectItem value="cn" text="中国区"/><SelectItem value="apac" text="亚太区"/><SelectItem value="emea" text="欧洲中东非"/><SelectItem value="americas" text="美洲区"/></SelectInput></Column>
@@ -134,20 +190,22 @@ export function DashboardPage() {
       </Grid>
     </Tile>
 
-    <div className="dashboard-area-nav" role="tablist" aria-label="经营分析板块">{areas.map(item=><Button key={item.id} type="button" variant="ghost" role="tab" aria-selected={area===item.id} tabIndex={area===item.id?0:-1} className={area===item.id?'is-active':''} onClick={()=>setArea(item.id)}>{item.label}</Button>)}</div>
+    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel">{item.label}</cds-tab>)}</cds-tabs>
 
+    <div id="dashboard-area-panel" role="tabpanel" aria-label={activeTitle}>
     <div className="dashboard-section-heading"><div><div className="eyebrow">BUSINESS PERFORMANCE</div><h2>{activeTitle}</h2><p>{area==='overview'?'核心经营指标、收入走势与需要管理层关注的风险。':'当前板块的关键指标与经营分析；选择图表或风险项目可进入对应明细。'}</p></div><div className="dashboard-refresh"><span className="refresh-dot"/><span>视图刷新于 {updatedAt}</span></div></div>
 
-    <Grid fullWidth className="dashboard-metrics">{metrics.map(metric=><Column key={metric.label} sm={4} md={4} lg={area==='overview'?5:5}><Tile className="dashboard-metric-card"><div className="dashboard-metric-card__label"><span>{metric.label}</span><span className="dashboard-metric-icon">{metric.icon}</span></div><div className="dashboard-metric-card__value">{metric.value}</div><div className={'dashboard-metric-card__delta '+(metric.tone==='good'?'is-good':metric.tone==='warn'?'is-warn':'')}>{metric.delta}</div><Button type="button" className="metric-drilldown" onClick={()=>showDrilldown(metric.label)}>查看明细 <span aria-hidden="true">↗</span></Button></Tile></Column>)}</Grid>
+    <Grid fullWidth className="dashboard-metrics">{metrics.map(metric=><Column key={metric.label} sm={4} md={8} lg={8} xlg={8}><Tile className="dashboard-metric-card"><div className="dashboard-metric-card__label"><span>{metric.label}</span><span className="dashboard-metric-icon">{metric.icon}</span></div><div className="dashboard-metric-card__value">{metric.value}</div><div className={'dashboard-metric-card__delta '+(metric.tone==='good'?'is-good':metric.tone==='warn'?'is-warn':'')}>{metric.delta}</div><Button type="button" variant="ghost" className="metric-drilldown" onClick={()=>showDrilldown(metric.label)}>查看明细 <span aria-hidden="true">↗</span></Button></Tile></Column>)}</Grid>
 
     {area==='overview' ? <Grid fullWidth className="dashboard-charts">
       <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>月度收入趋势</h3><p>近 8 个月 · 按确认收入统计</p></div><Tag type="green">持续增长</Tag></div><TrendChart/><div className="dashboard-panel__footer"><span>收入趋势用于观察经营变化，不代表已连接实时财务数据。</span><Button type="button" onClick={()=>showDrilldown('月度收入趋势')}>下钻分析 ↗</Button></div></Tile></Column>
-      <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>销售漏斗</h3><p>金额与阶段分布</p></div><Button type="button" className="text-action" onClick={()=>setArea('sales')}>销售分析 ↗</Button></div><FunnelChart/><div className="funnel-summary"><div><span>漏斗总额</span><strong>¥ 12.84M</strong></div><div><span>预计赢单金额</span><strong>¥ 1.90M</strong></div></div></Tile></Column>
+      <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>销售漏斗</h3><p>金额与阶段分布</p></div><Button type="button" variant="ghost" className="text-action" onClick={()=>setArea('sales')}>销售分析 ↗</Button></div><FunnelChart/><div className="funnel-summary"><div><span>漏斗总额</span><strong>¥ 12.84M</strong></div><div><span>预计赢单金额</span><strong>¥ 1.90M</strong></div></div></Tile></Column>
     </Grid> : <Grid fullWidth className="dashboard-charts">
-      <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'业绩预测 vs 目标':area==='orders'?'订单到回款全链路':area==='service'?'工单与 SLA 趋势':area==='marketing'?'营销渠道表现':'线上交易表现'}</h3><p>按所选时间与全局筛选条件汇总</p></div><Tag type="blue">趋势分析</Tag></div>{area==='orders'?<div className="journey-flow">{['商机','报价','订单','开票','回款'].map((s,i)=><div className="journey-step" key={s}><span>{s}</span><strong>{['100%','72%','54%','43%','36%'][i]}</strong>{i<4&&<i>→</i>}</div>)}</div>:area==='service'?<div className="service-bars">{[['按时响应',96],['SLA 达成',97],['一次解决',81],['满意度',94]].map(([name,val])=><div className="service-bar" key={String(name)}><span>{name}</span><div><i style={{width:String(val)+'%'}}/></div><strong>{val}%</strong></div>)}</div>:<div className="bar-comparison">{(area==='sales'?[['预测业绩',86],['目标业绩',100],['已签订单',68],['加权商机',79]]:area==='marketing'?[['自然搜索',74],['付费广告',91],['合作伙伴',63],['客户推荐',82]]:[['商品 A',89],['商品 B',72],['商品 C',61],['商品 D',48]]).map(([label,val])=><div className="comparison-bar" key={String(label)}><span>{label}</span><div><i style={{width:String(val)+'%'}}/></div><strong>{val}%</strong></div>)}</div>}<div className="dashboard-panel__footer"><span>图表 · 数据接口接入后按实际业务记录计算</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>查看分析明细 ↗</Button></div></Tile></Column>
-      <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'销售个人排名':area==='orders'?'回款账龄分布':area==='service'?'坐席负载概览':area==='marketing'?'客户分群价值':'商品表现排行'}</h3><p>重点指标与待处理事项</p></div></div>{(area==='sales'?[['陈经理','¥ 680K'],['林经理','¥ 524K'],['王经理','¥ 416K'],['赵经理','¥ 308K']]:area==='orders'?[['未逾期','¥ 1.09M'],['1–30 天','¥ 126K'],['31–60 天','¥ 42K'],['60 天以上','¥ 18K']]:area==='service'?[['服务组 A','负载 82%'],['服务组 B','负载 74%'],['服务组 C','负载 68%'],['服务组 D','负载 51%']]:area==='marketing'?[['高价值客户','186 家'],['成长客户','524 家'],['待培育线索','1,248 条'],['流失预警','23 家']]:[['商品 A','¥ 286K'],['商品 B','¥ 218K'],['商品 C','¥ 164K'],['商品 D','¥ 98K']]).map(([name,val],i)=><Button type="button" className="ranking-row" key={name} onClick={()=>showDrilldown(name)}><span className="ranking-number">{String(i+1).padStart(2,'0')}</span><span>{name}</span><strong>{val}</strong><span className="ranking-arrow">↗</span></Button>)}<div className="dashboard-panel__footer"><span>选择条目查看对应明细</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>全部明细 ↗</Button></div></Tile></Column>
+      <Column sm={4} md={8} lg={10}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'业绩预测 vs 目标':area==='orders'?'订单到回款全链路':area==='service'?'工单与 SLA 趋势':area==='marketing'?'营销渠道表现':'线上交易表现'}</h3><p>按所选时间与全局筛选条件汇总</p></div><Tag type="blue">趋势分析</Tag></div><AreaPerformanceChart area={area as Exclude<Area, 'overview'>} /><div className="dashboard-panel__footer"><span>图表 · 数据接口接入后按实际业务记录计算</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>查看分析明细 ↗</Button></div></Tile></Column>
+      <Column sm={4} md={8} lg={6}><Tile className="dashboard-panel"><div className="dashboard-panel__heading"><div><h3>{area==='sales'?'销售个人排名':area==='orders'?'回款账龄分布':area==='service'?'坐席负载概览':area==='marketing'?'客户分群价值':'商品表现排行'}</h3><p>重点指标与待处理事项</p></div></div>{(area==='sales'?[['陈经理','¥ 680K'],['林经理','¥ 524K'],['王经理','¥ 416K'],['赵经理','¥ 308K']]:area==='orders'?[['未逾期','¥ 1.09M'],['1–30 天','¥ 126K'],['31–60 天','¥ 42K'],['60 天以上','¥ 18K']]:area==='service'?[['服务组 A','负载 82%'],['服务组 B','负载 74%'],['服务组 C','负载 68%'],['服务组 D','负载 51%']]:area==='marketing'?[['高价值客户','186 家'],['成长客户','524 家'],['待培育线索','1,248 条'],['流失预警','23 家']]:[['商品 A','¥ 286K'],['商品 B','¥ 218K'],['商品 C','¥ 164K'],['商品 D','¥ 98K']]).map(([name,val],i)=><Button type="button" variant="ghost" className="ranking-row" key={name} onClick={()=>showDrilldown(name)}><span className="ranking-number">{String(i+1).padStart(2,'0')}</span><span>{name}</span><strong>{val}</strong><span className="ranking-arrow">↗</span></Button>)}<div className="dashboard-panel__footer"><span>选择条目查看对应明细</span><Button type="button" onClick={()=>showDrilldown(activeTitle)}>全部明细 ↗</Button></div></Tile></Column>
     </Grid>}
 
-    <Tile className="dashboard-panel risk-panel"><div className="dashboard-panel__heading"><div><h3>{area==='overview'?'经营风险预警':'待处理事项与风险预警'}</h3><p>优先关注逾期回款、SLA 超时与长时间停滞的重点商机</p></div><Tag type="red">3 项待关注</Tag></div><div className="risk-list">{(area==='overview'?risks:risks.filter((_,i)=>area==='orders'?i===0:area==='service'?i===1:area==='sales'?i===2:true)).map((risk)=><Button className="risk-row" type="button" key={risk.title} onClick={()=>showDrilldown(risk.title)}><span className="risk-mark"><WarningAlt size={18}/></span><span className="risk-main"><strong>{risk.title}</strong><small>{risk.detail}</small></span><Tag type={risk.level==='高风险'?'red':'warm-gray'}>{risk.type} · {risk.level}</Tag><span className="ranking-arrow">↗</span></Button>)}</div><div className="dashboard-panel__footer"><span>提醒规则与责任人需在业务数据及 SLA 配置接入后启用。</span><Button type="button" onClick={()=>showDrilldown('全部风险预警')}>查看全部预警 ↗</Button></div></Tile>
+    <Tile className="dashboard-panel risk-panel"><div className="dashboard-panel__heading"><div><h3>{area==='overview'?'经营风险预警':'待处理事项与风险预警'}</h3><p>优先关注逾期回款、SLA 超时与长时间停滞的重点商机</p></div><Tag type="red">3 项待关注</Tag></div><div className="risk-list">{(area==='overview'?risks:risks.filter((_,i)=>area==='orders'?i===0:area==='service'?i===1:area==='sales'?i===2:true)).map((risk)=><Button variant="ghost" className="risk-row" type="button" key={risk.title} onClick={()=>showDrilldown(risk.title)}><span className="risk-mark"><WarningAlt size={18}/></span><span className="risk-main"><strong>{risk.title}</strong><small>{risk.detail}</small></span><Tag type={risk.level==='高风险'?'red':'warm-gray'}>{risk.type} · {risk.level}</Tag><span className="ranking-arrow">↗</span></Button>)}</div><div className="dashboard-panel__footer"><span>提醒规则与责任人需在业务数据及 SLA 配置接入后启用。</span><Button type="button" onClick={()=>showDrilldown('全部风险预警')}>查看全部预警 ↗</Button></div></Tile>
+    </div>
   </div>;
 }

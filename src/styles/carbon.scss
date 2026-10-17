@@ -1,1 +1,22 @@
-@use '@carbon/react';
+@use '@carbon/styles';
+@use '@carbon/styles/scss/theme' as *;
+@use '@carbon/styles/scss/themes';
+
+:root {
+  @include theme(themes.$g10);
+
+  // Project-level names required by the YooAI typography contract.
+  // Each alias resolves to Carbon's emitted type-style custom properties.
+  --cds-type-heading-01: var(--cds-heading-01-font-size);
+  --cds-type-heading-02: var(--cds-heading-02-font-size);
+  --cds-type-expressive-heading-03: var(--cds-expressive-heading-03-font-size, var(--cds-heading-01-font-size));
+  --cds-type-body-01: var(--cds-body-01-font-size, var(--cds-body-compact-01-font-size));
+  --cds-type-body-02: var(--cds-body-02-font-size, var(--cds-label-01-font-size));
+  --cds-text-success: var(--cds-support-success);
+  --cds-text-warning: var(--cds-support-warning);
+  --cds-text-danger: var(--cds-support-error);
+}
+
+.cds--g10 {
+  @include theme(themes.$g10);
+}

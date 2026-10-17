@@ -8,9 +8,11 @@ import { OpportunitiesPage } from '../modules/opportunities/OpportunitiesPage';
 import { QuotesPage } from '../modules/quotes/QuotesPage';
 import { OrdersPage } from '../modules/orders/OrdersPage';
 import { PaymentsPage } from '../modules/payments/PaymentsPage';
+import { ShipmentsPage } from '../modules/shipments/ShipmentsPage';
 import { DashboardPage } from '../modules/dashboard/DashboardPage';
 import { LoginPage } from '../modules/settings/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
+import { AIProvidersPage } from '../modules/settings/AIProvidersPage';
 
 export default function App() {
   return <Routes>
@@ -26,6 +28,8 @@ export default function App() {
       <Route path="/quotes" element={<QuotesPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/payments" element={<PaymentsPage />} />
+      <Route path="/shipments" element={<ShipmentsPage />} />
+      <Route path="/settings/ai-providers" element={<AIProvidersPage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>;
