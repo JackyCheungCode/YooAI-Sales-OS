@@ -35,10 +35,7 @@ function ProviderCard({ provider, testResult, testing, onTest }: {
       {provider.model ? <div><dt>默认模型</dt><dd><code>{provider.model}</code></dd></div> : null}
       {provider.baseUrl ? <div><dt>API Base URL</dt><dd className="ai-provider-card__url">{provider.baseUrl}</dd></div> : null}
     </dl>
-    {testResult ? <div className={'ai-provider-card__result ' + (testResult.ok ? 'is-success' : 'is-error')} role="status" aria-live="polite">
-      {testResult.ok ? <CheckmarkFilled size={16} /> : <WarningFilled size={16} />}
-      <span>{testResult.message}{testResult.durationMs ? `（${testResult.durationMs} ms）` : ''}</span>
-    </div> : null}
+    {testResult ? <InlineNotification kind={testResult.ok ? 'success' : 'error'} lowContrast title={testResult.ok ? '连接测试成功' : '连接测试失败'} subtitle={testResult.message + (testResult.durationMs ? '（' + testResult.durationMs + ' ms）' : '')} hideCloseButton /> : null}
     <div className="ai-provider-card__actions">
       {provider.canTest
         ? <Button variant="primary" size="sm" disabled={!provider.configured || testing} onClick={() => onTest(provider.id)} renderIcon={testing ? Renew : Api}>{testing ? '正在测试' : '测试连接'}</Button>
