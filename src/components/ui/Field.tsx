@@ -28,7 +28,7 @@ function useCarbonChange(
       const value = target?.value ?? detail?.value;
       if (value !== undefined) onChange({ target: { value: String(value) } });
     };
-    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-textarea-input', 'cds-number-input-changed'];
+    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-textarea-input', 'cds-number-input-changed', 'cds-date-picker-changed'];
     eventNames.forEach((name) => element.addEventListener(name, notify));
     return () => eventNames.forEach((name) => element.removeEventListener(name, notify));
   }, [ref, onChange]);
@@ -51,13 +51,34 @@ export function TextInput({ labelText, id, onChange, ...props }: CommonControlPr
   useCarbonChange(ref, onChange);
   const label = labelText ?? (typeof props['aria-label'] === 'string' ? props['aria-label'] : '输入');
   const isNumber = props.type === 'number';
-  const { type: _type, ...controlProps } = props;
+  const isDate = props.type === 'date';
+  const { type: _type, min, max, ...controlProps } = props;
+  if (isDate) {
+    return createElement('cds-date-picker', {
+      ref,
+      id: id ?? generatedId,
+      value: props.value ?? props.defaultValue ?? '',
+      minDate: min,
+      maxDate: max,
+      ...controlProps,
+    }, createElement('cds-date-picker-input', {
+      kind: 'single',
+      labelText: label,
+      hideLabel: !labelText,
+      placeholder: props.placeholder ?? 'YYYY-MM-DD',
+      value: props.value ?? props.defaultValue ?? '',
+      required: props.required,
+      disabled: props.disabled,
+    }));
+  }
   return createElement(isNumber ? 'cds-number-input' : 'cds-text-input', {
     ref,
     id: id ?? generatedId,
     label,
     labelText: label,
     hideLabel: !labelText,
+    ...(min !== undefined ? { min } : {}),
+    ...(max !== undefined ? { max } : {}),
     ...controlProps,
   });
 }
