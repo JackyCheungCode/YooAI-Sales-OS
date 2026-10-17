@@ -1,4 +1,5 @@
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
+import { LineChart, BarChart } from '@carbon/charts-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/icons-react';
 import { Button } from '../../components/ui/Button';
@@ -81,25 +82,53 @@ const risks = [
   { type: '大单停滞', title: '北美区域 · Orion Systems', detail: '商机金额 ¥ 820,000 · 14 天无活动', level: '需关注' },
 ];
 
+
+const revenueTrendData = [
+  { group: '收入', key: '3 月', value: 1.42 },
+  { group: '收入', key: '4 月', value: 1.68 },
+  { group: '收入', key: '5 月', value: 1.61 },
+  { group: '收入', key: '6 月', value: 1.98 },
+  { group: '收入', key: '7 月', value: 2.08 },
+  { group: '收入', key: '8 月', value: 2.34 },
+  { group: '收入', key: '9 月', value: 2.27 },
+  { group: '收入', key: '10 月', value: 2.49 },
+];
+const revenueTrendOptions: any = {
+  axes: {
+    bottom: { mapsTo: 'key', scaleType: 'labels', title: '月份' },
+    left: { mapsTo: 'value', scaleType: 'linear', title: '收入（百万）' },
+  },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '320px',
+};
 function TrendChart() {
-  const points = '20,112 68,92 116,101 164,63 212,72 260,42 308,55 356,24';
-  return <div className="dash-chart" role="img" aria-label="近八个月收入趋势，整体呈增长趋势">
+  return <div className="dash-chart">
     <div className="chart-summary"><strong>¥ 2.49M</strong><span className="dash-positive">↗ 12.8%</span><span className="chart-summary__note">本期累计收入</span></div>
-    <svg viewBox="0 0 380 145" className="trend-svg" preserveAspectRatio="none" aria-hidden="true">
-      <defs><linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--cds-interactive)" stopOpacity=".20"/><stop offset="100%" stopColor="var(--cds-interactive)" stopOpacity="0"/></linearGradient></defs>
-      {[25,55,85,115].map(y=><line key={y} x1="0" x2="380" y1={y} y2={y} stroke="var(--cds-border-subtle-01)" strokeDasharray="3 4" />)}
-      <polygon points={'20,130 '+points+' 356,130'} fill="url(#revenue-fill)" />
-      <polyline points={points} fill="none" stroke="var(--cds-interactive)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {points.split(' ').map((point,i)=>{const [cx,cy]=point.split(',');return <circle key={i} cx={cx} cy={cy} r="3.5" fill="var(--cds-background)" stroke="var(--cds-interactive)" strokeWidth="2"/>})}
-    </svg>
-    <div className="chart-axis"><span>3 月</span><span>4 月</span><span>5 月</span><span>6 月</span><span>7 月</span><span>8 月</span><span>9 月</span><span>10 月</span></div>
+    <LineChart data={revenueTrendData} options={revenueTrendOptions} />
+    <p className="chart-summary__note">演示指标；实时财务数据服务尚未接入。</p>
   </div>;
 }
 
+const funnelChartData = [
+  { group: '销售漏斗', key: '潜在线索', value: 12.8 },
+  { group: '销售漏斗', key: '已确认需求', value: 8.6 },
+  { group: '销售漏斗', key: '方案与报价', value: 5.4 },
+  { group: '销售漏斗', key: '商务谈判', value: 3.2 },
+  { group: '销售漏斗', key: '赢单', value: 1.9 },
+];
+const funnelChartOptions: any = {
+  axes: {
+    left: { mapsTo: 'key', scaleType: 'labels', title: '阶段' },
+    bottom: { mapsTo: 'value', scaleType: 'linear', title: '金额（百万）' },
+  },
+  bars: { orientation: 'horizontal' },
+  legend: { enabled: false },
+  theme: 'g10',
+  height: '320px',
+};
 function FunnelChart() {
-  return <div className="funnel-chart">{funnel.map((item,i)=><div className="funnel-row" key={item.name}>
-    <span className="funnel-name">{item.name}</span><div className="funnel-track"><div className="funnel-fill" style={{width: item.width+'%',opacity:1-i*.12}} /></div><strong>{item.amount}</strong><span className="funnel-count">{item.count} 个</span>
-  </div>)}</div>;
+  return <div className="funnel-chart"><BarChart data={funnelChartData} options={funnelChartOptions} /></div>;
 }
 
 export function DashboardPage() {
