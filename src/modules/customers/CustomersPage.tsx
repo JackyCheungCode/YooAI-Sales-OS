@@ -2,7 +2,7 @@ import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } f
 import { Add, Download, Filter, UserMultiple } from '../../components/carbon/icons';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
-import { SelectInput, SelectItem } from '../../components/ui/Field';
+import { DropdownInput, SelectItem } from '../../components/ui/Field';
 import { isSupabaseConfigured } from '../../lib/supabase';
 
 function StatTile({ label, icon, value, note }: { label: string; icon: ReactNode; value: string; note: string }) {
@@ -41,12 +41,12 @@ export function CustomersPage() {
       <div className="filter-row">
         <CarbonSearch id="customer-search" labelText="搜索客户" placeholder="搜索客户名称、邮箱或联系人" value={keyword} onChange={(event) => setKeyword(event.target.value)} />
         <div className="filter-select">
-          <SelectInput id="customer-status" labelText="客户状态" value={status} onChange={(event) => setStatus(event.target.value)}>
+          <DropdownInput id="customer-status" labelText="客户状态" value={status} onChange={(event) => setStatus(event.target.value)}>
             <SelectItem value="all" text="全部状态" />
             <SelectItem value="active" text="合作中" />
             <SelectItem value="qualified" text="已确认" />
             <SelectItem value="inactive" text="已暂停" />
-          </SelectInput>
+          </DropdownInput>
         </div>
         <Button variant="secondary" onClick={() => { setKeyword(''); setStatus('all'); }}>重置</Button>
       </div>
