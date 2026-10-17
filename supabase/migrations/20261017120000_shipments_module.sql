@@ -222,6 +222,13 @@ create policy "shipment events owner access" on public.shipment_events for all t
 drop policy if exists "shipment notification jobs owner access" on public.shipment_notification_jobs;
 create policy "shipment notification jobs owner access" on public.shipment_notification_jobs for all to authenticated using(owner_id=(select auth.uid())) with check(owner_id=(select auth.uid()));
 
+-- Explicit Data API grants; row-level security remains the authorization boundary.
+grant select on public.order_items,public.shipments,public.shipment_items,public.shipment_documents,public.shipment_costs,public.shipment_exceptions,public.shipment_events to authenticated;
+grant insert,update on public.shipment_documents to authenticated;
+grant insert,update on public.shipment_costs to authenticated;
+grant insert,update on public.shipment_exceptions to authenticated;
+grant insert on public.shipment_events to authenticated;
+
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('shipment-documents','shipment-documents',false,26214400,array['application/pdf','image/png','image/jpeg','image/webp','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
 on conflict(id) do nothing;
