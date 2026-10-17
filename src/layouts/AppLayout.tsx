@@ -31,6 +31,7 @@ export function AppLayout() {
 
   return <div className="app-shell">
     <cds-header aria-label="YooAI Sales OS">
+      <cds-skip-to-content href="#main-content" />
       <cds-header-menu-button
         aria-label={mobileNavOpen ? '收起导航菜单' : '展开导航菜单'}
         active={mobileNavOpen}
@@ -77,7 +78,7 @@ export function AppLayout() {
         <cds-breadcrumb-item href="/dashboard">经营工作空间</cds-breadcrumb-item>
         <cds-breadcrumb-item aria-current="page">{pageTitle}</cds-breadcrumb-item>
       </cds-breadcrumb>
-      <main className="page-content cds--content">
+      <main id="main-content" className="page-content cds--content">
         <Grid fullWidth className="page-layout-grid">
           <Column sm={4} md={8} lg={16} xlg={16}><Outlet /></Column>
         </Grid>
