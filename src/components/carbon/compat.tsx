@@ -135,3 +135,25 @@ export function SideNavMenuItem({ isActive, children, ...props }: SideNavBasePro
 export function SideNav(props: CarbonProps) {
   return createElement('cds-side-nav', props, props.children);
 }
+
+export function ProgressIndicator(props: CarbonProps) {
+  return createElement('cds-progress-indicator', props, props.children);
+}
+export function ProgressStep(props: CarbonProps) {
+  return createElement('cds-progress-step', props, props.children);
+}
+export function Modal(props: CarbonProps) {
+  return createElement('cds-modal', props, props.children);
+}
+export function ModalHeader(props: CarbonProps) {
+  return createElement('cds-modal-header', props, props.children);
+}
+export function ModalLabel(props: CarbonProps) {
+  return createElement('cds-modal-label', props, props.children);
+}
+export function ModalHeading(props: CarbonProps) {
+  return createElement('cds-modal-heading', props, props.children);
+}
+export function ModalBody(props: CarbonProps) {
+  return createElement('cds-modal-body', props, props.children);
+}
