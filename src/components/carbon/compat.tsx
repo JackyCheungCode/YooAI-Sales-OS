@@ -111,7 +111,7 @@ type SideNavBaseProps = CarbonProps & {
   title?: string;
 };
 
-function slottedIcon(renderIcon?: React.ComponentType<{ size?: number }>) {
+function slottedIcon(renderIcon?: ComponentType<{ size?: number }>) {
   if (!renderIcon) return null;
   return createElement(
     'span',
