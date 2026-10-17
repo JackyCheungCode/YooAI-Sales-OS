@@ -188,3 +188,6 @@ export function ModalHeading(props: CarbonProps) {
 export function ModalBody(props: CarbonProps) {
   return createElement('cds-modal-body', props, props.children);
 }
+export function ModalFooter(props: CarbonProps) {
+  return createElement('cds-modal-footer', props, props.children);
+}

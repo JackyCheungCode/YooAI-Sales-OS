@@ -151,3 +151,10 @@
 - [ ] 所有 Modal 操作按钮均位于原生 `cds-modal-footer`；所有 Side Panel 操作按钮均位于原生 `cds-side-panel-footer`。
 - [ ] 全站无用普通 `footer` 或自定义 `div` 充当弹窗/侧面板操作轨道的实现。
 - [ ] 已验证关闭按钮、遮罩关闭、Escape、焦点陷阱/还原、键盘操作、移动端布局及表单提交行为。
+
+
+### 实施进度（2026-10-17）
+
+- 已将 `@carbon/web-components` 从 `2.64.0` 更新到稳定补丁版本 `2.65.0`。该版本升级本身不代表 `cds-side-panel` 已进入公开稳定 API；实施侧面板前仍须核验发布包导出与注册文件。
+- 已在共用 Carbon 兼容层增加原生 `cds-modal-footer` 映射，并将“新建真实订单”从自制遮罩/section 对话框迁移为原生 `cds-modal` 结构。
+- 全站其他弹窗 Footer 迁移、详情查看/编辑 Side Panel 迁移、类型检查、构建及交互回归仍未完成；不得标记为全站通过。
