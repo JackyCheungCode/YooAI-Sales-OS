@@ -87,6 +87,14 @@ export function ShipmentsPage() {
   const [releaseOverrideReason, setReleaseOverrideReason] = useState('');
   const [logisticsDraft, setLogisticsDraft] = useState({shippingMode:'fcl',incoterm:'FOB',originPort:'',destinationPort:'',latestShipDate:'',etd:'',eta:'',responsibleName:'',consignee:'',notifyParty:'',bookingNumber:'',billNumber:'',billType:'',vesselVoyage:'',carrierName:'',shippingLine:'',containerType:'',containerCount:'0',transshipmentInfo:'',containerNumbers:'',sealNumbers:'',trackingNumber:'',trackingUrl:'',notes:''});
   const createFormRef = useRef<HTMLFormElement>(null);
+  const createModalRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const modal = createModalRef.current;
+    if (!modal) return;
+    const close = () => setCreateOpen(false);
+    modal.addEventListener('cds-modal-closed', close);
+    return () => modal.removeEventListener('cds-modal-closed', close);
+  }, [createOpen]);
 
   const selected = shipments.find(s => s.id === selectedId) ?? null;
   const filtered = useMemo(() => shipments.filter(s => {
@@ -350,7 +358,9 @@ export function ShipmentsPage() {
       </section></Column>
     </Grid>
 
-    {createOpen&&<div className="shipment-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setCreateOpen(false);}}><section className="shipment-modal" role="dialog" aria-modal="true" aria-labelledby="shipment-create-title"><header><div><div className="shipments-eyebrow">NEW SHIPMENT</div><h2 id="shipment-create-title">新建出运单</h2></div><Button variant="ghost" onClick={()=>setCreateOpen(false)}>关闭</Button></header><form ref={createFormRef} onSubmit={saveShipment}><button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+    {createOpen&&<cds-modal ref={createModalRef} open size="lg" aria-label="新建出运单">
+      <cds-modal-header><div><cds-modal-label>NEW SHIPMENT</cds-modal-label><cds-modal-heading id="shipment-create-title">新建出运单</cds-modal-heading></div><Button variant="ghost" onClick={()=>setCreateOpen(false)}>关闭</Button></cds-modal-header>
+      <cds-modal-body><form ref={createFormRef} className="shipment-modal-form" onSubmit={saveShipment}><button type="submit" hidden aria-hidden="true" tabIndex={-1} />
       <Grid fullWidth className="shipment-form-grid">
         <Column sm={4} md={4} lg={4} xlg={4}> <label>所属订单（必填）<SelectInput value={orderId} onChange={e=>void changeOrder(e.target.value)} required><SelectItem value="" text="选择真实订单"/>{orders.filter(o=>!['cancelled','closed'].includes(o.status)).map(o=><SelectItem key={o.id} value={o.id} text={o.order_number+' · '+(o.customers?.name||'未关联客户')}/>)}</SelectInput></label> </Column>
         <Column sm={4} md={4} lg={4} xlg={4}> <label>装运方式<SelectInput value={shippingMode} onChange={e=>setShippingMode(e.target.value)}>{modes.map(m=><SelectItem key={m.value} value={m.value} text={m.label}/>)}</SelectInput></label> </Column>
@@ -373,7 +383,8 @@ export function ShipmentsPage() {
       <h3>出运明细（数量不能超过订单剩余数量）</h3>
       {!orderId?<p className="shipments-empty">选择订单后读取真实订单明细。</p>:orderItems.length===0?<p className="shipments-empty">此订单暂无已登记的产品明细，不能创建出运单。请先在订单中补齐产品行。</p>:<div className="shipment-table-wrap"><Table className="shipment-table"><TableHead><TableRow><TableHeader>产品 / SKU</TableHeader><TableHeader>订单数量</TableHeader><TableHeader>已出运</TableHeader><TableHeader>本批数量</TableHeader><TableHeader>单位</TableHeader><TableHeader>毛重 kg</TableHeader><TableHeader>净重 kg</TableHeader><TableHeader>体积 m³</TableHeader><TableHeader>件数</TableHeader><TableHeader>包装</TableHeader><TableHeader>唛头</TableHeader></TableRow></TableHead><TableBody>{orderItems.map(item=><TableRow key={item.order_item_id}><TableCell>{item.product_name}<small>{item.sku||'—'}</small></TableCell><TableCell>{item.ordered_quantity}</TableCell><TableCell>{item.shipped_quantity}</TableCell><TableCell><TextInput aria-label={item.product_name+'本批出运数量'} type="number" min="0" max={item.ordered_quantity-item.shipped_quantity} step="any" value={item.quantity} onChange={e=>updateItem(item.order_item_id,'quantity',e.target.value)}/></TableCell><TableCell>{item.unit}</TableCell><TableCell><TextInput aria-label={item.product_name+'毛重'} type="number" min="0" value={item.gross_weight} onChange={e=>updateItem(item.order_item_id,'gross_weight',e.target.value)}/></TableCell><TableCell><TextInput aria-label={item.product_name+'净重'} type="number" min="0" value={item.net_weight} onChange={e=>updateItem(item.order_item_id,'net_weight',e.target.value)}/></TableCell><TableCell><TextInput aria-label={item.product_name+'体积'} type="number" min="0" value={item.volume_cbm} onChange={e=>updateItem(item.order_item_id,'volume_cbm',e.target.value)}/></TableCell><TableCell><TextInput aria-label={item.product_name+'件数'} type="number" min="0" value={item.package_count} onChange={e=>updateItem(item.order_item_id,'package_count',e.target.value)}/></TableCell><TableCell><TextInput aria-label={item.product_name+'包装方式'} value={item.packaging_method} onChange={e=>updateItem(item.order_item_id,'packaging_method',e.target.value)}/></TableCell><TableCell><TextInput aria-label={item.product_name+'唛头'} value={item.marks} onChange={e=>updateItem(item.order_item_id,'marks',e.target.value)}/></TableCell></TableRow>)}</TableBody></Table></div>}
       <footer><Button variant="secondary" type="button" onClick={()=>setCreateOpen(false)}>取消</Button><Button type="button" onClick={()=>createFormRef.current?.requestSubmit()} disabled={saving||!orderId||orderItems.every(i=>Number(i.quantity)<=0)}>{saving?'保存中…':'保存并生成出运单'}</Button></footer>
-    </form></section></div>}
+    </form></cds-modal-body>
+    </cds-modal>}
   </div>;
 }
 
