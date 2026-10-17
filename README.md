@@ -134,6 +134,11 @@ UI‑Shell是Carbon整套全局导航框架，全部是 <cds‑xxx> web‑compon
 39. 侧边导航菜单项： <cds-side-nav-menu-item> ，侧边栏每一条导航链接，使用 aria‑current="page" 标记当前激活页面。
 40. 侧边导航分隔线： <cds-side-nav-divider> ，侧边栏菜单之间分割，不要手写border。
 41. 右侧滑出面板： <cds-side-panel> ，header触发从右侧滑出的面板。
+42，cds-modal：创建新建记录（新建商机、新建客户、新建出运单）
+cds-side-panel：查看记录详情、多字段编辑查看
+cds-modal：新建创建记录（短表单创建弹窗）
+cds-side-panel：查看记录详情、详情页编辑记录
+ 
  
 全局强制约束
  
