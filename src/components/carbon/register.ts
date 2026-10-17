@@ -34,7 +34,6 @@ import '@carbon/web-components/es/components/dropdown/index.js';
 import '@carbon/web-components/es/components/floating-menu/index.js';
 import '@carbon/web-components/es/components/form/index.js';
 import '@carbon/web-components/es/components/inline-loading/index.js';
-import '@carbon/web-components/es/components/input/index.js';
 import '@carbon/web-components/es/components/link/index.js';
 import '@carbon/web-components/es/components/list/index.js';
 import '@carbon/web-components/es/components/loading/index.js';
