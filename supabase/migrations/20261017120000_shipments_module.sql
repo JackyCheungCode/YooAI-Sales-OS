@@ -381,7 +381,7 @@ begin
   if p_latest_ship_date is not null then
     insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
     values(auth.uid(),p_shipment_id,'latest_ship_date_warning','documentation','shipment_latest_ship_date_warning','zh-CN',greatest(now(),(p_latest_ship_date::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
-    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null where public.shipment_notification_jobs.status<>'sent';
   end if;
   if p_eta is not null then
     insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
