@@ -114,8 +114,8 @@ type SideNavBaseProps = CarbonProps & {
 function slottedIcon(renderIcon?: ElementType<{ size?: number }>) {
   if (!renderIcon) return null;
   return createElement(
-    'span',
-    { slot: 'title-icon', 'aria-hidden': true },
+    'cds-icon',
+    { slot: 'title-icon', size: 16, 'aria-hidden': true },
     createElement(renderIcon, { size: 16 }),
   );
 }
