@@ -31,6 +31,7 @@ import Time16 from '@carbon/icons/es/time/16.js';
 import TrashCan16 from '@carbon/icons/es/trash--can/16.js';
 import Trophy16 from '@carbon/icons/es/trophy/16.js';
 import UserMultiple16 from '@carbon/icons/es/user--multiple/16.js';
+import UserAvatar16 from '@carbon/icons/es/user--avatar/16.js';
 import WarningAlt16 from '@carbon/icons/es/warning--alt/16.js';
 import WarningFilled16 from '@carbon/icons/es/warning--filled/16.js';
 
@@ -76,5 +77,6 @@ export const Time = asCarbonIcon(Time16);
 export const TrashCan = asCarbonIcon(TrashCan16);
 export const Trophy = asCarbonIcon(Trophy16);
 export const UserMultiple = asCarbonIcon(UserMultiple16);
+export const UserAvatar = asCarbonIcon(UserAvatar16);
 export const WarningAlt = asCarbonIcon(WarningAlt16);
 export const WarningFilled = asCarbonIcon(WarningFilled16);
