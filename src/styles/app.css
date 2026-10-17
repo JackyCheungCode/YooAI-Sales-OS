@@ -11,7 +11,7 @@
 .stat-grid{display:grid;gap:var(--cds-spacing-05);margin-bottom:var(--cds-spacing-07)}
 .stat-card{padding:var(--cds-spacing-05);min-width:0}
 .stat-value{overflow-wrap:anywhere}
-.panel{min-width:0;border:1px solid var(--cds-border-subtle-01);background:var(--cds-layer)}
+.panel{min-width:0;background:var(--cds-layer)}
 .panel__heading{padding:var(--cds-spacing-05) var(--cds-spacing-06)}
 .filter-row{gap:var(--cds-spacing-05);padding:0 var(--cds-spacing-06) var(--cds-spacing-05)}
 .filter-row>*{min-width:0}
