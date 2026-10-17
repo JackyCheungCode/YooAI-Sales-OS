@@ -10,6 +10,7 @@ import '@carbon/web-components/es/components/grid/index.js';
 import '@carbon/web-components/es/components/notification/index.js';
 import '@carbon/web-components/es/components/file-uploader/index.js';
 import '@carbon/web-components/es/components/radio-button/index.js';
+import '@carbon/web-components/es/components/progress-indicator/index.js';
 import '@carbon/web-components/es/components/search/index.js';
 import '@carbon/web-components/es/components/select/index.js';
 import '@carbon/web-components/es/components/data-table/index.js';
