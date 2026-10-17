@@ -56,3 +56,9 @@ a { color: inherit; text-decoration: none; }
   overflow-wrap: anywhere;
   font-size:var(--cds-type-body-02);
 }
+
+/* Shared Carbon tabs: selected labels use text emphasis without the interactive underline. */
+cds-tabs { --cds-border-interactive: transparent; display:block; max-width:100%; min-width:0; }
+cds-dropdown { display:block; min-width:0; }
+.account-list-filters,.contacts-filters,.lead-filter,.opps-filters,.orders-filter,.quotes-filter,.shipments-list-tools,.filter-row { position:relative; z-index:2; }
+.account-list-items,.contacts-list-items,.opps-list,.orders-list-items,.quotes-list-items,.shipments-records { position:relative; z-index:0; }

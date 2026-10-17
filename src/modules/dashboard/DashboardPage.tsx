@@ -3,7 +3,7 @@ import { LineChart, SimpleBarChart } from '@carbon/charts-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '../../components/carbon/icons';
 import { Button } from '../../components/ui/Button';
-import { SelectInput, SelectItem } from '../../components/ui/Field';
+import { SelectInput, DropdownInput, SelectItem } from '../../components/ui/Field';
 import './dashboard.css';
 
 type Area = 'overview' | 'sales' | 'orders' | 'service' | 'marketing' | 'commerce';
@@ -148,18 +148,7 @@ function AreaPerformanceChart({ area }: { area: Exclude<Area, 'overview'> }) {
 export function DashboardPage() {
   const [area, setArea] = useState<Area>('overview');
   const areaTabsRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    const tabs = areaTabsRef.current;
-    if (!tabs) return;
-    const onSelected = (event: Event) => {
-      const target = event.target as HTMLElement & { value?: string };
-      const detail = (event as CustomEvent<{ value?: string }>).detail;
-      const next = target.value ?? detail?.value;
-      if (areas.some(item => item.id === next)) setArea(next as Area);
-    };
-    tabs.addEventListener('cds-tabs-selected', onSelected);
-    return () => tabs.removeEventListener('cds-tabs-selected', onSelected);
-  }, []);
+  useEffect(() => { const tabs = areaTabsRef.current; if (!tabs) return; tabs.value = area; const onSelected = (event: Event) => { const target = event.target as HTMLElement & { value?: string }; const detail = (event as CustomEvent<{ value?: string; selectedTab?: HTMLElement }>).detail; const selected = detail?.selectedTab as (HTMLElement & { value?: string }) | undefined; const next = selected?.value ?? target.value ?? detail?.value; if (areas.some(item => item.id === next)) setArea(next as Area); }; tabs.addEventListener('cds-tabs-selected', onSelected); return () => tabs.removeEventListener('cds-tabs-selected', onSelected); }, [area]);
   const [period, setPeriod] = useState('month');
   const [region, setRegion] = useState('all');
   const [product, setProduct] = useState('all');
@@ -182,15 +171,15 @@ export function DashboardPage() {
     <Tile className="dashboard-filter-panel">
       <div className="dashboard-filter-title"><div><strong>全局分析条件</strong><span>所有经营板块共享当前筛选条件</span></div><Button type="button" variant="ghost" className="filter-reset" onClick={()=>{setPeriod('month');setRegion('all');setProduct('all');setTeam('all');setTier('all')}}>重置筛选</Button></div>
       <Grid fullWidth className="dashboard-filters">
-        <Column sm={4} md={4} lg={3}><SelectInput id="dash-period" labelText="统计时间" value={period} onChange={e=>setPeriod(e.target.value)}><SelectItem value="day" text="今日"/><SelectItem value="week" text="本周"/><SelectItem value="month" text="本月"/><SelectItem value="quarter" text="本季度"/><SelectItem value="year" text="本年度"/></SelectInput></Column>
-        <Column sm={4} md={4} lg={3}><SelectInput id="dash-region" labelText="区域" value={region} onChange={e=>setRegion(e.target.value)}><SelectItem value="all" text="全部区域"/><SelectItem value="cn" text="中国区"/><SelectItem value="apac" text="亚太区"/><SelectItem value="emea" text="欧洲中东非"/><SelectItem value="americas" text="美洲区"/></SelectInput></Column>
-        <Column sm={4} md={4} lg={3}><SelectInput id="dash-product" labelText="产品线" value={product} onChange={e=>setProduct(e.target.value)}><SelectItem value="all" text="全部产品线"/><SelectItem value="software" text="软件与订阅"/><SelectItem value="hardware" text="硬件设备"/><SelectItem value="service" text="专业服务"/></SelectInput></Column>
-        <Column sm={4} md={4} lg={3}><SelectInput id="dash-team" labelText="销售团队" value={team} onChange={e=>setTeam(e.target.value)}><SelectItem value="all" text="全部团队"/><SelectItem value="enterprise" text="大客户团队"/><SelectItem value="growth" text="增长团队"/><SelectItem value="channel" text="渠道团队"/></SelectInput></Column>
-        <Column sm={4} md={4} lg={4}><SelectInput id="dash-tier" labelText="客户等级" value={tier} onChange={e=>setTier(e.target.value)}><SelectItem value="all" text="全部等级"/><SelectItem value="strategic" text="战略客户"/><SelectItem value="key" text="重点客户"/><SelectItem value="standard" text="普通客户"/></SelectInput></Column>
+        <Column sm={4} md={4} lg={3}><DropdownInput id="dash-period" labelText="统计时间" value={period} onChange={e=>setPeriod(e.target.value)}><SelectItem value="day" text="今日"/><SelectItem value="week" text="本周"/><SelectItem value="month" text="本月"/><SelectItem value="quarter" text="本季度"/><SelectItem value="year" text="本年度"/></DropdownInput></Column>
+        <Column sm={4} md={4} lg={3}><DropdownInput id="dash-region" labelText="区域" value={region} onChange={e=>setRegion(e.target.value)}><SelectItem value="all" text="全部区域"/><SelectItem value="cn" text="中国区"/><SelectItem value="apac" text="亚太区"/><SelectItem value="emea" text="欧洲中东非"/><SelectItem value="americas" text="美洲区"/></DropdownInput></Column>
+        <Column sm={4} md={4} lg={3}><DropdownInput id="dash-product" labelText="产品线" value={product} onChange={e=>setProduct(e.target.value)}><SelectItem value="all" text="全部产品线"/><SelectItem value="software" text="软件与订阅"/><SelectItem value="hardware" text="硬件设备"/><SelectItem value="service" text="专业服务"/></DropdownInput></Column>
+        <Column sm={4} md={4} lg={3}><DropdownInput id="dash-team" labelText="销售团队" value={team} onChange={e=>setTeam(e.target.value)}><SelectItem value="all" text="全部团队"/><SelectItem value="enterprise" text="大客户团队"/><SelectItem value="growth" text="增长团队"/><SelectItem value="channel" text="渠道团队"/></DropdownInput></Column>
+        <Column sm={4} md={4} lg={4}><DropdownInput id="dash-tier" labelText="客户等级" value={tier} onChange={e=>setTier(e.target.value)}><SelectItem value="all" text="全部等级"/><SelectItem value="strategic" text="战略客户"/><SelectItem value="key" text="重点客户"/><SelectItem value="standard" text="普通客户"/></DropdownInput></Column>
       </Grid>
     </Tile>
 
-    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel">{item.label}</cds-tab>)}</cds-tabs>
+    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel" onClick={()=>setArea(item.id)}>{item.label}</cds-tab>)}</cds-tabs>
 
     <div id="dashboard-area-panel" role="tabpanel" aria-label={activeTitle}>
     <div className="dashboard-section-heading"><div><div className="eyebrow">BUSINESS PERFORMANCE</div><h2>{activeTitle}</h2><p>{area==='overview'?'核心经营指标、收入走势与需要管理层关注的风险。':'当前板块的关键指标与经营分析；选择图表或风险项目可进入对应明细。'}</p></div><div className="dashboard-refresh"><span className="refresh-dot"/><span>视图刷新于 {updatedAt}</span></div></div>
