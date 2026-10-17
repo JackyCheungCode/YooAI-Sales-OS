@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Add, WarningAlt } from '@carbon/icons-react';
+import { Add, WarningAlt } from '../../components/carbon/icons';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput } from '../../components/ui/Field';
 import { supabase } from '../../lib/supabase';
