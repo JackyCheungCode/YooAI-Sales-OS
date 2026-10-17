@@ -304,6 +304,13 @@ begin
     update public.order_items set shipped_quantity=shipped_quantity+v_quantity where id=v_order_item.id;
   end loop;
 
+  update public.orders o set status=case
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity)
+      and exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'partially_shipped'
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then o.status
+    else 'shipped' end,
+    updated_at=now()
+  where o.id=v_order.id and o.owner_id=auth.uid();
   insert into public.shipment_events(owner_id,shipment_id,event_type,description)
   values(auth.uid(),v_shipment.id,'created','出运单已创建，等待确认备货及订舱。');
   return jsonb_build_object('shipment_id',v_shipment.id,'shipment_number',v_shipment.shipment_number,'batch_number',v_shipment.batch_number);
@@ -311,6 +318,189 @@ end;
 $$;
 revoke all on function public.create_shipment_with_items(uuid,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,jsonb) from public,anon;
 grant execute on function public.create_shipment_with_items(uuid,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,jsonb) to authenticated;
+
+create or replace function public.create_order_with_items(
+  p_order_number text,
+  p_customer_id uuid,
+  p_currency_code text,
+  p_total_amount numeric,
+  p_payment_terms jsonb,
+  p_items jsonb
+) returns jsonb
+language plpgsql security definer set search_path = ''
+as $
+declare
+  v_order public.orders%rowtype;
+  v_item jsonb;
+  v_line_number integer := 0;
+  v_quantity numeric(14,3);
+  v_price numeric(14,4);
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  if nullif(trim(p_order_number),'') is null then raise exception 'Order number is required' using errcode='22023'; end if;
+  if p_currency_code !~ '^[A-Z]{3}
+  p_shipment_id uuid,
+  p_shipping_mode text,
+  p_incoterm text,
+  p_origin_port text,
+  p_destination_port text,
+  p_latest_ship_date date,
+  p_etd date,
+  p_eta date,
+  p_responsible_name text,
+  p_consignee text,
+  p_notify_party text,
+  p_booking_number text,
+  p_bill_of_lading_number text,
+  p_bill_of_lading_type text,
+  p_vessel_voyage text,
+  p_container_numbers text,
+  p_seal_numbers text,
+  p_tracking_number text,
+  p_tracking_url text,
+  p_notes text
+) returns jsonb
+language plpgsql security definer set search_path = ''
+as $
+declare v_shipment public.shipments%rowtype;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
+  if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
+  if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot be edited' using errcode='22023'; end if;
+  if p_shipping_mode not in ('fcl','lcl','bulk','air','express','rail') then raise exception 'Invalid shipping mode' using errcode='22023'; end if;
+  if p_bill_of_lading_type is not null and p_bill_of_lading_type not in ('original','telex_release','sea_waybill') then raise exception 'Invalid bill of lading type' using errcode='22023'; end if;
+  update public.shipments set
+    shipping_mode=p_shipping_mode, incoterm=p_incoterm, origin_port=p_origin_port, destination_port=p_destination_port,
+    latest_ship_date=p_latest_ship_date, etd=p_etd, eta=p_eta, responsible_name=p_responsible_name,
+    consignee=p_consignee, notify_party=p_notify_party, booking_number=p_booking_number,
+    bill_of_lading_number=p_bill_of_lading_number, bill_of_lading_type=p_bill_of_lading_type,
+    vessel_voyage=p_vessel_voyage, container_numbers=p_container_numbers, seal_numbers=p_seal_numbers,
+    tracking_number=p_tracking_number, tracking_url=p_tracking_url, notes=p_notes
+  where id=p_shipment_id;
+  insert into public.shipment_events(owner_id,shipment_id,event_type,description)
+  values(auth.uid(),p_shipment_id,'logistics_updated','物流与出运信息已更新。');
+  return jsonb_build_object('shipment_id',p_shipment_id,'updated',true);
+end;
+$;
+revoke all on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) from public,anon;
+grant execute on function public.update_shipment_logistics(uuid,text,text,text,text,date,date,date,text,text,text,text,text,text,text,text,text,text,text,text) to authenticated;
+
+create or replace function public.stamp_shipment_document_review()
+returns trigger language plpgsql set search_path = ''
+as $
+begin
+  if new.status='approved' and old.status is distinct from 'approved' then
+    new.reviewed_by := auth.uid();
+    new.reviewed_at := now();
+  end if;
+  if new.status='sent' and old.status is distinct from 'sent' then
+    new.sent_at := now();
+  end if;
+  return new;
+end;
+$;
+drop trigger if exists shipment_documents_stamp_review on public.shipment_documents;
+create trigger shipment_documents_stamp_review before update of status on public.shipment_documents
+for each row execute function public.stamp_shipment_document_review();
+
+create or replace function public.transition_shipment_status(p_shipment_id uuid,p_new_status text,p_reason text default null)
+returns jsonb language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_shipment public.shipments%rowtype;
+  v_current_index integer;
+  v_new_index integer;
+  v_allowed text[] := array['draft','pending_booking','booked','containerized','customs_cleared','departed','in_transit','arrived','delivered','closed'];
+  v_item record;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
+  select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
+  if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
+  if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot change status' using errcode='22023'; end if;
+  if p_new_status='cancelled' then
+    if nullif(trim(p_reason),'') is null then raise exception 'Cancellation reason is required' using errcode='22023'; end if;
+    if v_shipment.status in ('departed','in_transit','arrived','delivered') then raise exception 'A shipment already in transport cannot be cancelled' using errcode='22023'; end if;
+    update public.shipments set status='cancelled',cancellation_reason=trim(p_reason) where id=p_shipment_id;
+    for v_item in select order_item_id,quantity from public.shipment_items where shipment_id=p_shipment_id loop
+      update public.order_items set shipped_quantity=greatest(0,shipped_quantity-v_item.quantity) where id=v_item.order_item_id;
+    end loop;
+  else
+    if not p_new_status=any(v_allowed) then raise exception 'Invalid shipment status' using errcode='22023'; end if;
+    v_current_index := array_position(v_allowed,v_shipment.status);
+    v_new_index := array_position(v_allowed,p_new_status);
+    if v_current_index is null or v_new_index is null or v_new_index<>v_current_index+1 then
+      raise exception 'Shipment status must advance one step at a time' using errcode='22023';
+    end if;
+    if p_new_status='booked' and nullif(trim(v_shipment.booking_number),'') is null then
+      raise exception 'Booking number is required before confirming booking' using errcode='22023';
+    end if;
+    if p_new_status='departed' and nullif(trim(v_shipment.bill_of_lading_number),'') is null then
+      raise exception 'Bill of lading number is required before departure' using errcode='22023';
+    end if;
+    if p_new_status='closed' and exists(select 1 from public.shipment_documents where shipment_id=p_shipment_id and status not in ('approved','sent')) then
+      raise exception 'All shipment documents must be approved before closing' using errcode='22023';
+    end if;
+    update public.shipments set status=p_new_status,
+      actual_departure_date=case when p_new_status='departed' then current_date else actual_departure_date end,
+      actual_arrival_date=case when p_new_status='arrived' then current_date else actual_arrival_date end,
+      customer_pickup_date=case when p_new_status='delivered' then current_date else customer_pickup_date end
+      where id=p_shipment_id;
+  end if;
+  insert into public.shipment_events(owner_id,shipment_id,event_type,description,metadata)
+  values(auth.uid(),p_shipment_id,'status_changed','出运状态更新为：'||p_new_status,jsonb_build_object('from',v_shipment.status,'to',p_new_status,'reason',p_reason));
+  if p_new_status in ('booked','containerized','departed','arrived','delivered') then
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at)
+    values(auth.uid(),p_shipment_id,p_new_status,'sales','shipment_'||p_new_status,'zh-CN',now())
+    on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
+  end if;
+  update public.orders o set status=case
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.quantity>oi.shipped_quantity) then
+      case when exists(select 1 from public.order_items oi where oi.order_id=o.id and oi.shipped_quantity>0) then 'partially_shipped' else o.status end
+    when exists(select 1 from public.order_items oi where oi.order_id=o.id) then 'shipped'
+    else o.status end,
+    updated_at=now()
+  where o.id=v_shipment.order_id and o.owner_id=auth.uid();
+  return jsonb_build_object('shipment_id',p_shipment_id,'status',p_new_status);
+end;
+$$;
+revoke all on function public.transition_shipment_status(uuid,text,text) from public,anon;
+grant execute on function public.transition_shipment_status(uuid,text,text) to authenticated;
+
+-- Do not allow direct inserts to bypass quantity checks; all shipment items are created by the atomic RPC.
+revoke insert,update,delete on public.shipment_items from authenticated;
+grant select on public.shipment_items to authenticated;
+revoke insert,update,delete on public.shipments from authenticated;
+grant select on public.shipments to authenticated;
+revoke insert,update,delete on public.order_items from authenticated;
+grant select on public.order_items to authenticated;
+ then raise exception 'Currency must be a three-letter ISO code' using errcode='22023'; end if;
+  if p_total_amount < 0 then raise exception 'Order amount cannot be negative' using errcode='22023'; end if;
+  if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 then raise exception 'At least one order item is required' using errcode='22023'; end if;
+  if not exists(select 1 from public.customers c where c.id=p_customer_id and c.owner_id=auth.uid()) then
+    raise exception 'Customer not found or access denied' using errcode='42501';
+  end if;
+  insert into public.orders(owner_id,customer_id,order_number,status,currency_code,total_amount,payment_terms,confirmed_at)
+  values(auth.uid(),p_customer_id,trim(p_order_number),'confirmed',p_currency_code,p_total_amount,coalesce(p_payment_terms,'{}'::jsonb),now())
+  returning * into v_order;
+  for v_item in select value from jsonb_array_elements(p_items) loop
+    v_line_number := v_line_number+1;
+    v_quantity := (v_item->>'quantity')::numeric;
+    v_price := coalesce(nullif(v_item->>'unit_price','')::numeric,0);
+    if nullif(trim(v_item->>'product_name'),'') is null or v_quantity is null or v_quantity<=0 or v_price<0 then
+      raise exception 'Each order item requires a product name, positive quantity, and non-negative price' using errcode='22023';
+    end if;
+    insert into public.order_items(owner_id,order_id,line_number,product_name,sku,specification,quantity,unit,unit_price,currency_code,note)
+    values(auth.uid(),v_order.id,v_line_number,trim(v_item->>'product_name'),nullif(v_item->>'sku',''),nullif(v_item->>'specification',''),v_quantity,
+      coalesce(nullif(v_item->>'unit',''),'件'),v_price,p_currency_code,nullif(v_item->>'note',''));
+  end loop;
+  insert into public.audit_logs(owner_id,entity_type,entity_id,action,new_values,metadata)
+  values(auth.uid(),'order',v_order.id,'created',jsonb_build_object('order_number',v_order.order_number,'total_amount',v_order.total_amount,'currency_code',v_order.currency_code),jsonb_build_object('source','shipment_module_order_entry'));
+  return jsonb_build_object('order_id',v_order.id,'order_number',v_order.order_number,'customer_id',v_order.customer_id);
+end;
+$;
+revoke all on function public.create_order_with_items(text,uuid,text,numeric,jsonb,jsonb) from public,anon;
+grant execute on function public.create_order_with_items(text,uuid,text,numeric,jsonb,jsonb) to authenticated;
 
 create or replace function public.update_shipment_logistics(
   p_shipment_id uuid,
