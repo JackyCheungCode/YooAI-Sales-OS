@@ -244,7 +244,8 @@ create policy "shipment notification jobs owner access" on public.shipment_notif
 
 -- Explicit Data API grants; row-level security remains the authorization boundary.
 revoke insert,update,delete on public.order_items,public.shipments,public.shipment_items from authenticated;
-revoke delete on public.shipment_documents,public.shipment_costs,public.shipment_exceptions,public.shipment_events,public.shipment_notification_jobs from authenticated;
+revoke delete on public.shipment_documents,public.shipment_costs,public.shipment_exceptions from authenticated;
+revoke update,delete on public.shipment_events from authenticated;
 revoke insert,update,delete on public.shipment_notification_jobs from authenticated;
 grant select on public.order_items,public.shipments,public.shipment_items,public.shipment_documents,public.shipment_costs,public.shipment_exceptions,public.shipment_events to authenticated;
 grant insert,update on public.shipment_documents to authenticated;
@@ -531,8 +532,8 @@ returns trigger language plpgsql set search_path = ''
 as $body$
 declare v_role text := coalesce(auth.jwt()->'app_metadata'->>'role','');
 begin
-  if v_role not in ('documentation','admin','executive','manager','followup') then
-    raise exception 'Only documentation, follow-up, finance, or management roles may edit shipment documents' using errcode='42501';
+  if v_role not in ('documentation','admin','executive','manager','followup','operations','shipping') then
+    raise exception 'Only documentation, follow-up, operations, shipping, or management roles may edit shipment documents' using errcode='42501';
   end if;
   if tg_op='INSERT' then
     if new.status not in ('pending','prepared') then
