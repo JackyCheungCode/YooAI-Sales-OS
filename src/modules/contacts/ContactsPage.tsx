@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Add, Renew, Email, Phone, Chat, UserMultiple, WarningAlt, Calendar, Time, Link as LinkIcon, Close, CheckmarkFilled, Document } from '@carbon/icons-react';
-import { Search as CarbonSearch, Tag, Modal, ModalHeader, ModalHeading, ModalBody, Tile } from '../../components/carbon/compat';
+import { Search as CarbonSearch, Tag, Modal, ModalHeader, ModalHeading, ModalBody, Tile, InlineNotification } from '../../components/carbon/compat';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
@@ -56,7 +56,7 @@ export function ContactsPage() {
  const localTime = selected.localTime;
  return <div className="contacts-page">
   <div className="page-heading contacts-heading"><div><div className="eyebrow">CONTACT RELATIONSHIP WORKSPACE</div><h1>联系人管理</h1><p className="page-subtitle">以客户为中心管理关键联系人、业务角色、沟通记录与合规偏好。</p></div><div className="contacts-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>setNotice('页面状态已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={()=>{setNotice('新建联系人表单已打开。');setShowEditor(true);}}>新建联系人</Button></div></div>
-  <div className="contacts-notice" role="status"><WarningAlt size={17}/><span>{notice}</span></div>
+  <InlineNotification kind="info" lowContrast title="操作提示" subtitle={notice} hideCloseButton />
   <div className="contacts-workspace">
    <Tile className="contacts-list-panel"><div className="contacts-list-head"><h2>联系人档案</h2><Tag type="blue">{filtered.length}</Tag></div><CarbonSearch className="contacts-search" labelText="搜索联系人" value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜索姓名、邮箱、客户" /><div className="contacts-filters"><SelectInput value={roleFilter} onChange={e=>setRoleFilter(e.target.value)} aria-label="角色筛选">{['全部角色','决策人','采购执行','财务','物流和清关','老板','影响者','技术或质检'].map(x=><SelectItem key={x} value={x} text={x} />)}</SelectInput><SelectInput value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} aria-label="状态筛选">{['全部状态','有效','离职','已失联'].map(x=><SelectItem key={x} value={x} text={x} />)}</SelectInput></div><div className="contacts-list-items">{filtered.map(c=><Button type="button" variant="ghost" key={c.id} className={'contacts-list-item'+(c.id===selectedId?' selected':'')} onClick={()=>{setSelectedId(c.id);setActiveTab('概览');}}><span className="contacts-list-avatar">{c.name.split(' ').map(x=>x[0]).slice(0,2).join('')}</span><span className="contacts-list-main"><span className="contacts-list-title"><strong>{c.name}</strong>{c.primary&&<span className="primary-dot" title="主联系人">主</span>}</span><span className="contacts-list-role">{c.title}</span><span className="contacts-list-account">{c.account}</span><span className="contacts-list-tags">{c.roles.slice(0,2).map(r=><Tag key={r} type={roleColors[r]??'gray'}>{r}</Tag>)}</span></span></Button>)}</div><div className="contacts-list-foot">主联系人规则需由服务端保证，每个客户唯一。</div></Tile>
    <section className="contacts-detail">
