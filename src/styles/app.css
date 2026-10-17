@@ -51,3 +51,7 @@ cds-table-container{max-width:100%;overflow-x:auto}
 .app-main{width:100%;min-width:0;margin:0}
 .page-breadcrumb{display:block;padding:var(--cds-spacing-05) var(--cds-spacing-07)}
 @media(max-width:671px){.page-breadcrumb{padding:var(--cds-spacing-04) var(--cds-spacing-05)}}
+
+.profile-panel-content{display:flex;flex-direction:column;gap:var(--cds-spacing-05);padding:var(--cds-spacing-05)}
+.profile-panel-content h2{margin:0;font-size:var(--cds-type-heading-02);color:var(--cds-text-primary)}
+.profile-panel-content p{margin:0;font-size:var(--cds-type-body-01);color:var(--cds-text-secondary);overflow-wrap:anywhere}
