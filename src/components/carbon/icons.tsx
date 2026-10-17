@@ -28,7 +28,7 @@ import Send16 from '@carbon/icons/es/send/16.js';
 import ShoppingCart16 from '@carbon/icons/es/shopping--cart/16.js';
 import Task16 from '@carbon/icons/es/task/16.js';
 import Time16 from '@carbon/icons/es/time/16.js';
-import TrashCan16 from '@carbon/icons/es/trash--can/16.js';
+import TrashCan16 from '@carbon/icons/es/trash-can/16.js';
 import Trophy16 from '@carbon/icons/es/trophy/16.js';
 import UserMultiple16 from '@carbon/icons/es/user--multiple/16.js';
 import UserAvatar16 from '@carbon/icons/es/user--avatar/16.js';

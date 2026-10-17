@@ -5,7 +5,7 @@ import App from './app/App';
 import { AppErrorBoundary } from './app/AppErrorBoundary';
 import { AuthProvider } from './app/AuthContext';
 import './components/carbon/register';
-import '@carbon/charts-react/dist/styles.css';
+import '@carbon/charts-react/styles.css';
 import './styles/carbon.scss';
 import './styles/carbon-tokens.css';
 import './styles/global.css';
