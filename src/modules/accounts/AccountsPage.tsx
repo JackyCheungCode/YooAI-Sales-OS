@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Add, Renew, ArrowRight, Close, Building, UserMultiple, Email, Phone, WarningAlt, Document, CheckmarkFilled } from '@carbon/icons-react';
-import { Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody } from '../../components/carbon/compat';
+import { Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody, InlineNotification } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './accounts.css';
@@ -44,7 +44,7 @@ export function AccountsPage(){
  const riskItems=[...(selected.receivable>0?[{title:'存在应收未收款',text:`当前应收 ${money(selected.receivable,selected.currency)}，请核对账龄与到期日。`}]:[]),...(selected.importStatus!=='允许'?[{title:'目的国进口状态需关注',text:`当前状态：${selected.importStatus}。请在确认订单与出运前完成合规核验。`}]:[]),...(selected.status==='潜在客户'?[{title:'尚未分配主负责人',text:'请分配唯一主负责人，协作人员通过客户团队管理。'}]:[])];
  return <div className="accounts-page">
   <div className="page-heading accounts-heading"><div><div className="eyebrow">ACCOUNT MASTER DATA</div><h1>客户管理</h1><p className="page-subtitle">以唯一客户编号管理企业主数据、商务条款、风险、客户团队与全生命周期关系。</p></div><div className="accounts-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>setNotice('页面状态已刷新。')}>刷新</Button><Button renderIcon={Add} onClick={()=>{setNotice('新建客户表单已打开，请确认查重信息。');setEditOpen(true);}}>新建客户</Button></div></div>
-  <div className="accounts-notice" role="status"><WarningAlt size={17}/><span>{notice}</span></div>
+  <InlineNotification kind="info" lowContrast title="操作提示" subtitle={notice} hideCloseButton />
   <div className="accounts-workspace">
    <Tile className="account-list-panel"><div className="account-list-head"><h2>客户档案</h2><Tag type="blue">{filtered.length}</Tag></div><CarbonSearch className="account-search" labelText="搜索客户" value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜索客户、编号、国家" /><div className="account-list-filters"><SelectInput value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} aria-label="客户状态筛选">{['全部状态','潜在客户','新客户','老客户','流失客户'].map(x=><SelectItem key={x} value={x} text={x} />)}</SelectInput><SelectInput value={tierFilter} onChange={e=>setTierFilter(e.target.value)} aria-label="客户等级筛选">{['全部等级','战略','重点','标准'].map(x=><SelectItem key={x} value={x} text={x} />)}</SelectInput></div><div className="account-list-items">{filtered.map(a=><Button type="button" variant="ghost" key={a.id} className={'account-list-item'+(a.id===selectedId?' selected':'')} onClick={()=>{setSelectedId(a.id);setActiveTab('概览');}}><span className="account-list-item-top"><strong>{a.name}</strong><span className={'account-tier tier-'+a.tier}>{a.tier}</span></span><span className="account-list-meta">{a.id} · {a.country}</span><span className="account-list-bottom"><span>{a.status}</span><span>{a.owner}</span></span></Button>)}</div><div className="account-list-foot">客户编号为系统主键，不可编辑。</div></Tile>
    <section className="account-detail">
