@@ -343,6 +343,7 @@ declare
   v_line integer := 0;
   v_quantity numeric(14,3);
   v_price numeric(14,4);
+  v_items_total numeric := 0;
   v_deposit_percent numeric(5,2);
   v_deposit_due_days integer;
   v_balance_due_days integer;
@@ -370,7 +371,11 @@ begin
     end if;
     insert into public.order_items(owner_id,order_id,line_number,product_name,sku,specification,quantity,unit,unit_price,currency_code,note)
     values(auth.uid(),v_order.id,v_line,trim(v_item->>'product_name'),nullif(v_item->>'sku',''),nullif(v_item->>'specification',''),v_quantity,coalesce(nullif(v_item->>'unit',''),'件'),v_price,p_currency_code,nullif(v_item->>'note',''));
+    v_items_total := v_items_total + (v_quantity*v_price);
   end loop;
+  if round(v_items_total,2)<>round(p_total_amount,2) then
+    raise exception 'Order total must equal the sum of its product lines' using errcode='22023';
+  end if;
   v_deposit_percent := greatest(0,least(100,coalesce(nullif(v_order.payment_terms->>'deposit_percent','')::numeric,0)));
   v_deposit_due_days := greatest(0,coalesce(nullif(v_order.payment_terms->>'deposit_due_days','')::integer,7));
   v_balance_due_days := greatest(0,coalesce(nullif(v_order.payment_terms->>'balance_due_days','')::integer,30));
@@ -568,7 +573,7 @@ declare
   v_item record;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
-  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('','followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot change shipment status' using errcode='42501'; end if;
+  if coalesce(auth.jwt()->'app_metadata'->>'role','') not in ('followup','documentation','admin','executive','manager','operations','shipping') then raise exception 'Role cannot change shipment status' using errcode='42501'; end if;
   select * into v_shipment from public.shipments where id=p_shipment_id and owner_id=auth.uid() for update;
   if not found then raise exception 'Shipment not found or access denied' using errcode='P0002'; end if;
   if v_shipment.status in ('closed','cancelled') then raise exception 'Closed or cancelled shipments cannot change status' using errcode='22023'; end if;
