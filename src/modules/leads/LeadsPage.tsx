@@ -154,11 +154,11 @@ export function LeadsPage() {
     <div className="page-heading leads-heading"><div><div className="eyebrow">LEAD MANAGEMENT</div><h1>线索管理</h1><p className="page-subtitle">集中管理尚未确认的潜在客户，从来源采集、资格判断到转化为正式客户关系。</p></div><div className="leads-heading-actions"><Button variant="secondary" renderIcon={Renew} onClick={()=>{fetchPersistedLeads().then(rows=>{setLeads(rows);setNotice('已刷新 Supabase 云端线索。');}).catch(error=>setNotice(error instanceof Error?error.message:'刷新云端线索失败。'));}}>刷新</Button><Button renderIcon={Add} onClick={openNew}>新建线索</Button></div></div>
     <InlineNotification kind="info" lowContrast title="操作提示" subtitle={notice} hideCloseButton />
     <div className="lead-stat-grid">
-      <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='全部线索'?' active':'')} onClick={()=>setStatusFilter('全部线索')}><span>线索总数</span><strong>{counts.all}</strong><small>全部状态</small></Button>
-      <Button type="button" variant="ghost" className={'lead-stat'+(statusFilter==='新线索'?' active':'')} onClick={()=>setStatusFilter('新线索')}><span>新线索</span><strong>{counts.fresh}</strong><small>待首次处理</small></Button>
-      <Button type="button" className={'lead-stat'+(statusFilter==='跟进中'?' active':'')} onClick={()=>setStatusFilter('跟进中')}><span>跟进中</span><strong>{counts.follow}</strong><small>等待回复或推进</small></Button>
-      <Button type="button" className={'lead-stat'+(statusFilter==='已确认'?' active':'')} onClick={()=>setStatusFilter('已确认')}><span>已确认</span><strong>{counts.qualified}</strong><small>具备转化条件</small></Button>
-      <Button type="button" className={'lead-stat'+(poolOnly?' active':'')} onClick={()=>setPoolOnly(v=>!v)}><span>公共线索池</span><strong>{counts.pool}</strong><small>{poolOnly?'正在查看公共池':'点击查看待认领'}</small></Button>
+      <cds-clickable-tile href="#lead-list" link-role="button" className="lead-stat" aria-pressed={statusFilter==='全部线索'} onClick={event=>{event.preventDefault();setStatusFilter('全部线索');}}><span>线索总数</span><strong>{counts.all}</strong><small>全部状态</small></cds-clickable-tile>
+      <cds-clickable-tile href="#lead-list" link-role="button" className="lead-stat" aria-pressed={statusFilter==='新线索'} onClick={event=>{event.preventDefault();setStatusFilter('新线索');}}><span>新线索</span><strong>{counts.fresh}</strong><small>待首次处理</small></cds-clickable-tile>
+      <cds-clickable-tile href="#lead-list" link-role="button" className="lead-stat" aria-pressed={statusFilter==='跟进中'} onClick={event=>{event.preventDefault();setStatusFilter('跟进中');}}><span>跟进中</span><strong>{counts.follow}</strong><small>等待回复或推进</small></cds-clickable-tile>
+      <cds-clickable-tile href="#lead-list" link-role="button" className="lead-stat" aria-pressed={statusFilter==='已确认'} onClick={event=>{event.preventDefault();setStatusFilter('已确认');}}><span>已确认</span><strong>{counts.qualified}</strong><small>具备转化条件</small></cds-clickable-tile>
+      <cds-clickable-tile href="#lead-list" link-role="button" className="lead-stat" aria-pressed={poolOnly} onClick={event=>{event.preventDefault();setPoolOnly(v=>!v);}}><span>公共线索池</span><strong>{counts.pool}</strong><small>{poolOnly?'正在查看公共池':'点击查看待认领'}</small></cds-clickable-tile>
     </div>
     <Tile className="leads-table-panel">
       <div className="leads-panel-heading"><div><h2>线索工作台</h2><p>点击线索行查看和维护资料；已转化线索为只读状态。</p></div></div>
