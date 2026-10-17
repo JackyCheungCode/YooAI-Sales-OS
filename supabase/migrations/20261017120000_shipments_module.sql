@@ -311,6 +311,19 @@ begin
     else 'shipped' end,
     updated_at=now()
   where o.id=v_order.id and o.owner_id=auth.uid();
+  if p_latest_ship_date is not null then
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),v_shipment.id,'latest_ship_date_warning','documentation','shipment_latest_ship_date_warning','zh-CN',greatest(now(),(p_latest_ship_date::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
+  end if;
+  if p_eta is not null then
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),v_shipment.id,'eta_prep_notice','customer','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),v_shipment.id,'eta_prep_notice','sales','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do nothing;
+  end if;
   insert into public.shipment_events(owner_id,shipment_id,event_type,description)
   values(auth.uid(),v_shipment.id,'created','出运单已创建，等待确认备货及订舱。');
   return jsonb_build_object('shipment_id',v_shipment.id,'shipment_number',v_shipment.shipment_number,'batch_number',v_shipment.batch_number);
@@ -378,6 +391,19 @@ begin
     vessel_voyage=p_vessel_voyage, container_numbers=p_container_numbers, seal_numbers=p_seal_numbers,
     tracking_number=p_tracking_number, tracking_url=p_tracking_url, notes=p_notes
   where id=p_shipment_id;
+  if p_latest_ship_date is not null then
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),p_shipment_id,'latest_ship_date_warning','documentation','shipment_latest_ship_date_warning','zh-CN',greatest(now(),(p_latest_ship_date::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+  end if;
+  if p_eta is not null then
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),p_shipment_id,'eta_prep_notice','customer','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+    insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
+    values(auth.uid(),p_shipment_id,'eta_prep_notice','sales','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+  end if;
   insert into public.shipment_events(owner_id,shipment_id,event_type,description)
   values(auth.uid(),p_shipment_id,'logistics_updated','物流与出运信息已更新。');
   return jsonb_build_object('shipment_id',p_shipment_id,'updated',true);
