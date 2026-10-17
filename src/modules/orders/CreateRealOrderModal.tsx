@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Add, WarningAlt } from '@carbon/icons-react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput } from '../../components/ui/Field';
@@ -10,21 +10,22 @@ type Props = { onClose: () => void; onCreated: (orderNumber: string) => void };
 
 export function CreateRealOrderModal({onClose,onCreated}:Props) {
   const [customers,setCustomers]=useState<Customer[]>([]);
-  const [loaded,setLoaded]=useState(false);
   const [orderNumber,setOrderNumber]=useState('SO-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+String(Date.now()).slice(-5));
   const [customerId,setCustomerId]=useState('');
   const [currency,setCurrency]=useState('USD');
   const [lines,setLines]=useState<OrderLineDraft[]>([{product_name:'',sku:'',specification:'',quantity:'1',unit:'件',unit_price:'0',note:''}]);
   const [saving,setSaving]=useState(false);
   const [error,setError]=useState('');
-  if(!loaded) {
-    setLoaded(true);
-    if(supabase) void supabase.from('customers').select('id,name').eq('customer_type','customer').order('name').limit(500).then(({data,error:loadError})=>{
+  useEffect(()=>{
+    if(!supabase){setError('Supabase 尚未配置，无法创建真实订单。');return;}
+    let active=true;
+    void supabase.from('customers').select('id,name').eq('customer_type','customer').order('name').limit(500).then(({data,error:loadError})=>{
+      if(!active)return;
       if(loadError)setError('读取客户失败：'+loadError.message);
       else setCustomers((data??[]) as Customer[]);
     });
-    else setError('Supabase 尚未配置，无法创建真实订单。');
-  }
+    return ()=>{active=false;};
+  },[]);
   const updateLine=(index:number,patch:Partial<OrderLineDraft>)=>setLines(prev=>prev.map((line,i)=>i===index?{...line,...patch}:line));
   const total=lines.reduce((sum,line)=>sum+(Number(line.quantity)||0)*(Number(line.unit_price)||0),0);
   const create=async()=>{
