@@ -1,5 +1,5 @@
 import { Column, Grid, InlineNotification, Tag, Tile } from '../../components/carbon/compat';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Dashboard, UserMultiple, Filter, Download, WarningAlt, ChartLine, ShoppingCart, Headset, Currency, Trophy, Renew } from '@carbon/icons-react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
@@ -104,6 +104,19 @@ function FunnelChart() {
 
 export function DashboardPage() {
   const [area, setArea] = useState<Area>('overview');
+  const areaTabsRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const tabs = areaTabsRef.current;
+    if (!tabs) return;
+    const onSelected = (event: Event) => {
+      const target = event.target as HTMLElement & { value?: string };
+      const detail = (event as CustomEvent<{ value?: string }>).detail;
+      const next = target.value ?? detail?.value;
+      if (areas.some(item => item.id === next)) setArea(next as Area);
+    };
+    tabs.addEventListener('cds-tabs-selected', onSelected);
+    return () => tabs.removeEventListener('cds-tabs-selected', onSelected);
+  }, []);
   const [period, setPeriod] = useState('month');
   const [region, setRegion] = useState('all');
   const [product, setProduct] = useState('all');
@@ -134,8 +147,9 @@ export function DashboardPage() {
       </Grid>
     </Tile>
 
-    <div className="dashboard-area-nav" role="tablist" aria-label="经营分析板块">{areas.map(item=><Button key={item.id} type="button" variant="ghost" role="tab" aria-selected={area===item.id} tabIndex={area===item.id?0:-1} className={area===item.id?'is-active':''} onClick={()=>setArea(item.id)}>{item.label}</Button>)}</div>
+    <cds-tabs id="dashboard-area-tabs" ref={areaTabsRef} value={area} selectedIndex={areas.findIndex(item => item.id === area)} aria-label="经营分析板块">{areas.map(item => <cds-tab key={item.id} id={"dashboard-tab-" + item.id} value={item.id} target="dashboard-area-panel">{item.label}</cds-tab>)}</cds-tabs>
 
+    <div id="dashboard-area-panel" role="tabpanel" aria-label={activeTitle}>
     <div className="dashboard-section-heading"><div><div className="eyebrow">BUSINESS PERFORMANCE</div><h2>{activeTitle}</h2><p>{area==='overview'?'核心经营指标、收入走势与需要管理层关注的风险。':'当前板块的关键指标与经营分析；选择图表或风险项目可进入对应明细。'}</p></div><div className="dashboard-refresh"><span className="refresh-dot"/><span>视图刷新于 {updatedAt}</span></div></div>
 
     <Grid fullWidth className="dashboard-metrics">{metrics.map(metric=><Column key={metric.label} sm={2} md={4} lg={4}><Tile className="dashboard-metric-card"><div className="dashboard-metric-card__label"><span>{metric.label}</span><span className="dashboard-metric-icon">{metric.icon}</span></div><div className="dashboard-metric-card__value">{metric.value}</div><div className={'dashboard-metric-card__delta '+(metric.tone==='good'?'is-good':metric.tone==='warn'?'is-warn':'')}>{metric.delta}</div><Button type="button" variant="ghost" className="metric-drilldown" onClick={()=>showDrilldown(metric.label)}>查看明细 <span aria-hidden="true">↗</span></Button></Tile></Column>)}</Grid>
@@ -149,5 +163,6 @@ export function DashboardPage() {
     </Grid>}
 
     <Tile className="dashboard-panel risk-panel"><div className="dashboard-panel__heading"><div><h3>{area==='overview'?'经营风险预警':'待处理事项与风险预警'}</h3><p>优先关注逾期回款、SLA 超时与长时间停滞的重点商机</p></div><Tag type="red">3 项待关注</Tag></div><div className="risk-list">{(area==='overview'?risks:risks.filter((_,i)=>area==='orders'?i===0:area==='service'?i===1:area==='sales'?i===2:true)).map((risk)=><Button variant="ghost" className="risk-row" type="button" key={risk.title} onClick={()=>showDrilldown(risk.title)}><span className="risk-mark"><WarningAlt size={18}/></span><span className="risk-main"><strong>{risk.title}</strong><small>{risk.detail}</small></span><Tag type={risk.level==='高风险'?'red':'warm-gray'}>{risk.type} · {risk.level}</Tag><span className="ranking-arrow">↗</span></Button>)}</div><div className="dashboard-panel__footer"><span>提醒规则与责任人需在业务数据及 SLA 配置接入后启用。</span><Button type="button" onClick={()=>showDrilldown('全部风险预警')}>查看全部预警 ↗</Button></div></Tile>
+    </div>
   </div>;
 }
