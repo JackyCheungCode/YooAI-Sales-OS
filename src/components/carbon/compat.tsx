@@ -154,8 +154,16 @@ export function ProgressIndicator(props: CarbonProps) {
 export function ProgressStep(props: CarbonProps) {
   return createElement('cds-progress-step', props, props.children);
 }
-export function Modal(props: CarbonProps) {
-  return createElement('cds-modal', props, props.children);
+export function Modal({ onClose, ...props }: CarbonProps & { onClose?: () => void }) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onClose) return;
+    const close = () => onClose();
+    element.addEventListener('cds-modal-closed', close);
+    return () => element.removeEventListener('cds-modal-closed', close);
+  }, [onClose]);
+  return createElement('cds-modal', { ref, ...props }, props.children);
 }
 export function ModalHeader(props: CarbonProps) {
   return createElement('cds-modal-header', props, props.children);
