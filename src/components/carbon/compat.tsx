@@ -1,10 +1,10 @@
-import { createElement, useEffect, useRef, type ElementType, type ReactNode } from 'react';
+import { createElement, useEffect, useRef, type ElementType, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
 
 type CarbonProps = Record<string, any> & {
   children?: ReactNode;
   className?: string;
-  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
   onChange?: (event: any) => void;
 };
 
@@ -111,7 +111,7 @@ type SideNavBaseProps = CarbonProps & {
   title?: string;
 };
 
-function slottedIcon(renderIcon?: ComponentType<{ size?: number }>) {
+function slottedIcon(renderIcon?: ElementType<{ size?: number }>) {
   if (!renderIcon) return null;
   return createElement(
     'span',
