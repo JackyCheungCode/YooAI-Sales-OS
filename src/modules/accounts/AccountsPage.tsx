@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Add, Renew, ArrowRight, Building, UserMultiple, Email, Phone, Document, CheckmarkFilled } from '../../components/carbon/icons';
-import { Search as CarbonSearch, Tag, Tile, Button, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody, InlineNotification, Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '../../components/carbon/compat';
+import { Search as CarbonSearch, Tag, Tile, Modal, ModalHeader, ModalLabel, ModalHeading, ModalBody, InlineNotification, Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, DropdownInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './accounts.css';
