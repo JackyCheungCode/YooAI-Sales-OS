@@ -76,7 +76,7 @@ export function AppLayout() {
         <cds-breadcrumb-item href="/dashboard">经营工作空间</cds-breadcrumb-item>
         <cds-breadcrumb-item aria-current="page">{pageTitle}</cds-breadcrumb-item>
       </cds-breadcrumb>
-      <main className="page-content">
+      <main className="page-content cds--content">
         <Grid fullWidth className="page-layout-grid">
           <Column sm={4} md={8} lg={16} xlg={16}><Outlet /></Column>
         </Grid>
