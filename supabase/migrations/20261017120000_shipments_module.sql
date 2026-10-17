@@ -386,10 +386,10 @@ begin
   if p_eta is not null then
     insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
     values(auth.uid(),p_shipment_id,'eta_prep_notice','customer','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
-    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null where public.shipment_notification_jobs.status<>'sent';
     insert into public.shipment_notification_jobs(owner_id,shipment_id,event_key,recipient_type,template_key,locale,scheduled_at,timezone)
     values(auth.uid(),p_shipment_id,'eta_prep_notice','sales','shipment_eta_prep_notice','zh-CN',greatest(now(),(p_eta::timestamp at time zone 'UTC')-interval '7 days'),'UTC')
-    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null;
+    on conflict(shipment_id,event_key,recipient_type,template_key) do update set scheduled_at=excluded.scheduled_at,status='pending',last_error=null where public.shipment_notification_jobs.status<>'sent';
   end if;
   insert into public.shipment_events(owner_id,shipment_id,event_type,description) values(auth.uid(),p_shipment_id,'logistics_updated','物流与出运信息已更新。');
   return jsonb_build_object('shipment_id',p_shipment_id,'updated',true);
