@@ -101,9 +101,9 @@ export function ShipmentsPage() {
   }, [createOpen]);
 
   const selected = shipments.find(s => s.id === selectedId) ?? null;
-  // The database RPCs and Storage policies are owner-scoped; keep the UI aligned with that boundary.
-  const canEditSelected = Boolean(canEditShipment && selected && selected.owner_id === currentUserId);
-  const canManageSelectedCosts = Boolean(isFinance && selected && selected.owner_id === currentUserId);
+  // Single-user mode: any signed-in user can operate all shipment features.
+  const canEditSelected = Boolean(selected);
+  const canManageSelectedCosts = Boolean(selected);
   const filtered = useMemo(() => shipments.filter(s => {
     const text = [s.shipment_number, s.orders?.order_number, s.customers?.name, s.destination_port, s.booking_number].filter(Boolean).join(' ').toLowerCase();
     return (!query || text.includes(query.toLowerCase())) && (filter === 'all' || s.status === filter);
@@ -154,7 +154,7 @@ export function ShipmentsPage() {
     if (detailError) setError('读取出运详情失败：'+detailError.message);
   }, [canManageSelectedCosts]);
 
-  useEffect(() => { void loadShipments(); if(supabase) void supabase.auth.getUser().then(({data})=>{setCurrentUserId(data.user?.id??'');const role=String(data.user?.app_metadata?.role||'');setIsFinance(['finance','admin','executive'].includes(role));setCanEditShipment(['followup','documentation','admin','executive','manager','operations','shipping'].includes(role));}); }, []);
+  useEffect(() => { void loadShipments(); if(supabase) void supabase.auth.getUser().then(({data})=>{const signedIn=Boolean(data.user?.id);setCurrentUserId(data.user?.id??'');setIsFinance(signedIn);setCanEditShipment(signedIn);}); }, []);
   useEffect(() => { if (selectedId) void loadDetails(selectedId); else { setDocuments([]); setEvents([]); setCosts([]); setExceptions([]); } }, [selectedId,loadDetails]);
   useEffect(() => {
     if (!selected) return;
