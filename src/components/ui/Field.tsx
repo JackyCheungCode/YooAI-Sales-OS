@@ -1,4 +1,4 @@
-import { createElement, useEffect, useId, useRef, type ReactNode } from 'react';
+import { Children, createElement, isValidElement, useEffect, useId, useRef, type ReactNode } from 'react';
 
 type ValueEvent = { target: { value: string } };
 type CommonControlProps = {
@@ -25,10 +25,10 @@ function useCarbonChange(
     const notify = (event: Event) => {
       const target = event.target as HTMLElement & { value?: string };
       const detail = (event as CustomEvent<{ value?: string }>).detail;
-      const value = target?.value ?? detail?.value;
+      const value = target?.value ?? detail?.value ?? detail?.item?.value ?? detail?.selectedItem?.value;
       if (value !== undefined) onChange({ target: { value: String(value) } });
     };
-    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-text-input-input', 'cds-textarea-input', 'cds-number-input-changed', 'cds-date-picker-changed'];
+    const eventNames = ['input', 'change', 'cds-select-selected', 'cds-dropdown-selected', 'cds-text-input-input', 'cds-textarea-input', 'cds-number-input-changed', 'cds-date-picker-changed'];
     eventNames.forEach((name) => element.addEventListener(name, notify));
     return () => eventNames.forEach((name) => element.removeEventListener(name, notify));
   }, [ref, onChange]);
@@ -109,6 +109,28 @@ export function SelectInput({ labelText, id, onChange, children, ...props }: Com
     hideLabel: !labelText,
     ...props,
   }, children);
+}
+
+
+/** Carbon dropdown thin wrapper for filter bars; it uses the in-page Carbon popup on desktop and mobile. */
+export function DropdownInput({ labelText, id, onChange, children, value, ...props }: CommonControlProps & { children?: ReactNode }) {
+  const generatedId = useId();
+  const ref = useRef<HTMLElement | null>(null);
+  useCarbonChange(ref, onChange);
+  const options = Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    const item = child.props as { value?: string | number; text?: string; children?: ReactNode };
+    const itemValue = String(item.value ?? '');
+    return createElement('cds-dropdown-item', { value: itemValue, selected: String(value ?? '') === itemValue }, item.children ?? item.text ?? itemValue);
+  });
+  const selectedChild = Children.toArray(children).find((child) => {
+    if (!isValidElement(child)) return false;
+    const item = child.props as { value?: string | number };
+    return String(item.value ?? '') === String(value ?? '');
+  });
+  const selectedProps = selectedChild && isValidElement(selectedChild) ? selectedChild.props as { text?: string; children?: ReactNode } : undefined;
+  const triggerContent = selectedProps?.children ?? selectedProps?.text ?? labelText ?? '请选择';
+  return createElement('cds-dropdown', { ref, id: id ?? generatedId, 'trigger-content': String(triggerContent), value: value == null ? '' : String(value), ...props }, options);
 }
 
 export function SelectItem({ value, text, children }: { value: string; text?: string; children?: ReactNode }) {

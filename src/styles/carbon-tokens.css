@@ -1,8 +1,8 @@
-/* Project aliases must resolve to Carbon theme/type tokens, never hard-coded values. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+SC:wght@400;500;600&display=swap');
+
+/* Project font extension only; visual tokens remain owned by Carbon. */
 :root {
   --cds-bg-page: var(--cds-background);
-  --cds-font-family-sans: 'IBM Plex Sans', 'Songti TC', 'Songti SC', SimSun, serif;
+  --cds-font-family-sans: 'IBM Plex Sans', 'IBM Plex Sans SC', sans-serif;
 }
-body {
-  font-family: var(--cds-font-family-sans);
-}
+body { font-family: var(--cds-font-family-sans); }
