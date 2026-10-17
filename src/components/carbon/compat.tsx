@@ -125,7 +125,7 @@ export function SideNavItems(props: CarbonProps) {
 }
 
 export function SideNavLink({ isActive, renderIcon, children, ...props }: SideNavBaseProps) {
-  return createElement('cds-side-nav-menu-item', {
+  return createElement('cds-side-nav-link', {
     ...props,
     active: isActive,
     'aria-current': isActive ? 'page' : undefined,
