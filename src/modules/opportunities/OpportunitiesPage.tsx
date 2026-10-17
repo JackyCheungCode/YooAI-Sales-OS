@@ -1,7 +1,7 @@
-import { Tile } from '@carbon/react';
+import { Tile, Tag } from '../../components/carbon/compat';
 import { useMemo, useState } from 'react';
-import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '@carbon/react/icons';
-import { Tag, Checkbox } from '@carbon/react';
+import { Add, Search, Renew, ArrowRight, Close, Building, UserMultiple, WarningAlt, Document, CheckmarkFilled, Time, Calendar, ChartLine, Task } from '@carbon/icons-react';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
 import { TextInput, SelectInput, SelectItem, TextAreaInput } from '../../components/ui/Field';
 import './opportunities.css';
@@ -61,7 +61,7 @@ export function OpportunitiesPage(){
    <div className="opps-kpi"><span>本月预计成交</span><strong>2 笔</strong><small>预测口径</small></div>
   </section>
   <section className="opps-pipeline-card"><div className="opps-section-head"><div><h2>阶段管道</h2><p>选择商机后查看阶段；推进前必须满足对应退出条件。</p></div><Tag type="blue">{selected.stage}</Tag></div>
-   <div className="opps-stage-track">{stages.map((s,i)=>{const current=stages.indexOf(selected.stage);return <Button key={s} className={'opps-stage '+(i<current?'completed':i===current?'current':'')} onClick={()=>{if(i===current)return;setExitChecks({});setBackwardReason('');setTargetStage(s);setShowAdvance(true);}}><span className="opps-stage-dot">{i<current?<CheckmarkFilled size={14}/>:i+1}</span><span>{s}</span><small>{stageProbability[s]}%</small></Button>;})}</div>
+   <div className="opps-stage-track">{stages.map((s,i)=>{const current=stages.indexOf(selected.stage);return <Button variant="ghost" key={s} className={'opps-stage '+(i<current?'completed':i===current?'current':'')} onClick={()=>{if(i===current)return;setExitChecks({});setBackwardReason('');setTargetStage(s);setShowAdvance(true);}}><span className="opps-stage-dot">{i<current?<CheckmarkFilled size={14}/>:i+1}</span><span>{s}</span><small>{stageProbability[s]}%</small></Button>;})}</div>
    <div className="opps-stage-footer"><span><span className="opps-legend-dot done"/>已完成阶段</span><span><span className="opps-legend-dot now"/>当前阶段</span><span>阶段停留 <b>{dwell} 天</b></span><span>赢单概率 <b>{selected.probability}%</b></span></div>
   </section>
   <div className="opps-main-layout">

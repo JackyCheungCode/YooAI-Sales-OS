@@ -4,7 +4,7 @@
 * { box-sizing: border-box; }
 html, body, #root { min-height: 100%; margin: 0; }
 body {
-  background: var(--cds-background);
+  background: var(--cds-bg-page);
   color: var(--cds-text-primary);
   font-size: var(--cds-body-compact-01-font-size);
 }

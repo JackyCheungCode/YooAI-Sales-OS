@@ -1,5 +1,5 @@
-import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '@carbon/react';
-import { Add, Download, Filter, UserMultiple } from '@carbon/react/icons';
+import { Column, Grid, InlineNotification, Search as CarbonSearch, Tag, Tile } from '../../components/carbon/compat';
+import { Add, Download, Filter, UserMultiple } from '@carbon/icons-react';
 import { useState, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem } from '../../components/ui/Field';
@@ -50,12 +50,14 @@ export function CustomersPage() {
         </div>
         <Button variant="secondary" onClick={() => { setKeyword(''); setStatus('all'); }}>重置</Button>
       </div>
+      <Tile className="empty-state-tile">
       <div className="empty-state">
         <div className="empty-state__icon"><UserMultiple size={25} /></div>
         <h3>{keyword ? '尚无匹配客户' : '客户数据准备就绪'}</h3>
         <p>{isSupabaseConfigured ? 'Supabase 连接配置已检测到。完成数据库表结构和权限策略后，这里将展示真实客户数据。' : '当前还没有加载客户数据。下一步将接入 Supabase 数据表与安全访问策略。'}</p>
         <Button renderIcon={Add} onClick={() => setNotice('客户数据尚未接入：需要完成 Supabase 表结构、RLS 权限策略和新增/编辑流程。')}>规划客户数据接入</Button>
       </div>
+      </Tile>
       <div className="table-footer"><span>当前为基础界面阶段，未写入任何客户数据</span><span>第 1 页 <span className="footer-divider">·</span> 共 0 条</span></div>
       </Tile></Column>
     </Grid>

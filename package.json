@@ -10,11 +10,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@carbon/react": "1.118.0",
     "@supabase/supabase-js": "2.49.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-router-dom": "7.5.0"
+    "react-router-dom": "7.5.0",
+    "@carbon/styles": "1.116.0",
+    "@carbon/web-components": "2.64.0",
+    "@carbon/icons-react": "11.89.0"
   },
   "devDependencies": {
     "@types/react": "19.0.12",
