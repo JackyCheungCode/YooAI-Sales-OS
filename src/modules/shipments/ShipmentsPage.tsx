@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useRef, type FormEvent } from 'react';
-import { Add, Renew, Search, WarningAlt, CheckmarkFilled, Document, Checkmark } from '@carbon/icons-react';
+import { Add, Renew, Search, WarningAlt, Document } from '@carbon/icons-react';
 import { Tile, Tag, FileUploaderButton, Table, TableHead, TableBody, TableRow, TableHeader, TableCell, InlineNotification, Grid, Column } from '../../components/carbon/compat';
 import { Button } from '../../components/ui/Button';
 import { SelectInput, SelectItem, TextInput, TextAreaInput } from '../../components/ui/Field';
